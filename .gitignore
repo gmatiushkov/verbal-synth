@@ -1,0 +1,26 @@
+# Build output
+build/
+out/
+cmake-build-*/
+
+# JUCE / VS project artifacts
+*.vcxproj.user
+*.suo
+*.sdf
+.vs/
+
+# Compiled files
+*.o
+*.obj
+*.lib
+*.a
+*.exe
+*.dll
+*.pdb
+*.ilk
+
+# IDE-specific (uncomment if you don't want to share VS Code settings)
+# .vscode/
+
+# Claude Code memory (AI assistant state, not project code)
+.claude/

@@ -1,0 +1,23 @@
+{
+  "configurations": [
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/Source",
+        "C:/Root/6 - Dev/JUCE/modules",
+        "${workspaceFolder}/build/VerbalSynth_artefacts/JuceLibraryCode"
+      ],
+      "defines": [
+        "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1",
+        "JUCE_WEB_BROWSER=0",
+        "JUCE_USE_CURL=0",
+        "_WIN32",
+        "WIN32"
+      ],
+      "compilerPath": "C:/Program Files/Microsoft Visual Studio/18/Community/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-msvc-x64"
+    }
+  ],
+  "version": 4
+}
