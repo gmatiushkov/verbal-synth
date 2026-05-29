@@ -14,6 +14,12 @@ public:
 
     float processSample(float input);
 
+    // Set type and resonance only (no cutoff change) — use before per-sample loop
+    void setTypeAndResonance(int type, float resonance);
+
+    // Process sample with direct cutoff override (bypasses SmoothedValue) — use in per-sample loop
+    float processSampleRaw(float input, float cutoffHz);
+
     void snapToZero() { mFilter.snapToZero(); }
 
 private:

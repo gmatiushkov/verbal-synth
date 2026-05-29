@@ -2,6 +2,7 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "SynthEngine.h"
 #include "PatchPanel.h"
+#include "VerbalLookAndFeel.h"
 
 class MainComponent : public juce::AudioAppComponent,
                       public juce::KeyListener
@@ -20,6 +21,8 @@ public:
     bool keyPressed(const juce::KeyPress& key, juce::Component* source) override;
 
 private:
+    VerbalLookAndFeel mLookAndFeel;
+
     SynthEngine mEngine;
     PatchPanel  mPatchPanel;
 
@@ -27,7 +30,13 @@ private:
     juce::MidiKeyboardComponent mKeyboard;
     juce::MidiMessageCollector  mMidiCollector;
 
-    juce::Label mStatusLabel;
+    // Top bar
+    juce::Label      mTitleLabel;
+    juce::TextEditor mPromptInput;
+    juce::TextButton mGenerateBtn;
+    juce::Slider     mVolumeKnob;
+    juce::Label      mVolumeLabel;
+
     bool mNotePlaying = false;
 
     void toggleTestNote();

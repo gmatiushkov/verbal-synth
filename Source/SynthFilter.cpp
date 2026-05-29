@@ -41,3 +41,24 @@ float SynthFilter::processSample(float input)
     mFilter.setCutoffFrequency(mCutoffSmoother.getNextValue());
     return mFilter.processSample(0, input);
 }
+
+void SynthFilter::setTypeAndResonance(int type, float resonance)
+{
+    using T = juce::dsp::StateVariableTPTFilterType;
+    const T types[] = { T::lowpass, T::bandpass, T::highpass };
+    mType = juce::jlimit(0, 2, type);
+    mFilter.setType(types[mType]);
+
+    const float q = 0.5f + resonance * 9.5f;
+    if (std::abs(q - mResonance) > 1e-3f)
+    {
+        mFilter.setResonance(q);
+        mResonance = q;
+    }
+}
+
+float SynthFilter::processSampleRaw(float input, float cutoffHz)
+{
+    mFilter.setCutoffFrequency(juce::jlimit(20.f, 18000.f, cutoffHz));
+    return mFilter.processSample(0, input);
+}

@@ -7,6 +7,9 @@ static constexpr int kLutSize = 256;
 void LfoGenerator::prepare(double sampleRate)
 {
     mSampleRate = sampleRate;
+    // Allow full [-1,1] swing in 2 ms — removes saw/square click without affecting shape
+    mSlewLimit = 2.f / (static_cast<float>(sampleRate) * 0.002f);
+    mSlewPrev  = 0.f;
 
     mSine  .initialise([](float x){ return std::sin(x); }, kLutSize);
     mTri   .initialise([](float x){
@@ -31,6 +34,7 @@ void LfoGenerator::reset()
     mTri   .reset();
     mSaw   .reset();
     mSquare.reset();
+    mSlewPrev = 0.f;
 }
 
 void LfoGenerator::setParams(float rateNorm, float shapeMorph)
@@ -46,21 +50,28 @@ float LfoGenerator::getNextSample()
     const float w = mSaw   .processSample(0.f);
     const float q = mSquare.processSample(0.f);
 
+    float raw;
     if (mMorph < 0.333f)
     {
         const float b = blend(mMorph, 0.f, 0.333f);
-        return s * (1.f - b) + t * b;
+        raw = s * (1.f - b) + t * b;
     }
     else if (mMorph < 0.667f)
     {
         const float b = blend(mMorph, 0.333f, 0.667f);
-        return t * (1.f - b) + w * b;
+        raw = t * (1.f - b) + w * b;
     }
     else
     {
         const float b = blend(mMorph, 0.667f, 1.f);
-        return w * (1.f - b) + q * b;
+        raw = w * (1.f - b) + q * b;
     }
+
+    // Slew limiter: caps rate-of-change to remove clicks at wave discontinuities
+    const float delta  = raw - mSlewPrev;
+    const float slewed = mSlewPrev + juce::jlimit(-mSlewLimit, mSlewLimit, delta);
+    mSlewPrev = slewed;
+    return slewed;
 }
 
 void LfoGenerator::syncRate(float hz)

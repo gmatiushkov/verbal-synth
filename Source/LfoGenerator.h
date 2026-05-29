@@ -21,6 +21,10 @@ private:
     float  mMorph      = 0.f;
     double mSampleRate = 44100.0;
 
+    // Slew limiter: prevents audible clicks at saw/square discontinuities
+    float mSlewPrev  = 0.f;
+    float mSlewLimit = 0.023f;  // updated in prepare()
+
     void syncRate(float hz);
 
     static float blend(float morph, float lo, float hi)

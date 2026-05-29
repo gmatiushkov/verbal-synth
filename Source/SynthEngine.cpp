@@ -1,6 +1,17 @@
 #include "SynthEngine.h"
 
-SynthEngine::SynthEngine() = default;
+SynthEngine::SynthEngine()
+{
+    const juce::File wavetableDir =
+        juce::File::getSpecialLocation(juce::File::currentApplicationFile)
+            .getParentDirectory()
+            .getChildFile("Wavetables");
+
+    mBanks = WavetableBank::load(wavetableDir);
+
+    for (auto& v : mVoices)
+        v.setBanks(&mBanks);
+}
 
 void SynthEngine::prepare(double sampleRate, int samplesPerBlock)
 {
@@ -10,15 +21,18 @@ void SynthEngine::prepare(double sampleRate, int samplesPerBlock)
     for (auto& v : mVoices)
         v.prepare(sampleRate, samplesPerBlock);
 
-    mLfo.prepare(sampleRate);
-    mLfoBuf.resize(static_cast<size_t>(samplesPerBlock), 0.f);
+    mLfo1.prepare(sampleRate);
+    mLfo2.prepare(sampleRate);
+
+    const size_t bufSize = static_cast<size_t>(samplesPerBlock);
+    mLfo1Buf.resize(bufSize, 0.f);
+    mLfo2Buf.resize(bufSize, 0.f);
+
     mVoiceSumBuffer.setSize(2, samplesPerBlock);
 
     juce::dsp::ProcessSpec spec{ sampleRate,
                                  static_cast<juce::uint32>(samplesPerBlock), 2 };
     mDrive .prepare(spec);
-    mPhaser.prepare(spec);
-    mDelay .prepare(spec);
     mReverb.prepare(spec);
 
     updateEffectParams();
@@ -38,43 +52,58 @@ void SynthEngine::process(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& mi
 
     const int numSamples = buffer.getNumSamples();
 
-    // --- Глобальный LFO (единый для всех голосов) ---
-    if (static_cast<int>(mLfoBuf.size()) < numSamples)
-        mLfoBuf.resize(static_cast<size_t>(numSamples), 0.f);
-    for (int i = 0; i < numSamples; ++i)
-        mLfoBuf[i] = mLfo.getNextSample();
+    // --- LFO buffers ---
+    if (static_cast<int>(mLfo1Buf.size()) < numSamples)
+        mLfo1Buf.resize(static_cast<size_t>(numSamples), 0.f);
+    if (static_cast<int>(mLfo2Buf.size()) < numSamples)
+        mLfo2Buf.resize(static_cast<size_t>(numSamples), 0.f);
 
-    // --- Голоса ---
+    for (int i = 0; i < numSamples; ++i)
+    {
+        mLfo1Buf[i] = mLfo1.getNextSample();
+        mLfo2Buf[i] = mLfo2.getNextSample();
+    }
+
+    // Expose last LFO value for UI LED display (atomic write from audio thread)
+    if (numSamples > 0)
+    {
+        mLfo1Level.store(mLfo1Buf[numSamples - 1]);
+        mLfo2Level.store(mLfo2Buf[numSamples - 1]);
+    }
+
+    // --- Voices ---
     mVoiceSumBuffer.setSize(2, numSamples, false, false, true);
     mVoiceSumBuffer.clear();
 
     for (auto& v : mVoices)
         if (v.isActive())
-            v.renderNextBlock(mVoiceSumBuffer, 0, numSamples, mLfoBuf.data());
+            v.renderNextBlock(mVoiceSumBuffer, 0, numSamples,
+                              mLfo1Buf.data(), mLfo2Buf.data());
 
-    // Копируем сумму голосов в выходной буфер
     for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
         buffer.copyFrom(ch, 0, mVoiceSumBuffer, ch, 0, numSamples);
 
-    // Нормализация: предотвращает клиппинг при 8 голосах
     buffer.applyGain(1.f / static_cast<float>(kNumVoices));
 
-    // --- Эффекты ---
+    // --- Effects ---
     mDrive.setDrive(mPatch.drive_amount);
-    mDrive.setTone (mPatch.drive_tone);
-    mDrive .processBlock(buffer);
-    mPhaser.processBlock(buffer);
-    mDelay .processBlock(buffer);
+    mDrive.setTone(mPatch.drive_tone);
+    mDrive.processBlock(buffer);
+
     mReverb.processBlock(buffer);
+
+    // --- Master volume ---
+    buffer.applyGain(mMasterVolume.load());
 }
 
 void SynthEngine::reset()
 {
-    for (auto& v : mVoices) v.prepare(mSampleRate, mBlockSize);
-    mLfo   .reset();
-    mDrive .reset();
-    mPhaser.reset();
-    mDelay .reset();
+    for (auto& v : mVoices)
+        v.prepare(mSampleRate, mBlockSize);
+
+    mLfo1.reset();
+    mLfo2.reset();
+    mDrive.reset();
     mReverb.reset();
 }
 
@@ -127,8 +156,8 @@ int SynthEngine::stealVoice()
 
 void SynthEngine::updateEffectParams()
 {
-    mLfo.setParams(mPatch.lfo_rate, mPatch.lfo_shape);
-    mPhaser.setParams(mPatch.phaser_rate, mPatch.phaser_depth, mPatch.phaser_feedback);
-    mDelay .setParams(mPatch.delay_time,  mPatch.delay_feedback, mPatch.delay_mix);
+    mLfo1.setParams(mPatch.lfo1_rate, mPatch.lfo1_shape);
+    mLfo2.setParams(mPatch.lfo2_rate, mPatch.lfo2_shape);
+
     mReverb.setParams(mPatch.reverb_time, mPatch.reverb_damp, mPatch.reverb_mix);
 }

@@ -18,12 +18,9 @@ target_sources(VerbalSynth PRIVATE
     Source/MainComponent.cpp
     Source/SynthVoice.cpp
     Source/SynthEngine.cpp
-    Source/Oscillator.cpp
     Source/AdsrEnvelope.cpp
     Source/SynthFilter.cpp
     Source/LfoGenerator.cpp
-    Source/PhaserEffect.cpp
-    Source/DelayEffect.cpp
     Source/ReverbEffect.cpp
     Source/PatchPanel.cpp
 )
