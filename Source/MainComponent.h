@@ -1,8 +1,10 @@
 #pragma once
+#include <unordered_map>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "SynthEngine.h"
 #include "PatchPanel.h"
 #include "VerbalLookAndFeel.h"
+#include "PresetManager.h"
 
 class MainComponent : public juce::AudioAppComponent,
                       public juce::KeyListener
@@ -19,6 +21,7 @@ public:
     void resized() override;
 
     bool keyPressed(const juce::KeyPress& key, juce::Component* source) override;
+    bool keyStateChanged(bool isKeyDown, juce::Component*) override;
 
 private:
     VerbalLookAndFeel mLookAndFeel;
@@ -30,14 +33,43 @@ private:
     juce::MidiKeyboardComponent mKeyboard;
     juce::MidiMessageCollector  mMidiCollector;
 
-    // Top bar
+    // Top bar — preset strip
     juce::Label      mTitleLabel;
+    juce::TextButton mPrevPresetBtn;
+    juce::TextButton mPresetNameBtn;
+    juce::TextButton mNextPresetBtn;
+    juce::TextButton mSavePresetBtn;
+
+    // Top bar — prompt / generate
     juce::TextEditor mPromptInput;
     juce::TextButton mGenerateBtn;
+
+    // Top bar — right side controls
+    juce::ToggleButton mVelocityToggle;
     juce::Slider     mVolumeKnob;
     juce::Label      mVolumeLabel;
 
+    // Preset manager state
+    PresetManager mPresetManager;
+    int           mCurrentPresetIndex = -1;
+    juce::String  mCurrentPresetName  = "Init";
+    bool          mPresetDirty        = false;
+    bool          mLoadingPreset      = false;
+
+    // Preset methods
+    void loadPresetByIndex(int index);
+    void saveCurrentPreset();
+    void savePresetAs();
+    void showPresetDropdown();
+    void updatePresetLabel();
+    void markDirty();
+
+    // Computer keyboard MIDI
     bool mNotePlaying = false;
+    int  mKeyboardOctave = 4;
+    std::unordered_map<int, int> mActiveComputerKeys;
+
+    static int computerKeyToSemitone(int keyCode);
 
     void toggleTestNote();
     void openAllMidiInputs();

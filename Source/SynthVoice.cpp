@@ -45,12 +45,13 @@ void SynthVoice::updateOscBanks()
 
 float SynthVoice::computeOsc1Freq() const
 {
-    return SynthUtils::midiToHz(mNote);  // OSC1 has no detune
+    const int shift = SynthUtils::octaveShift(mPatch.osc1_octave);
+    return SynthUtils::midiToHz(mNote) * std::pow(2.f, static_cast<float>(shift));
 }
 
 float SynthVoice::computeOsc2Freq() const
 {
-    const float baseHz   = SynthUtils::midiToHz(mNote);
+    const float baseHz   = computeOsc1Freq();  // OSC2 semis/detune are relative to OSC1 octave
     const int   semis    = static_cast<int>(std::round((mPatch.osc2_semitones - 0.5f) * 48.f));
     const float detCents = (mPatch.osc2_detune - 0.5f) * 100.f;
     return baseHz * std::pow(2.f, static_cast<float>(semis) / 12.f)
@@ -61,7 +62,7 @@ void SynthVoice::noteOn(int midiNote, int velocity, const SynthPatch& patch)
 {
     mNote    = midiNote;
     mNoteIsOn = true;
-    juce::ignoreUnused(velocity);
+    mVelocity = juce::jlimit(0.f, 1.f, static_cast<float>(velocity) / 127.f);
 
     updatePatch(patch);
 
@@ -197,7 +198,7 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& buffer,
             ? juce::jmax(0.f, 1.f + lfo2Val * p.lfo2_to_amp)
             : 1.f;
 
-        mMonoBuf[i] = filtered * envVal * ampMod;
+        mMonoBuf[i] = filtered * envVal * ampMod * mVelocity;
     }
 
     mFilter.snapToZero();

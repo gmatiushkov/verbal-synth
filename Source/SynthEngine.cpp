@@ -121,7 +121,8 @@ void SynthEngine::noteOn(int midiNote, int velocity)
     int idx = findFreeVoice();
     if (idx < 0)
         idx = stealVoice();
-    mVoices[idx].noteOn(midiNote, velocity, mPatch);
+    const int vel = mVelocityEnabled ? velocity : 127;
+    mVoices[idx].noteOn(midiNote, vel, mPatch);
 }
 
 void SynthEngine::noteOff(int midiNote)

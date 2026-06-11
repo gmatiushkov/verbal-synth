@@ -2,14 +2,13 @@
 #include <array>
 #include <string_view>
 
-// 36 synth parameters, normalised to [0.0, 1.0].
-// osc1_detune removed (OSC1 stays on base pitch).
-// Chorus removed; replaced by Reverb only.
+// 37 synth parameters, normalised to [0.0, 1.0].
 struct SynthPatch
 {
     // Oscillator 1
     float osc1_table    = 0.0f;   // wavetable bank index
     float osc1_position = 0.0f;   // frame position [0..1]
+    float osc1_octave   = 0.5f;   // -2..+2 oct, 5 steps (0,0.25,0.5,0.75,1)
 
     // Oscillator 2
     float osc2_table     = 0.0f;
@@ -65,7 +64,7 @@ struct SynthPatch
 
     // ---- helpers ----
 
-    static constexpr int kNumParams = 36;
+    static constexpr int kNumParams = 37;
 
     float*       data()       { return &osc1_table; }
     const float* data() const { return &osc1_table; }
@@ -73,7 +72,7 @@ struct SynthPatch
     static constexpr std::array<std::string_view, kNumParams> paramNames()
     {
         return {
-            "osc1_table", "osc1_position",
+            "osc1_table", "osc1_position", "osc1_octave",
             "osc2_table", "osc2_position", "osc2_detune", "osc2_semitones",
             "mix_osc1", "mix_osc2", "mix_noise",
             "filter_type", "filter_cutoff", "filter_resonance", "filter_keytrack",
@@ -89,4 +88,4 @@ struct SynthPatch
 };
 
 static_assert(sizeof(SynthPatch) == SynthPatch::kNumParams * sizeof(float),
-              "SynthPatch layout must be packed floats");
+              "SynthPatch layout must be packed floats — 37 floats × 4 = 148 bytes");

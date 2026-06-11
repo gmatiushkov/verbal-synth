@@ -33,6 +33,8 @@ private:
             setResizable(true, true);
             centreWithSize(getWidth(), getHeight());
             setVisible(true);
+            toFront(true);
+            getContentComponent()->grabKeyboardFocus();
         }
 
         void closeButtonPressed() override

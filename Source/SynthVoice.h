@@ -34,8 +34,9 @@ private:
     SynthPatch mPatch;
     const std::vector<WavetableBank>* mBanks = nullptr;
 
-    int  mNote      = 60;
-    bool mNoteIsOn  = false;
+    int   mNote      = 60;
+    float mVelocity  = 1.0f;
+    bool  mNoteIsOn  = false;
     double mSampleRate = 44100.0;
     int    mBlockSize  = 512;
 

@@ -28,9 +28,10 @@ public:
 
     const std::vector<WavetableBank>& getBanks() const { return mBanks; }
 
-    void  setMasterVolume(float v) noexcept { mMasterVolume.store(juce::jlimit(0.f, 1.f, v)); }
-    float getLfo1Level()     const noexcept { return mLfo1Level.load(); }
-    float getLfo2Level()     const noexcept { return mLfo2Level.load(); }
+    void  setMasterVolume(float v)    noexcept { mMasterVolume.store(juce::jlimit(0.f, 1.f, v)); }
+    void  setVelocityEnabled(bool e)  noexcept { mVelocityEnabled = e; }
+    float getLfo1Level()        const noexcept { return mLfo1Level.load(); }
+    float getLfo2Level()        const noexcept { return mLfo2Level.load(); }
 
     static constexpr int kNumVoices = 8;
 
@@ -48,6 +49,7 @@ private:
     std::atomic<float> mLfo1Level{0.f};
     std::atomic<float> mLfo2Level{0.f};
 
+    bool       mVelocityEnabled = true;
     SynthPatch mPatch;
     double     mSampleRate = 44100.0;
     int        mBlockSize  = 512;
