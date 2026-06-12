@@ -4,12 +4,12 @@
 MainComponent::MainComponent()
     : mKeyboard(mKeyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    setSize(1024, 720);
+    setSize(1024, 760);
     setLookAndFeel(&mLookAndFeel);
 
     // ── Title ──
     mTitleLabel.setText("VerbalSynth", juce::dontSendNotification);
-    mTitleLabel.setFont(juce::FontOptions(18.f).withStyle("Bold"));
+    mTitleLabel.setFont(juce::Font(juce::FontOptions("Arial", 18.f, juce::Font::bold)));
     mTitleLabel.setColour(juce::Label::textColourId, juce::Colour(UI::TITLE));
     mTitleLabel.setJustificationType(juce::Justification::centredLeft);
     addAndMakeVisible(mTitleLabel);
@@ -67,7 +67,7 @@ MainComponent::MainComponent()
     mPromptInput.setText("", false);
     mPromptInput.setTextToShowWhenEmpty("Describe a sound... e.g. \"warm pad with long reverb\"",
                                         juce::Colour(UI::LABEL));
-    mPromptInput.setFont(juce::FontOptions(14.f));
+    mPromptInput.setFont(juce::Font(juce::FontOptions("Arial", 14.f, juce::Font::plain)));
     addAndMakeVisible(mPromptInput);
 
     // ── Generate button ──
@@ -77,39 +77,6 @@ MainComponent::MainComponent()
     mGenerateBtn.setColour(juce::TextButton::buttonOnColourId, juce::Colour(UI::KNOB_FILL));
     mGenerateBtn.setWantsKeyboardFocus(false);
     addAndMakeVisible(mGenerateBtn);
-
-    // ── Velocity toggle ──
-    mVelocityToggle.setButtonText("VEL");
-    mVelocityToggle.setToggleState(true, juce::dontSendNotification);
-    mVelocityToggle.setColour(juce::ToggleButton::textColourId,        juce::Colour(UI::BTN_TEXT));
-    mVelocityToggle.setColour(juce::ToggleButton::tickColourId,        juce::Colour(UI::KNOB_FILL));
-    mVelocityToggle.setColour(juce::ToggleButton::tickDisabledColourId, juce::Colour(UI::LABEL));
-    mVelocityToggle.setWantsKeyboardFocus(false);
-    mVelocityToggle.onClick = [this]() {
-        mEngine.setVelocityEnabled(mVelocityToggle.getToggleState());
-    };
-    addAndMakeVisible(mVelocityToggle);
-
-    // ── Volume knob ──
-    mVolumeKnob.setSliderStyle(juce::Slider::Rotary);
-    mVolumeKnob.setRotaryParameters(juce::MathConstants<float>::pi * 1.2f,
-                                    juce::MathConstants<float>::pi * 2.8f, true);
-    mVolumeKnob.setRange(0.0, 1.0);
-    mVolumeKnob.setValue(0.7);
-    mVolumeKnob.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-    mVolumeKnob.setDoubleClickReturnValue(true, 0.7);
-    mVolumeKnob.setWantsKeyboardFocus(false);
-    mVolumeKnob.onValueChange = [this]() {
-        mEngine.setMasterVolume(static_cast<float>(mVolumeKnob.getValue()));
-    };
-    mEngine.setMasterVolume(0.7f);
-    addAndMakeVisible(mVolumeKnob);
-
-    mVolumeLabel.setText("VOL", juce::dontSendNotification);
-    mVolumeLabel.setFont(juce::FontOptions(11.f));
-    mVolumeLabel.setColour(juce::Label::textColourId, juce::Colour(UI::LABEL));
-    mVolumeLabel.setJustificationType(juce::Justification::centred);
-    addAndMakeVisible(mVolumeLabel);
 
     // ── MIDI keyboard ──
     mKeyboard.setAvailableRange(24, 108);
@@ -124,6 +91,11 @@ MainComponent::MainComponent()
     };
     mPatchPanel.onGetLfo1Level = [this]() { return mEngine.getLfo1Level(); };
     mPatchPanel.onGetLfo2Level = [this]() { return mEngine.getLfo2Level(); };
+    mPatchPanel.onVelocityChanged = [this](bool e)  { mEngine.setVelocityEnabled(e); };
+    mPatchPanel.onVolumeChanged   = [this](float v) { mEngine.setMasterVolume(v); };
+    mPatchPanel.setVelocityEnabled(true);
+    mPatchPanel.setMasterVolume(0.7f);
+    mEngine.setMasterVolume(0.7f);
     mPatchPanel.setWavetableBanks(&mEngine.getBanks());
     mPatchPanel.setPatch(mEngine.currentPatch());
 
@@ -133,6 +105,8 @@ MainComponent::MainComponent()
             .getParentDirectory()
             .getChildFile("Patches");
     mPresetManager.setFolder(patchesDir);
+    ensureInitPreset();
+    loadInitPreset();
 
     setWantsKeyboardFocus(true);
     addKeyListener(this);
@@ -209,13 +183,8 @@ void MainComponent::resized()
     mSavePresetBtn .setBounds(topBar.removeFromLeft(64).reduced(0, 4));
     topBar.removeFromLeft(6);
 
-    // Right: VOL label + knob + VEL toggle + gap + Generate
-    mVolumeLabel   .setBounds(topBar.removeFromRight(28).reduced(0, 10));
-    mVolumeKnob    .setBounds(topBar.removeFromRight(40).reduced(2, 2));
-    topBar.removeFromRight(4);
-    mVelocityToggle.setBounds(topBar.removeFromRight(52).reduced(0, 4));
-    topBar.removeFromRight(8);
-    mGenerateBtn   .setBounds(topBar.removeFromRight(100).reduced(0, 4));
+    // Right: Generate button
+    mGenerateBtn.setBounds(topBar.removeFromRight(100).reduced(0, 4));
     topBar.removeFromRight(6);
 
     // Middle: prompt
@@ -269,8 +238,11 @@ void MainComponent::saveCurrentPreset()
 {
     if (mCurrentPresetIndex >= 0)
     {
-        mPresetManager.savePreset(mCurrentPresetName, mPatchPanel.getPatch());
+        const SynthPatch savedPatch = mPatchPanel.getPatch();
+        mPresetManager.savePreset(mCurrentPresetName, savedPatch);
         mCurrentPresetIndex = mPresetManager.findByName(mCurrentPresetName);
+        if (mCurrentPresetName.equalsIgnoreCase(initPresetName()))
+            mPatchPanel.setInitPatch(savedPatch);
         mPresetDirty = false;
         updatePresetLabel();
     }
@@ -298,6 +270,8 @@ void MainComponent::savePresetAs()
                     mPresetManager.savePreset(name, mPatchPanel.getPatch());
                     mCurrentPresetIndex = mPresetManager.findByName(name);
                     mCurrentPresetName  = name;
+                    if (name.equalsIgnoreCase(initPresetName()))
+                        mPatchPanel.setInitPatch(mPatchPanel.getPatch());
                     mPresetDirty        = false;
                     updatePresetLabel();
                 }
@@ -320,6 +294,38 @@ void MainComponent::showPresetDropdown()
         [this](int result) {
             if (result > 0) loadPresetByIndex(result - 1);
         });
+}
+
+// ── Init preset helpers ───────────────────────────────────────────────────────
+
+juce::String MainComponent::initPresetName()
+{
+    // "—— Init ——" (two em-dashes each side)
+    return juce::String::fromUTF8("\xe2\x80\x94\xe2\x80\x94 Init \xe2\x80\x94\xe2\x80\x94");
+}
+
+void MainComponent::ensureInitPreset()
+{
+    if (mPresetManager.findByName(initPresetName()) < 0)
+        mPresetManager.savePreset(initPresetName(), SynthPatch{});
+}
+
+void MainComponent::loadInitPreset()
+{
+    const int idx = mPresetManager.findByName(initPresetName());
+    if (idx < 0) return;
+
+    mLoadingPreset = true;
+    const SynthPatch patch = mPresetManager.loadPreset(idx);
+    mEngine.applyPatch(patch);
+    mPatchPanel.setPatch(patch);
+    mPatchPanel.setInitPatch(patch);
+    mLoadingPreset = false;
+
+    mCurrentPresetIndex = idx;
+    mCurrentPresetName  = initPresetName();
+    mPresetDirty        = false;
+    updatePresetLabel();
 }
 
 // ── Computer keyboard → MIDI note map ────────────────────────────────────────

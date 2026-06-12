@@ -44,11 +44,6 @@ private:
     juce::TextEditor mPromptInput;
     juce::TextButton mGenerateBtn;
 
-    // Top bar — right side controls
-    juce::ToggleButton mVelocityToggle;
-    juce::Slider     mVolumeKnob;
-    juce::Label      mVolumeLabel;
-
     // Preset manager state
     PresetManager mPresetManager;
     int           mCurrentPresetIndex = -1;
@@ -63,6 +58,10 @@ private:
     void showPresetDropdown();
     void updatePresetLabel();
     void markDirty();
+
+    static juce::String initPresetName();
+    void ensureInitPreset();
+    void loadInitPreset();
 
     // Computer keyboard MIDI
     bool mNotePlaying = false;

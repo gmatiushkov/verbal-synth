@@ -23,7 +23,8 @@ public:
     void snapToZero() { mFilter.snapToZero(); }
 
 private:
-    juce::dsp::StateVariableTPTFilter<float> mFilter;
+    juce::dsp::StateVariableTPTFilter<float> mFilter;   // resonant stage (user Q)
+    juce::dsp::StateVariableTPTFilter<float> mFilter2;  // slope stage (fixed Q=0.7071, −24 dB/oct total)
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Multiplicative> mCutoffSmoother;
 
     double mSampleRate = 44100.0;

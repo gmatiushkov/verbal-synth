@@ -4,6 +4,7 @@
 #include "WavetableBank.h"
 #include "WaveDisplay.h"
 #include "AdsrDisplay.h"
+#include "FilterVisualizer.h"
 
 class PatchPanel : public juce::Component,
                    private juce::Slider::Listener,
@@ -13,6 +14,8 @@ public:
     std::function<void(const SynthPatch&)> onPatchChanged;
     std::function<float()> onGetLfo1Level;
     std::function<float()> onGetLfo2Level;
+    std::function<void(bool)>  onVelocityChanged;
+    std::function<void(float)> onVolumeChanged;
 
     PatchPanel();
 
@@ -23,16 +26,28 @@ public:
     SynthPatch getPatch() const;
 
     void setWavetableBanks(const std::vector<WavetableBank>* banks);
+    void setVelocityEnabled(bool e);
+    void setMasterVolume(float v);
+    void setInitPatch(const SynthPatch& patch);
 
 private:
     std::array<juce::Slider, SynthPatch::kNumParams> mSliders;
     std::array<juce::Label,  SynthPatch::kNumParams> mValueLabels;
     std::array<juce::Label,  SynthPatch::kNumParams> mLabels;
 
-    juce::TextButton mFilterTypeBtn;
+    FilterVisualizer   mFilterVisualizer;
 
     WaveDisplay  mWaveDisplay1, mWaveDisplay2;
     AdsrDisplay  mAdsrAmpDisplay, mAdsrFenvDisplay;
+
+    // Controls group
+    juce::ToggleButton mVelToggle;
+    juce::Label        mVelLabel;
+    juce::Slider       mVolKnob;
+    juce::Label        mVolLabel;
+    juce::Label        mVolValueLabel;
+    juce::ToggleButton mAnimToggle;
+    juce::Label        mAnimLabel;
 
     const std::vector<WavetableBank>* mBanks = nullptr;
 
@@ -60,12 +75,14 @@ private:
     void layoutLfoGroup(juce::Rectangle<int>, const char*,
                         std::initializer_list<int>, juce::Rectangle<int>& ledOut);
     void layoutFilterGroup(juce::Rectangle<int>);
+    void layoutControlsGroup(juce::Rectangle<int>);
 
     void drawLfoLed(juce::Graphics&, juce::Rectangle<int> bounds, float level);
 
     void updateWaveDisplays();
     void updateWaveDisplay(int osc);
     void updateAdsrDisplays();
+    void updateFilterVisualizer();
 
     juce::String getDisplayValue(int paramIndex, float norm) const;
 

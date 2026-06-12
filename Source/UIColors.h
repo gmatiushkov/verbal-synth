@@ -37,4 +37,8 @@ namespace UI
     inline constexpr juce::uint32 ADSR_BG   = 0xff050e18;
     inline constexpr juce::uint32 ADSR_LINE = 0xff00d8b0;
     inline constexpr juce::uint32 ADSR_FILL = 0x2200c090;
+
+    // LFO modulation ring
+    inline constexpr juce::uint32 MOD_COLOR = 0xff006850;  // dark green — range arc
+    inline constexpr juce::uint32 MOD_DOT   = 0xff20d080;  // bright green — live position
 }

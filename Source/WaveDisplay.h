@@ -15,6 +15,20 @@ public:
         repaint();
     }
 
+    void setGhostFrame(const float* samples, int numSamples)
+    {
+        if (samples && numSamples > 0)
+            mGhostSamples.assign(samples, samples + numSamples);
+        else
+            mGhostSamples.clear();
+        repaint();
+    }
+
+    void clearGhost()
+    {
+        if (!mGhostSamples.empty()) { mGhostSamples.clear(); repaint(); }
+    }
+
     void paint(juce::Graphics& g) override
     {
         const auto b = getLocalBounds().toFloat();
@@ -39,6 +53,22 @@ public:
         const float midY  = b.getY() + 3.f + drawH * 0.5f;
         const int   n     = static_cast<int>(mSamples.size());
 
+        // Ghost waveform — drawn BEHIND the static layer
+        if (!mGhostSamples.empty())
+        {
+            juce::Path ghost;
+            const int ng = static_cast<int>(mGhostSamples.size());
+            for (int i = 0; i < ng; ++i)
+            {
+                const float px = drawX + (float)i / (float)(ng - 1) * drawW;
+                const float py = midY  - mGhostSamples[i] * (drawH * 0.45f);
+                if (i == 0) ghost.startNewSubPath(px, py); else ghost.lineTo(px, py);
+            }
+            g.setColour(juce::Colour(UI::ADSR_LINE).withAlpha(0.45f));
+            g.strokePath(ghost, juce::PathStrokeType(1.0f));
+        }
+
+        // Static main waveform — always on top
         juce::Path path;
         for (int i = 0; i < n; ++i)
         {
@@ -54,4 +84,5 @@ public:
 
 private:
     std::vector<float> mSamples;
+    std::vector<float> mGhostSamples;
 };

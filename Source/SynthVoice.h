@@ -28,7 +28,8 @@ public:
 private:
     WavetableOscillator mOsc1, mOsc2;
     NoiseGenerator      mNoise;
-    SynthFilter         mFilter;
+    SynthFilter         mLpFilter;
+    SynthFilter         mHpFilter;
     AdsrEnvelope        mAmpEnv, mFilterEnv;
 
     SynthPatch mPatch;

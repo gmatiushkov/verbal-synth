@@ -2,7 +2,7 @@
 #include <array>
 #include <string_view>
 
-// 37 synth parameters, normalised to [0.0, 1.0].
+// 38 synth parameters, normalised to [0.0, 1.0].
 struct SynthPatch
 {
     // Oscillator 1
@@ -21,11 +21,12 @@ struct SynthPatch
     float mix_osc2  = 0.0f;
     float mix_noise = 0.0f;
 
-    // Filter
-    float filter_type      = 0.0f;  // 0=LP, 1=HP (binary toggle)
-    float filter_cutoff    = 0.8f;
-    float filter_resonance = 0.0f;
-    float filter_keytrack  = 0.0f;
+    // Filter (dual LP + HP in series)
+    float lp_cutoff      = 0.8f;  // lowpass cutoff, log 20..18k Hz
+    float lp_resonance   = 0.0f;  // Q 0.5..10
+    float hp_cutoff      = 0.0f;  // highpass cutoff — 0.0 = 20 Hz (effectively open)
+    float hp_resonance   = 0.0f;
+    float filter_keytrack = 0.0f; // both filters track note pitch
 
     // Amp ADSR
     float amp_attack  = 0.0f;
@@ -64,7 +65,7 @@ struct SynthPatch
 
     // ---- helpers ----
 
-    static constexpr int kNumParams = 37;
+    static constexpr int kNumParams = 38;
 
     float*       data()       { return &osc1_table; }
     const float* data() const { return &osc1_table; }
@@ -75,7 +76,7 @@ struct SynthPatch
             "osc1_table", "osc1_position", "osc1_octave",
             "osc2_table", "osc2_position", "osc2_detune", "osc2_semitones",
             "mix_osc1", "mix_osc2", "mix_noise",
-            "filter_type", "filter_cutoff", "filter_resonance", "filter_keytrack",
+            "lp_cutoff", "lp_resonance", "hp_cutoff", "hp_resonance", "filter_keytrack",
             "amp_attack", "amp_decay", "amp_sustain", "amp_release",
             "fenv_attack", "fenv_decay", "fenv_sustain", "fenv_release",
             "fenv_amount", "fenv_to_wt",
@@ -88,4 +89,4 @@ struct SynthPatch
 };
 
 static_assert(sizeof(SynthPatch) == SynthPatch::kNumParams * sizeof(float),
-              "SynthPatch layout must be packed floats — 37 floats × 4 = 148 bytes");
+              "SynthPatch layout must be packed floats — 38 floats × 4 = 152 bytes");

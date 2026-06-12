@@ -24,3 +24,4 @@ cmake-build-*/
 
 # Claude Code memory (AI assistant state, not project code)
 .claude/
+migrate_presets.py

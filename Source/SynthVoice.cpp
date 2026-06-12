@@ -11,7 +11,8 @@ void SynthVoice::prepare(double sampleRate, int blockSize)
     mOsc1.prepare(sampleRate);
     mOsc2.prepare(sampleRate);
     mNoise.prepare(sampleRate);
-    mFilter.prepare(sampleRate, blockSize);
+    mLpFilter.prepare(sampleRate, blockSize);
+    mHpFilter.prepare(sampleRate, blockSize);
     mAmpEnv.prepare(sampleRate);
     mFilterEnv.prepare(sampleRate);
 
@@ -95,9 +96,8 @@ void SynthVoice::updatePatch(const SynthPatch& patch)
     mOsc1.setFrequency(computeOsc1Freq(), mSampleRate);
     mOsc2.setFrequency(computeOsc2Freq(), mSampleRate);
 
-    // filter type: 0=LP, 1=HP — map 0..1 → 0 or 2 (skip BP for now, use 0=LP,2=HP)
-    const int filterType = (patch.filter_type < 0.5f) ? 0 : 2;
-    mFilter.setTypeAndResonance(filterType, patch.filter_resonance);
+    mLpFilter.setTypeAndResonance(0 /*LP*/, patch.lp_resonance);
+    mHpFilter.setTypeAndResonance(2 /*HP*/, patch.hp_resonance);
 
     mAmpEnv.applyParams(patch.amp_attack, patch.amp_decay,
                         patch.amp_sustain, patch.amp_release);
@@ -115,17 +115,28 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& buffer,
 
     const SynthPatch& p = mPatch;
 
-    // Set filter type and resonance once before loop
-    const int filterType = (p.filter_type < 0.5f) ? 0 : 2;
-    mFilter.setTypeAndResonance(filterType, p.filter_resonance);
+    // Set filter types and resonances once before loop
+    mLpFilter.setTypeAndResonance(0, p.lp_resonance);
+    mHpFilter.setTypeAndResonance(2, p.hp_resonance);
 
-    // Key tracking base: base frequency of this note relative to A4
-    const float baseHz     = SynthUtils::midiToHz(mNote);
-    const float baseCutoff = SynthUtils::logParam(p.filter_cutoff, 20.f, 18000.f);
+    // Key tracking base: base frequency of this note
+    const float baseHz      = SynthUtils::midiToHz(mNote);
+    const float lpBaseCutoff = SynthUtils::logParam(p.lp_cutoff, 20.f, 18000.f);
+    const float hpBaseCutoff = SynthUtils::logParam(p.hp_cutoff, 20.f, 18000.f);
 
-    // Filter env amount: 0.5=neutral, range is ±18kHz in log space
-    // Use a simple ±octaves approach: amount maps to ±4 octaves of cutoff shift
+    // Filter env amount: 0.5=neutral, range ±4 octaves of LP cutoff shift
     const float fenvAmt = (p.fenv_amount - 0.5f) * 2.f;  // -1..+1
+
+    // Key tracking multiplier (same for both filters)
+    float lpKeyCutoff = lpBaseCutoff;
+    float hpKeyCutoff = hpBaseCutoff;
+    if (p.filter_keytrack > 1e-4f)
+    {
+        const float keyRatio  = baseHz / 440.f;
+        const float keyFactor = std::pow(keyRatio, p.filter_keytrack);
+        lpKeyCutoff = lpBaseCutoff + (lpBaseCutoff * keyFactor - lpBaseCutoff) * p.filter_keytrack;
+        hpKeyCutoff = hpBaseCutoff + (hpBaseCutoff * keyFactor - hpBaseCutoff) * p.filter_keytrack;
+    }
 
     for (int i = 0; i < numSamples; ++i)
     {
@@ -158,31 +169,19 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& buffer,
         mOsc1.setPosition(wt1Pos);
         mOsc2.setPosition(wt2Pos);
 
-        // Compute filter cutoff with key tracking + LFO1 + filter env
-        float cutoffHz = baseCutoff;
+        // LP cutoff: keytrack base + LFO1 + filter env
+        float lpCutHz = lpKeyCutoff;
 
-        // Key tracking: shift cutoff proportional to note distance from A4 (MIDI 69)
-        if (p.filter_keytrack > 1e-4f)
-        {
-            const float keyRatio = baseHz / 440.f;
-            const float trackCutoff = baseCutoff * std::pow(keyRatio, p.filter_keytrack);
-            cutoffHz = cutoffHz + (trackCutoff - cutoffHz) * p.filter_keytrack;
-        }
-
-        // LFO1 → filter
         if (p.lfo1_to_filter > 1e-4f)
-        {
-            const float swing = p.lfo1_to_filter * 2.f;  // octaves of swing
-            cutoffHz *= std::pow(2.f, lfo1Val * swing);
-        }
+            lpCutHz *= std::pow(2.f, lfo1Val * p.lfo1_to_filter * 2.f);  // ±2 oct swing
 
-        // Filter env → cutoff (±4 octaves)
         if (std::abs(p.fenv_amount - 0.5f) > 1e-4f)
-        {
-            cutoffHz *= std::pow(2.f, fenvVal * fenvAmt * 4.f);
-        }
+            lpCutHz *= std::pow(2.f, fenvVal * fenvAmt * 4.f);  // ±4 octaves
 
-        cutoffHz = juce::jlimit(20.f, 18000.f, cutoffHz);
+        lpCutHz = juce::jlimit(20.f, 18000.f, lpCutHz);
+
+        // HP cutoff: keytrack base only (no LFO / env modulation for HP)
+        const float hpCutHz = juce::jlimit(20.f, 18000.f, hpKeyCutoff);
 
         // Oscillators
         const float o1 = mOsc1.getSample() * p.mix_osc1;
@@ -190,7 +189,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& buffer,
         const float ns = mNoise.getSample() * p.mix_noise;
 
         const float mixed    = o1 + o2 + ns;
-        const float filtered = mFilter.processSampleRaw(mixed, cutoffHz);
+        const float lp_out   = mLpFilter.processSampleRaw(mixed, lpCutHz);
+        const float filtered = mHpFilter.processSampleRaw(lp_out, hpCutHz);
         const float envVal   = mAmpEnv.getNextSample();
 
         // LFO2 tremolo
@@ -201,7 +201,8 @@ void SynthVoice::renderNextBlock(juce::AudioBuffer<float>& buffer,
         mMonoBuf[i] = filtered * envVal * ampMod * mVelocity;
     }
 
-    mFilter.snapToZero();
+    mLpFilter.snapToZero();
+    mHpFilter.snapToZero();
 
     // Add mono buffer to both channels
     const int numCh = buffer.getNumChannels();

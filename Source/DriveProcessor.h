@@ -45,8 +45,9 @@ public:
 
         // Exponential gain curve: 1x (clean) → 40x (brutal) via pow(40, drive)
         const float inputGain  = std::pow(40.f, mDrive);
-        // Exact volume compensation matched to reference amplitude 0.35
-        const float kRef       = 0.35f;
+        // Reference-amplitude compensation: keeps perceived level stable at kRef amplitude
+        // kRef=0.1 matches typical single-voice level (mix_osc1=0.8 / 8 voices)
+        const float kRef       = 0.1f;
         const float outputGain = kRef / std::tanh(kRef * inputGain);
 
         const int numSamples = buffer.getNumSamples();
