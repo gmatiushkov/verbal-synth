@@ -25,3 +25,9 @@ cmake-build-*/
 # Claude Code memory (AI assistant state, not project code)
 .claude/
 migrate_presets.py
+
+# ML — секреты и локальные артефакты (НЕ коммитить ключи API)
+*.local.json
+ml/config/api_config.local.json
+__pycache__/
+*.pyc
