@@ -53,7 +53,14 @@ PRESET_DIRS = [
     ROOT.parent / "build" / "VerbalSynth_artefacts" / "Release" / "Patches",
     ROOT.parent / "build" / "VerbalSynth_artefacts" / "Debug" / "Patches",
 ]
-FEWSHOT_PRESETS = ["Piano", "Violin", "Overdrive Guitar"]
+# Эталонные заводские пресеты для few-shot. На тарифе с кэшем системный промпт
+# (включая эти примеры) кэшируется и читается ~0.1× на последующих запросах —
+# поэтому держим полный набор разнотипных рабочих звуков как обучающие образцы.
+FEWSHOT_PRESETS = [
+    "Piano", "Guitar", "Violin", "Cello", "Church Organ", "Rock Leslie Organ",
+    "Overdrive Short Guitar", "Reese Bass", "Dirty Acid 303 Bass",
+    "Slow Ambient Pad", "Voices Singing Yao", "Thin Bell",
+]
 
 DEFAULT_MODEL = "claude-opus-4-8"
 
@@ -190,21 +197,37 @@ STYLES = ["functional", "instrument", "psychoacoustic", "emotional", "metaphor",
 
 
 # ── User-сообщение на батч ────────────────────────────────────────────────────
-def build_user_message(category, targets_slice, n, axes) -> str:
-    targets_txt = "\n".join(f"  - {t}" for t in targets_slice)
+def build_user_message(category, target, n, axes, made_so_far=0) -> str:
+    """Батч посвящён ОДНОЙ цели: просим N её РАЗНЫХ прочтений. Так мандат «не-близнецы»
+    обеспечивает разнообразие именно между повторами одной цели (главная дыра прежней схемы)."""
     axes_txt = "\n".join(f"  · {a}" for a in axes)
-    return (
+    tail = (
+        f"Для каждого варианта — все 38 параметров в РЕАЛЬНЫХ единицах (банки и формы LFO — строками; "
+        f"октавы/полутоны — целыми; времена в секундах) и 6 описаний ({', '.join(STYLES)}). "
+        f"Верни СТРОГО JSON по формату из system-промпта, без текста вне JSON. "
+        f"Не вызывай инструменты/функции — ответ только текст с JSON."
+    )
+    head = (
         f"Категория: **{category['name']}** (id: {category['id']}).\n"
         f"Замысел категории: {category['intent']}\n\n"
-        f"Спроектируй ровно {n} РАЗНЫХ патчей. Отталкивайся от этих целей "
-        f"(можно интерпретировать свободно, но покрой их разнообразно):\n{targets_txt}\n\n"
-        f"Обязательно варьируй патчи по осям разнообразия:\n{axes_txt}\n\n"
-        f"Требования: никаких близнецов (соседние патчи различаются ≥3 осей); "
-        f"часть моно-OSC, часть слойные (OSC2); используй разные банки/приёмы там, где это уместно. "
-        f"Для каждого патча — все 38 параметров в РЕАЛЬНЫХ единицах (банки и формы LFO — строками; "
-        f"октавы/полутоны — целыми; времена в секундах) и 6 описаний "
-        f"({', '.join(STYLES)}). Верни СТРОГО JSON по формату из system-промпта, без текста вне JSON."
+        f"Цель этого запроса — звук **«{target}»**.\n"
     )
+    if n == 1:
+        return head + (
+            f"Спроектируй 1 патч этого звука — с выраженным характером, узнаваемо «{target}».\n\n"
+        ) + tail
+    cont = ""
+    if made_so_far > 0:
+        cont = (f" Для этой цели уже сделано {made_so_far} вариантов — уйди в ДРУГИЕ области осей, "
+                f"не повторяй типовые/очевидные решения.")
+    return head + (
+        f"Спроектируй {n} ЗАМЕТНО РАЗНЫХ вариантов ИМЕННО этого звука: это разные прочтения одной "
+        f"и той же цели (один инструмент/роль), а НЕ разные инструменты — каждый узнаваемо «{target}», "
+        f"но звучит по-своему.{cont}\n\n"
+        f"Разводи варианты по осям разнообразия (для каждого — своя комбинация):\n{axes_txt}\n\n"
+        f"Требования: никаких близнецов — варианты различаются ≥3 осей; часть моно-OSC, часть слойные "
+        f"(OSC2); где уместно — разные банки/регистры/артикуляции. "
+    ) + tail
 
 
 # ── Вызов модели с мягкой деградацией параметров ──────────────────────────────
@@ -223,16 +246,19 @@ def extract_json(text: str):
 
 def _one_call(client, kwargs, anthropic, verbose):
     """Один запрос (стрим → create fallback). Возвращает (data, usage). Бросает при пустом/битом."""
+    # Прокси инжектит агентные инструменты, и при stop_reason=tool_use ответ не содержит текста
+    # (модель «уходит» в фиктивный вызов WebFetch). Стрим в этом случае отдаёт пустой SSE.
+    # Нестриминговый create стабильнее; стрим оставляем запасным. Запрет инструментов — в промпте.
     try:
+        msg = client.messages.create(**kwargs)
+    except (anthropic.APIError, TypeError) as create_err:
+        if verbose:
+            print(f"    [create→stream fallback: {type(create_err).__name__}]")
         with client.messages.stream(**kwargs) as stream:
             msg = stream.get_final_message()
-    except (anthropic.APIError, TypeError) as stream_err:
-        if verbose:
-            print(f"    [stream→create fallback: {type(stream_err).__name__}]")
-        msg = client.messages.create(**kwargs)
     text = "".join(b.text for b in msg.content if getattr(b, "type", None) == "text")
     if not text.strip():
-        raise ValueError("пустой текстовый ответ")
+        raise ValueError(f"пустой текстовый ответ (stop={getattr(msg, 'stop_reason', None)})")
     return extract_json(text), getattr(msg, "usage", None)
 
 
@@ -247,31 +273,39 @@ def call_model(client, model, system_blocks, user_text, max_tokens, effort, verb
 
     base = dict(model=model, max_tokens=max_tokens, system=system_blocks,
                 messages=[{"role": "user", "content": user_text}])
-    # adaptive thinking даёт лучшее проектирование; plain — запасной, если thinking отвергнут.
-    attempts = [dict(thinking={"type": "adaptive"}), dict()]
+    # Стоимость провала = главный рычаг бюджета. adaptive thinking даёт лучшее проектирование,
+    # но НА ПЕРВОМ заходе: при пустом/битом ответе прокси повтор идёт БЕЗ thinking (дёшево) —
+    # чтобы провал не стоил как полноценная генерация (раньше thinking жгли на каждом повторе).
+    THINK = dict(thinking={"type": "adaptive"})
+    CHEAP = dict()  # без thinking — запасной/повторный вариант, стоит копейки
+
+    def attempts_for(round_idx):
+        # Первый заход: thinking, затем дешёвый запасной (если thinking отвергнут).
+        # Все последующие повторы (после транзиентного провала прокси): только дёшево.
+        return [THINK, CHEAP] if round_idx == 0 else [CHEAP]
 
     last_err = None
     for r in range(max_retries):
-        for i, extra in enumerate(attempts):
+        for i, extra in enumerate(attempts_for(r)):
             try:
                 data, usage = _one_call(client, {**base, **extra}, anthropic, verbose)
-                if i > 0 and verbose:
-                    print(f"    [использован запасной вариант запроса #{i}]")
+                if (r > 0 or i > 0) and verbose:
+                    print("    [использован дешёвый вариант запроса (без thinking)]")
                 return data, usage
             except (anthropic.BadRequestError, anthropic.NotFoundError, TypeError) as e:
                 last_err = e
                 if verbose:
-                    print(f"    [вариант #{i} отклонён: {type(e).__name__}: {e}; пробую проще]")
+                    print(f"    [вариант отклонён: {type(e).__name__}: {e}; пробую проще]")
                 continue
             except (json.JSONDecodeError, ValueError, anthropic.APIError) as e:
                 last_err = e
                 if verbose:
-                    print(f"    [попытка {r+1}/{max_retries}, вариант #{i}: {type(e).__name__}: {e}]")
+                    print(f"    [попытка {r+1}/{max_retries}: {type(e).__name__}: {e}]")
                 continue
         if r < max_retries - 1:
             delay = 2 ** r  # 1,2,4 c
             if verbose:
-                print(f"    [пустой/битый ответ прокси — повтор батча через {delay}c]")
+                print(f"    [пустой/битый ответ прокси — дешёвый повтор батча через {delay}c]")
             time.sleep(delay)
     raise RuntimeError(f"Все попытки не удались. Последняя ошибка: {last_err}")
 
@@ -317,74 +351,107 @@ def convert_patch_params(real_params):
     return real_clean, norm, present
 
 
+def distribute(count, k):
+    """count экземпляров РАВНОМЕРНО на k целей; первые (count % k) целей получают +1."""
+    if k <= 0:
+        return []
+    base, rem = divmod(count, k)
+    return [base + (1 if i < rem else 0) for i in range(k)]
+
+
 # ── Основной цикл генерации одной категории ───────────────────────────────────
 def generate_category(client, model, system_blocks, store, out_path,
-                      category, axes, target_count, batch_size, max_tokens, effort, verbose):
-    have = count_by_category(store, category["id"])
-    need = max(0, target_count - have)
-    if need == 0:
-        print(f"  [{category['id']}] уже есть {have}/{target_count} — пропуск")
-        return 0
-
-    print(f"  [{category['id']}] есть {have}, нужно ещё {need} (цель {target_count})")
+                      category, axes, target_count, batch_size, max_tokens, effort, verbose,
+                      target_limit=None):
+    """Набирает target_count патчей категории. Объём РАВНОМЕРНО распределяется по целям,
+    и КАЖДЫЙ батч = N разных вариантов ОДНОЙ цели (внутрибатчевый мандат «не-близнецы»
+    обеспечивает разнообразие между повторами одной цели). target_limit — взять только
+    первые K целей (тест-режим)."""
+    cat_id = category["id"]
     targets = category["targets"]
+    if target_limit:
+        targets = targets[:target_limit]
+    alloc = distribute(target_count, len(targets))   # желаемое число патчей на каждую цель
+
+    have_per = {}                                    # уже сделано по каждой цели (для резюме)
+    for e in store["entries"]:
+        if e.get("category") == cat_id:
+            have_per[e.get("target")] = have_per.get(e.get("target"), 0) + 1
+
+    total_need = sum(max(0, alloc[i] - have_per.get(targets[i], 0)) for i in range(len(targets)))
+    have_total = count_by_category(store, cat_id)
+    if total_need == 0:
+        print(f"  [{cat_id}] уже есть {have_total}/{target_count} — пропуск")
+        return 0
+    print(f"  [{cat_id}] есть {have_total}, нужно ещё {total_need} "
+          f"(цель {target_count}, целей {len(targets)})")
+
     produced = 0
-    t_off = have  # сдвиг по списку целей, чтобы продолжать с нового места
-
-    while produced < need:
-        n = min(batch_size, need - produced)
-        # вырезаем циклический срез целей для этого батча
-        sl = [targets[(t_off + k) % len(targets)] for k in range(n)]
-        t_off += n
-        user_text = build_user_message(category, sl, n, axes)
-
-        try:
-            data, usage = call_model(client, model, system_blocks, user_text,
-                                     max_tokens, effort, verbose)
-        except Exception as e:
-            print(f"    ОШИБКА батча: {e}\n    Прерываю категорию (прогресс сохранён).")
-            break
-
-        patches = data.get("patches", [])
-        if not patches:
-            print("    Пустой батч (0 патчей) — пропуск.")
-            continue
-
-        added = 0
-        idx = next_index(store, category["id"])
-        for p in patches:
-            raw = p.get("params")
-            if not isinstance(raw, dict):
-                print(f"    ⚠ патч без объекта params — пропуск ({p.get('concept')})")
-                continue
+    for i, target in enumerate(targets):
+        want = alloc[i]
+        got = have_per.get(target, 0)
+        while got < want:
+            n = min(batch_size, want - got)
+            user_text = build_user_message(category, target, n, axes, made_so_far=got)
             try:
-                real_clean, norm, present = convert_patch_params(raw)
+                data, usage = call_model(client, model, system_blocks, user_text,
+                                         max_tokens, effort, verbose)
             except Exception as e:
-                print(f"    ⚠ конверсия не удалась ({p.get('concept')}): {e} — пропуск")
-                continue
-            if present < 30:  # слишком мало реальных параметров — подозрительно
-                print(f"    ⚠ патч прислал лишь {present}/38 параметров — пропуск ({p.get('concept')})")
-                continue
-            entry = {
-                "id": f"{category['id']}_{idx:03d}",
-                "concept": p.get("concept", f"{category['id']}_{idx}"),
-                "category": category["id"],
-                "source": model,
-                "osc2_active": bool(p.get("osc2_active", False)),
-                "params": norm,                 # нормализованные [0..1] — для синта/обучения
-                "params_real": real_clean,       # реальные единицы — для ревью глазами
-                "descriptions": p.get("descriptions", []),
-            }
-            store["entries"].append(entry)
-            idx += 1
-            added += 1
-            produced += 1
+                print(f"    ОШИБКА батча [{target}]: {e}\n    Пропускаю цель (прогресс сохранён).")
+                break
 
-        save_store(out_path, store)  # чекпойнт после каждого батча
-        u = ""
-        if usage:
-            u = f" (in={getattr(usage,'input_tokens','?')}, out={getattr(usage,'output_tokens','?')})"
-        print(f"    +{added} патчей → всего {count_by_category(store, category['id'])}/{target_count}{u}")
+            patches = data.get("patches", [])
+            if not patches:
+                print(f"    Пустой батч [{target}] — пропуск цели.")
+                break
+
+            added = 0
+            idx = next_index(store, cat_id)
+            for p in patches:
+                raw = p.get("params")
+                if not isinstance(raw, dict):
+                    print(f"    ⚠ патч без объекта params — пропуск ({p.get('concept')})")
+                    continue
+                try:
+                    real_clean, norm, present = convert_patch_params(raw)
+                except Exception as e:
+                    print(f"    ⚠ конверсия не удалась ({p.get('concept')}): {e} — пропуск")
+                    continue
+                if present < 30:  # слишком мало реальных параметров — подозрительно
+                    print(f"    ⚠ патч прислал лишь {present}/38 параметров — пропуск ({p.get('concept')})")
+                    continue
+                entry = {
+                    "id": f"{cat_id}_{idx:03d}",
+                    "concept": p.get("concept", f"{cat_id}_{idx}"),
+                    "category": cat_id,
+                    "target": target,               # исходная цель — для резюме и анализа разнообразия
+                    "source": model,
+                    "osc2_active": bool(p.get("osc2_active", False)),
+                    "params": norm,                 # нормализованные [0..1] — для синта/обучения
+                    "params_real": real_clean,       # реальные единицы — для ревью глазами
+                    "descriptions": p.get("descriptions", []),
+                }
+                store["entries"].append(entry)
+                idx += 1
+                added += 1
+                got += 1
+                produced += 1
+
+            save_store(out_path, store)  # чекпойнт после каждого батча
+            u = ""
+            if usage:
+                # cache_read/creation покажут, работает ли кэширование системного промпта у прокси
+                cr = getattr(usage, "cache_read_input_tokens", None)
+                cc = getattr(usage, "cache_creation_input_tokens", None)
+                cache = ""
+                if cr is not None or cc is not None:
+                    cache = f", cache_read={cr or 0}, cache_write={cc or 0}"
+                u = (f" (in={getattr(usage,'input_tokens','?')}, "
+                     f"out={getattr(usage,'output_tokens','?')}{cache})")
+            print(f"    [{target}] +{added} → {got}/{want}{u}")
+            if added == 0:  # батч не дал валидных патчей — не зацикливаемся
+                print(f"    ⚠ батч [{target}] без валидных патчей — пропуск цели.")
+                break
 
     return produced
 
@@ -397,7 +464,7 @@ def main():
     mode.add_argument("--all", action="store_true", help="полный датасет по долям share")
     mode.add_argument("--category", help="ID одной категории из taxonomy")
     ap.add_argument("--count", type=int, default=None,
-                    help="--test: патчей/категория (деф. 4); --category: всего патчей; --all: общий объём (деф. 800)")
+                    help="--test: патчей/категория по первым 2 целям (деф. 6); --category: всего патчей; --all: общий объём (деф. 800)")
     ap.add_argument("--out", default=None, help="выходной JSON (деф. зависит от режима)")
     ap.add_argument("--batch-size", type=int, default=6, help="патчей за один запрос (деф. 6)")
     ap.add_argument("--max-tokens", type=int, default=24000)
@@ -427,7 +494,7 @@ def main():
         plan = [(c, max(1, round(total * c["share"]))) for c in taxonomy["categories"]]
         default_out = DATA / "patches_raw.json"
     else:  # --test (деф.)
-        per = args.count or 4
+        per = args.count or 6
         plan = [(c, per) for c in taxonomy["categories"]]
         default_out = DATA / "test_batch" / "patches_test.json"
 
@@ -452,7 +519,7 @@ def main():
         print(system_prompt)
         print("\n──── ПРИМЕР USER-СООБЩЕНИЯ ────\n")
         c0 = plan[0][0]
-        print(build_user_message(c0, c0["targets"][:min(args.batch_size, 6)], min(args.batch_size, 6), axes))
+        print(build_user_message(c0, c0["targets"][0], min(args.batch_size, 6), axes))
         return
 
     # ── API клиент ──
@@ -474,10 +541,17 @@ def main():
     store = load_store(out_path)
     t0 = time.time()
     total_new = 0
+    grand_total = sum(n for _, n in plan)
     for category, target in plan:
         total_new += generate_category(
             client, model, system_blocks, store, out_path,
-            category, axes, target, args.batch_size, args.max_tokens, args.effort, verbose)
+            category, axes, target, args.batch_size, args.max_tokens, args.effort, verbose,
+            target_limit=(2 if args.test else None))
+        done = len(store["entries"])
+        el = (time.time() - t0) / 60.0
+        pct = 100 * done // max(1, grand_total)
+        print(f"  ══► ПРОГРЕСС: {done}/{grand_total} патчей ({pct}%) · прошло {el:.0f} мин · "
+              f"новых за сессию {total_new} ══")
 
     dt = time.time() - t0
     print("=" * 70)

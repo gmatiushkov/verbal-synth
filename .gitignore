@@ -31,3 +31,5 @@ migrate_presets.py
 ml/config/api_config.local.json
 __pycache__/
 *.pyc
+# Транзитные логи прогонов генерации/валидации (не артефакт датасета)
+ml/data/*.log

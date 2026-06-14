@@ -1,1246 +1,1813 @@
-﻿{
-    "version":  "2.0",
-    "entries":  [
-                    {
-                        "id":  "acoustic_emulation_001",
-                        "concept":  "doublebass_pizzicato",
-                        "category":  "acoustic_emulation",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.4,
-                                       "osc1_position":  0.1,
-                                       "osc1_octave":  0.0,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  1.0,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.04,
-                                       "lp_cutoff":  0.35,
-                                       "lp_resonance":  0.0,
-                                       "hp_cutoff":  0.08,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.2,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.88,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.55,
-                                       "fenv_attack":  0.3,
-                                       "fenv_decay":  0.5,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.4,
-                                       "fenv_amount":  0.6,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.82,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.035,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.5,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.15,
-                                       "reverb_damp":  0.3,
-                                       "reverb_mix":  0.12
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "Р±Р°СЃРѕРІС‹Р№ РіРѕР»РѕСЃ РґР»СЏ РґР¶Р°Р·РѕРІРѕРіРѕ Р±Р»СЋР·Р°, РєРѕРЅС‚СЂР°Р±Р°СЃ РїРёС†С†РёРєР°С‚Рѕ РІ РЅРёР·РєРѕРј СЂРµРіРёСЃС‚СЂРµ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РєРѕРЅС‚СЂР°Р±Р°СЃ РІ РіР»СѓР±РѕРєРѕРј СЂРµРіРёСЃС‚СЂРµ, С‰РёРїРѕРє РїР°Р»СЊС†РµРј РїРѕ СЃС‚СЂСѓРЅРµ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№, С‚С‘РјРЅС‹Р№, СЃР»С‹С€РµРЅ С‰РµР»С‡РѕРє С‰РёРїРєР° Рё РґРѕР»РіРѕРµ Р·Р°С‚СѓС…Р°РЅРёРµ СЃС‚СЂСѓРЅС‹, РµР»Рµ СЃР»С‹С€РЅРѕРµ РІРёР±СЂР°С‚Рѕ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "С‡СѓРІСЃС‚РІРµРЅРЅР°СЏ РЅРµРіР°, СЃР»РѕРІРЅРѕ РєС‚Рѕ-С‚Рѕ СЃРёРґРёС‚ РІ Р±Р°СЂРµ Рё РїРµСЂРµР±РёСЂР°РµС‚ СЃС‚СЂСѓРЅС‹ РІ РѕРґРёРЅРѕС‡РµСЃС‚РІРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РєР°РїР»СЏ СЏРЅС‚Р°СЂСЏ, РїР°РґР°СЋС‰Р°СЏ РІ РїСѓСЃС‚РѕР№ СЃС‚Р°РєР°РЅ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№ С‰РёРїРєРѕРІС‹Р№ Р±Р°СЃ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "acoustic_emulation_002",
-                        "concept":  "flute_solo_breathy",
-                        "category":  "acoustic_emulation",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.0,
-                                       "osc1_position":  0.1,
-                                       "osc1_octave":  0.75,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.15,
-                                       "osc2_detune":  0.51,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.65,
-                                       "mix_osc2":  0.45,
-                                       "mix_noise":  0.05,
-                                       "lp_cutoff":  0.95,
-                                       "lp_resonance":  0.0,
-                                       "hp_cutoff":  0.0,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.6,
-                                       "amp_attack":  0.65,
-                                       "amp_decay":  0.35,
-                                       "amp_sustain":  0.85,
-                                       "amp_release":  0.3,
-                                       "fenv_attack":  0.4,
-                                       "fenv_decay":  0.45,
-                                       "fenv_sustain":  0.7,
-                                       "fenv_release":  0.35,
-                                       "fenv_amount":  0.52,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.35,
-                                       "lfo1_shape":  0.33,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.08,
-                                       "lfo2_rate":  0.22,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.12,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.45,
-                                       "reverb_damp":  0.25,
-                                       "reverb_mix":  0.4
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "СЃРѕР»Рѕ-РјРµР»РѕРґРёСЏ РґР»СЏ РЅРµРѕРєР»Р°СЃСЃРёРєРё, РІС‹СЃРѕРєР°СЏ С„Р»РµР№С‚Р° СЃ РІРѕР·РґСѓС…РѕРј"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РїСЂРѕРґРѕР»СЊРЅР°СЏ С„Р»РµР№С‚Р°, РґС‹С…Р°РЅРёРµ РјСѓР·С‹РєР°РЅС‚Р° СЃР»С‹С€РЅРѕ РІ РєР°Р¶РґРѕР№ РЅРѕС‚Рµ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "С‡РёСЃС‚С‹Р№ СЃРёРЅСѓСЃРѕРёРґРЅС‹Р№ С‚РµРјР±СЂ, РІРѕР·РґСѓС€РЅС‹Р№, РѕС‚РєСЂС‹С‚С‹Р№, РјСЏРіРєР°СЏ Р°С‚Р°РєР°, РјРµРґР»РµРЅРЅРѕРµ РґС‹С…Р°РЅРёРµ LFO, Р»С‘РіРєРёР№ С…РѕСЂ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "СѓРјРёСЂРѕС‚РІРѕСЂСЏСЋС‰РµРµ СЃРїРѕРєРѕР№СЃС‚РІРёРµ, СЏСЃРЅРѕСЃС‚СЊ РјС‹СЃР»Рё, РїСЂРѕР±СѓР¶РґРµРЅРёРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "СѓС‚СЂРµРЅРЅРёР№ С‚СѓРјР°РЅ РЅР°Рґ РѕР·РµСЂРѕРј, РїРµСЂРІС‹Рµ Р»СѓС‡Рё СЃРѕР»РЅС†Р° РїСЂРѕР±РёРІР°СЋС‚СЃСЏ СЃРєРІРѕР·СЊ СЂСЏР±СЊ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РІРѕР·РґСѓС€РЅР°СЏ С„Р»РµР№С‚Р° СЃРѕР»Рѕ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "acoustic_emulation_003",
-                        "concept":  "doublebass_sul_ponticello",
-                        "category":  "acoustic_emulation",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.4,
-                                       "osc1_position":  0.2,
-                                       "osc1_octave":  0.0,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.25,
-                                       "osc2_detune":  0.48,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.55,
-                                       "mix_osc2":  0.5,
-                                       "mix_noise":  0.02,
-                                       "lp_cutoff":  0.45,
-                                       "lp_resonance":  0.08,
-                                       "hp_cutoff":  0.05,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.3,
-                                       "amp_attack":  0.6,
-                                       "amp_decay":  0.4,
-                                       "amp_sustain":  0.8,
-                                       "amp_release":  0.65,
-                                       "fenv_attack":  0.35,
-                                       "fenv_decay":  0.4,
-                                       "fenv_sustain":  0.6,
-                                       "fenv_release":  0.5,
-                                       "fenv_amount":  0.55,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.83,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.04,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.28,
-                                       "lfo2_shape":  0.33,
-                                       "lfo2_to_wt":  0.1,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.12,
-                                       "drive_tone":  0.45,
-                                       "reverb_time":  0.35,
-                                       "reverb_damp":  0.4,
-                                       "reverb_mix":  0.32
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "СЃРјС‹С‡РєРѕРІС‹Р№ РєРѕРЅС‚СЂР°Р±Р°СЃ РґР»СЏ РѕСЂРєРµСЃС‚СЂРѕРІРѕР№ РїР°СЂС‚РёРё, РґРѕР»РіРѕРµ СЃСѓСЃС‚РµР№РЅ СЃ РІРёР±СЂР°С‚Рѕ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РєРѕРЅС‚СЂР°Р±Р°СЃ СЃРѕ СЃРјС‹С‡РєРѕРј sul ponticello, РѕР±РѕРіР°С‰С‘РЅРЅС‹Р№ СЃР»РѕР№РЅС‹Р№ С‚РµРјР±СЂ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "С‚С‘РїР»С‹Р№ СЃС‚СЂСѓРЅРЅС‹Р№ С‚РµРјР±СЂ, РјСЏРіРєР°СЏ Р°С‚Р°РєР°, РїРµРІСѓС‡РµРµ РІРёР±СЂР°С‚Рѕ 5 Р“С†, С…РѕСЂ Р±РёРµРЅРёР№, РµРґРІР° Р·Р°РјРµС‚РЅС‹Р№ РїРµСЂРµРіСЂСѓР·"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "С‚РѕСЂР¶РµСЃС‚РІРµРЅРЅР°СЏ РјРѕРЅСѓРјРµРЅС‚Р°Р»СЊРЅРѕСЃС‚СЊ, РєР°Рє РѕСЂРіР°РЅ РІ СЃРѕР±РѕСЂРµ, С‚РѕР»СЊРєРѕ РЅРёР¶Рµ Рё РёРЅС‚РёРјРЅРµРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "Р±РѕР»СЊС€РѕР№ РґРµСЂРµРІСЏРЅРЅС‹Р№ СЂРµР·РѕРЅР°С‚РѕСЂ РІ СЃС‚Р°СЂРёРЅРЅРѕРј РєРѕРЅС†РµСЂС‚РЅРѕРј Р·Р°Р»Рµ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "СЃРјС‹С‡РєРѕРІС‹Р№ Р±Р°СЃ СЃ РІРёР±СЂР°С‚Рѕ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "acoustic_emulation_004",
-                        "concept":  "clarinet_low_hollow",
-                        "category":  "acoustic_emulation",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.0,
-                                       "osc1_position":  0.8,
-                                       "osc1_octave":  0.5,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  1.0,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.0,
-                                       "lp_cutoff":  0.25,
-                                       "lp_resonance":  0.0,
-                                       "hp_cutoff":  0.1,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.5,
-                                       "amp_attack":  0.55,
-                                       "amp_decay":  0.4,
-                                       "amp_sustain":  0.75,
-                                       "amp_release":  0.5,
-                                       "fenv_attack":  0.4,
-                                       "fenv_decay":  0.35,
-                                       "fenv_sustain":  0.5,
-                                       "fenv_release":  0.4,
-                                       "fenv_amount":  0.52,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.5,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.5,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.28,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.25
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РєР»Р°СЂРЅРµС‚ РґР»СЏ РєР°РјРµСЂРЅРѕР№ РјСѓР·С‹РєРё, СЃСЂРµРґРЅРёР№ СЂРµРіРёСЃС‚СЂ, РїРѕР»С‹Р№ Р·Р°РєСЂС‹С‚С‹Р№ С‚РµРјР±СЂ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РєР»Р°СЂРЅРµС‚ in B, РёРіСЂР°СЋС‰РёР№ РІ СЃСЂРµРґРЅРµРј СЂРµРіРёСЃС‚СЂРµ, РєР»Р°СЃСЃРёС‡РµСЃРєР°СЏ РјР°РЅРµСЂР°"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РїРѕР»С‹Р№, СЃР»РµРіРєР° РіСѓР»РєРёР№, СЃ РЅРѕСЃРѕРІС‹Рј РѕС‚С‚РµРЅРєРѕРј, РјСЏРіРєР°СЏ Р°С‚Р°РєР°, РЅРµС‡С‘С‚РЅС‹Рµ РѕР±РµСЂС‚РѕРЅС‹, Р±РµР· РґРІРёР¶РµРЅРёСЏ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РјРµР»Р°РЅС…РѕР»РёС‡РЅР°СЏ РѕС‚СЃС‚СЂР°РЅС‘РЅРЅРѕСЃС‚СЊ, РєР°Рє РІРѕСЃРїРѕРјРёРЅР°РЅРёРµ Рѕ С‡С‘Рј-С‚Рѕ СѓС€РµРґС€РµРј"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РїСѓСЃС‚Р°СЏ РєРѕРјРЅР°С‚Р° СЃ РґРµСЂРµРІСЏРЅРЅС‹РјРё СЃС‚РµРЅР°РјРё, СЌС…Рѕ С€Р°РіРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РїРѕР»С‹Р№ РєР»Р°СЂРЅРµС‚ СЃСЂРµРґРЅРµРіРѕ СЂРµРіРёСЃС‚СЂР°"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "acoustic_emulation_005",
-                        "concept":  "oboe_nasal_reed",
-                        "category":  "acoustic_emulation",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.2,
-                                       "osc1_position":  0.33,
-                                       "osc1_octave":  0.75,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  1.0,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.03,
-                                       "lp_cutoff":  0.3,
-                                       "lp_resonance":  0.15,
-                                       "hp_cutoff":  0.15,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.55,
-                                       "amp_attack":  0.25,
-                                       "amp_decay":  0.45,
-                                       "amp_sustain":  0.5,
-                                       "amp_release":  0.45,
-                                       "fenv_attack":  0.1,
-                                       "fenv_decay":  0.35,
-                                       "fenv_sustain":  0.3,
-                                       "fenv_release":  0.35,
-                                       "fenv_amount":  0.6,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.55,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.5,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.25,
-                                       "reverb_damp":  0.35,
-                                       "reverb_mix":  0.28
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РіРѕР±РѕР№ РґР»СЏ РѕСЂРєРµСЃС‚СЂРѕРІРѕРіРѕ СЃРѕР»Рѕ, РІРµСЂС…РЅРёР№ СЂРµРіРёСЃС‚СЂ, С…Р°СЂР°РєС‚РµСЂРЅС‹Р№ РЅРѕСЃРѕРІРѕР№ С‚РµРјР±СЂ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РіРѕР±РѕР№, РёРіСЂР°СЋС‰РёР№ РІРµСЂС…РЅСЋСЋ РїР°СЂС‚РёСЋ, РґРІРѕР№РЅР°СЏ С‚СЂРѕСЃС‚СЊ Р·РІСѓС‡РёС‚ С…Р°СЂР°РєС‚РµСЂРЅРѕ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "СѓР·РєРёР№, РЅРѕСЃРѕРІРѕР№, СЃР»РµРіРєР° СЂРµР·РѕРЅР°РЅСЃРЅС‹Р№, Р±С‹СЃС‚СЂР°СЏ Р°С‚Р°РєР°, Р±СЂРѕСЃРєРѕРµ РЅР°С‡Р°Р»Рѕ РЅРѕС‚С‹, С‚СЂРѕСЃС‚РµРІР°СЏ С‚РµРєСЃС‚СѓСЂР°"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "С‚СЂРµРІРѕР¶РЅР°СЏ РЅР°РїСЂСЏР¶С‘РЅРЅРѕСЃС‚СЊ, РѕС‰СѓС‰РµРЅРёРµ РЅР°РґРІРёРіР°СЋС‰РµР№СЃСЏ Р±СѓСЂРё"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РґСѓРЅРѕРІРµРЅРёРµ РІ РїСѓСЃС‚РѕР№ РєРѕСЂРёРґРѕСЂ, Р·РІСѓРє РѕС‚СЂР°Р¶Р°РµС‚СЃСЏ РѕС‚ СЃС‚РµРЅ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РЅРѕСЃРѕРІРѕР№ РіРѕР±РѕР№ СЃРѕР»Рѕ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "synth_roles_001",
-                        "concept":  "pure_sub_bass",
-                        "category":  "synth_roles",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.0,
-                                       "osc1_position":  0.0,
-                                       "osc1_octave":  0.0,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.9,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.0,
-                                       "lp_cutoff":  0.18,
-                                       "lp_resonance":  0.0,
-                                       "hp_cutoff":  0.0,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.0,
-                                       "amp_attack":  0.15,
-                                       "amp_decay":  0.55,
-                                       "amp_sustain":  0.75,
-                                       "amp_release":  0.35,
-                                       "fenv_attack":  0.3,
-                                       "fenv_decay":  0.5,
-                                       "fenv_sustain":  0.5,
-                                       "fenv_release":  0.3,
-                                       "fenv_amount":  0.5,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.5,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.5,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.0,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.0
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "С‡РёСЃС‚С‹Р№ СЃСѓР±Р±Р°СЃ РґР»СЏ РєР»СѓР±РЅРѕРіРѕ РјРёРєСЃР° вЂ” Р·Р°РєР»Р°РґС‹РІР°РµС‚ С„СѓРЅРґР°РјРµРЅС‚ С‚СЂРµРєР°, РЅРµ РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ РєРёРєРѕРј Рё РґСЂСѓРіРёРјРё РЅРёР·Р°РјРё"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№ СЃРёРЅСѓСЃРѕРёРґР°Р»СЊРЅС‹Р№ РіРµРЅРµСЂР°С‚РѕСЂ Р±РµР· РѕР±РµСЂС‚РѕРЅРѕРІ, РёРјРёС‚РёСЂСѓСЋС‰РёР№ РЅРёР·РєРѕС‡Р°СЃС‚РѕС‚РЅС‹Р№ СЃР°Р±РІСѓС„РµСЂ СЃС‚СѓРґРёР№РЅРѕРіРѕ РјРѕРЅРёС‚РѕСЂРёРЅРіР°"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РјР°СЃСЃРёРІРЅС‹Р№, РіР»СѓС…РѕР№, РјС‘СЂС‚РІС‹Р№ С‚РµРјР±СЂ; СѓР»СЊС‚СЂР°РЅРёР·РєР°СЏ С‡Р°СЃС‚РѕС‚Р° РѕС‰СѓС‰Р°РµС‚СЃСЏ С‚РµР»РѕРј, Р° РЅРµ СЃР»С‹С€РёС‚СЃСЏ СѓС€Р°РјРё; РѕС‚СЃСѓС‚СЃС‚РІРёРµ РіР°СЂРјРѕРЅРёРє РіР°СЂР°РЅС‚РёСЂСѓРµС‚ РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ РІ РјРёРєСЃРµ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РѕС‰СѓС‰РµРЅРёРµ РЅРµРѕС‚РІСЂР°С‚РёРјРѕР№ С„РёР·РёС‡РµСЃРєРѕР№ СЃРёР»С‹ вЂ” Р·РІСѓРєРѕРІР°СЏ РІРѕР»РЅР°, РєРѕС‚РѕСЂР°СЏ СЃРґРІРёРіР°РµС‚ РІРѕР·РґСѓС… РІ РіСЂСѓРґРё"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РїРѕРґРІРѕРґРЅРѕРµ С‚РµС‡РµРЅРёРµ РЅР° РіР»СѓР±РёРЅРµ РѕРєРµР°РЅР° вЂ” РЅРµРІРёРґРёРјРѕРµ, РЅРѕ РјРѕС‰РЅРѕРµ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "С‡РёСЃС‚С‹Р№ СЃСѓР±Р±Р°СЃ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "synth_roles_002",
-                        "concept":  "reese_bass_dirty",
-                        "category":  "synth_roles",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.0,
-                                       "osc1_position":  0.8,
-                                       "osc1_octave":  0.25,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.85,
-                                       "osc2_detune":  0.43,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.65,
-                                       "mix_osc2":  0.65,
-                                       "mix_noise":  0.02,
-                                       "lp_cutoff":  0.5,
-                                       "lp_resonance":  0.35,
-                                       "hp_cutoff":  0.08,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.5,
-                                       "amp_attack":  0.2,
-                                       "amp_decay":  0.55,
-                                       "amp_sustain":  0.8,
-                                       "amp_release":  0.45,
-                                       "fenv_attack":  0.25,
-                                       "fenv_decay":  0.6,
-                                       "fenv_sustain":  0.4,
-                                       "fenv_release":  0.35,
-                                       "fenv_amount":  0.6,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.28,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.2,
-                                       "lfo2_rate":  0.22,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.15,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.88,
-                                       "drive_tone":  0.55,
-                                       "reverb_time":  0.15,
-                                       "reverb_damp":  0.7,
-                                       "reverb_mix":  0.18
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "reese/dnb-Р±Р°СЃ РґР»СЏ РґСЂР°РјСЌРЅР±Р°СЃСЃ-РёРЅС‚СЂРѕ СЃ С…Р°СЂР°РєС‚РµСЂРЅС‹Рј Р¶РёСЂРЅС‹Рј СЂС‹С‡Р°РЅРёРµРј вЂ” РґРІР° РґРµС‚СЋРЅ-РѕСЃС†РёР»Р»СЏС‚РѕСЂР° РІ РїРµСЂРµРіСЂСѓР·Рµ СЃРѕР·РґР°СЋС‚ РјРѕСЂРµ РіР°СЂРјРѕРЅРёРє"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РёСЃРєР°Р¶С‘РЅРЅС‹Р№ РєР»Р°СЂРЅРµС‚РѕРІРѕРїРѕРґРѕР±РЅС‹Р№ С‚РµРјР±СЂ РІ РЅРёР¶РЅРµРј СЂРµРіРёСЃС‚СЂРµ СЃ СЌС„С„РµРєС‚РѕРј С…РѕСЂСѓСЃР° РѕС‚ РґРІСѓС… СЂР°СЃСЃС‚СЂРѕРµРЅРЅС‹С… РіРµРЅРµСЂР°С‚РѕСЂРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РіСЂСЏР·РЅС‹Р№, Р·РµСЂРЅРёСЃС‚С‹Р№, СѓС‚СЂРѕР±РЅС‹Р№ Р±Р°СЃ СЃ Р±РёРµРЅРёСЏРјРё Рё СЃР°С‚СѓСЂР°С†РёРµР№; РјСЏРіРєР°СЏ Р°С‚Р°РєР° РїРµСЂРµС…РѕРґРёС‚ РІ РіСѓСЃС‚РѕР№ СЃСѓСЃС‚РµР№РЅ; СѓРјРµСЂРµРЅРЅС‹Р№ СЂРµР·РѕРЅР°РЅСЃ РґРѕР±Р°РІР»СЏРµС‚ С‚РµР»РµСЃРЅРѕСЃС‚СЊ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "С‚СЂРµРІРѕР¶РЅР°СЏ, РіРёРїРЅРѕС‚РёС‡РµСЃРєР°СЏ РїСѓР»СЊСЃР°С†РёСЏ вЂ” Р·РІСѓРє, РєРѕС‚РѕСЂС‹Р№ Р·Р°С‚СЏРіРёРІР°РµС‚ Рё РЅРµ РѕС‚РїСѓСЃРєР°РµС‚, РєР°Рє РІРѕСЂРѕРЅРєР°"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РґРІР° РіРёРіР°РЅС‚СЃРєРёС… РіРµРЅРµСЂР°С‚РѕСЂР°, РґС‹С€Р°С‰РёС… РІ СѓРЅРёСЃРѕРЅ, РѕР±С‘СЂРЅСѓС‚С‹Рµ РІ Р°РЅР°Р»РѕРіРѕРІСѓСЋ РіСЂСЏР·СЊ Рё РІРёР±СЂР°С†РёСЋ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РіСЂСЏР·РЅС‹Р№ РґРµС‚СЋРЅ-Р±Р°СЃ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "synth_roles_003",
-                        "concept":  "acid_303_style",
-                        "category":  "synth_roles",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.2,
-                                       "osc1_position":  0.4,
-                                       "osc1_octave":  0.25,
-                                       "osc2_table":  0.0,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.75,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.03,
-                                       "lp_cutoff":  0.28,
-                                       "lp_resonance":  0.82,
-                                       "hp_cutoff":  0.0,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.7,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.5,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.25,
-                                       "fenv_attack":  0.0,
-                                       "fenv_decay":  0.68,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.3,
-                                       "fenv_amount":  0.82,
-                                       "fenv_to_wt":  0.25,
-                                       "lfo1_rate":  0.75,
-                                       "lfo1_shape":  0.33,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.08,
-                                       "lfo2_rate":  0.0,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.45,
-                                       "drive_tone":  0.4,
-                                       "reverb_time":  0.0,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.0
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "Р°СѓС‚РµРЅС‚РёС‡РЅС‹Р№ acid-Р±Р°СЃ РІ СЃС‚РёР»Рµ TB-303 РґР»СЏ С‚РµС…РЅРѕ-С‚СЂРµРєР° вЂ” СЂРµР·РѕРЅР°РЅСЃРЅС‹Р№ С„РёР»СЊС‚СЂ-В«РєР»СЋРІВ» СЃ СЏСЂРєРѕ РІС‹СЂР°Р¶РµРЅРЅС‹Рј СЃРІРёРїРѕРј РїСЂРё РєР°Р¶РґРѕР№ РЅРѕС‚Рµ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РѕРґРЅРѕРіРѕР»РѕСЃС‹Р№ СЃРёРЅС‚РµР·Р°С‚РѕСЂ СЃ СЏСЂРєРёРј РіСѓРґСЏС‰РёРј С‚РµРјР±СЂРѕРј, РєРІР°Р·РёРѕСЂРіР°РЅРЅС‹Рј С…Р°СЂР°РєС‚РµСЂРѕРј Рё РІС‹СЂР°Р¶РµРЅРЅС‹Рј СЂРµР·РѕРЅР°РЅСЃРЅС‹Рј С„РёР»СЊС‚СЂРѕРј"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РїСЂРѕРЅР·РёС‚РµР»СЊРЅС‹Р№, РєРёСЃР»РѕС‚РЅС‹Р№, СЃРІРёСЃС‚СЏС‰РёР№ Р±Р°СЃ; РјРіРЅРѕРІРµРЅРЅР°СЏ Р°С‚Р°РєР° СЃ СЂРµР·РєРёРј Р±СЂРѕСЃРєРѕРј С„РёР»СЊС‚СЂР° РІРІРµСЂС… Рё РїРѕСЃС‚РµРїРµРЅРЅС‹Рј Р·Р°РєСЂС‹С‚РёРµРј; РѕСЃС‚СЂС‹Р№ В«РєР»СЋРІВ» РЅР° СЂРµР·РѕРЅР°РЅСЃРµ; РЅСѓР»РµРІРѕР№ СЃСѓСЃС‚РµР№РЅ РґР»СЏ СЃС‚Р°РєРєР°С‚Рѕ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РЅР°РїСЂСЏР¶С‘РЅРЅС‹Р№, РЅРµСѓРґРµСЂР¶РёРјС‹Р№ Р·СѓРґ вЂ” Р·РІСѓРє, РєРѕС‚РѕСЂС‹Р№ РїРѕСЃС‚РѕСЏРЅРЅРѕ С…РѕС‡РµС‚СЃСЏ СЂР°Р·СЂРµС€РёС‚СЊ, РЅРѕ РѕРЅ СЃРЅРѕРІР° Рё СЃРЅРѕРІР° РЅР°РіРЅРµС‚Р°РµС‚"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "СЌР»РµРєС‚СЂРёС‡РµСЃРєРёР№ СЃС‚СѓР» РІ Р°РЅР°Р»РѕРіРѕРІРѕРј РєРѕСЂРїСѓСЃРµ вЂ” РјРіРЅРѕРІРµРЅРЅС‹Р№ СЂР°Р·СЂСЏРґ Рё Р·Р°С‚СѓС…Р°РЅРёРµ, СЃРѕРїСЂРѕРІРѕР¶РґР°РµРјРѕРµ РІРёР·РіРѕРј РєРѕРЅРґРµРЅСЃР°С‚РѕСЂРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РєРёСЃР»РѕС‚РЅС‹Р№ СЃРІРёРї-Р±Р°СЃ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "synth_roles_004",
-                        "concept":  "pluck_bass_string",
-                        "category":  "synth_roles",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.4,
-                                       "osc1_position":  0.55,
-                                       "osc1_octave":  0.5,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.5,
-                                       "osc2_detune":  0.52,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.55,
-                                       "mix_osc2":  0.55,
-                                       "mix_noise":  0.0,
-                                       "lp_cutoff":  0.52,
-                                       "lp_resonance":  0.18,
-                                       "hp_cutoff":  0.12,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.45,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.72,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.32,
-                                       "fenv_attack":  0.18,
-                                       "fenv_decay":  0.58,
-                                       "fenv_sustain":  0.2,
-                                       "fenv_release":  0.28,
-                                       "fenv_amount":  0.65,
-                                       "fenv_to_wt":  0.2,
-                                       "lfo1_rate":  0.0,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.0,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.0,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.15,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.3,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.28
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "СЌР»Р°СЃС‚РёС‡РЅС‹Р№ РїР»С‘РЅРє-Р±Р°СЃ РґР»СЏ РёРЅРґРёС‚СЂРѕРЅРёРєРё/С„РѕР»Рє-РїРѕРїР° вЂ” РґРІР° Р°РєСѓСЃС‚РёС‡РµСЃРєРёС… РѕСЃС†РёР»Р»СЏС‚РѕСЂР° РІ Р»С‘РіРєРѕРј СЂР°СЃС…РѕР¶РґРµРЅРёРё СЃРѕР·РґР°СЋС‚ Р¶РёРІРѕР№ СЃС‚СЂСѓРЅРЅС‹Р№ С‰РµР»С‡РѕРє"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РёРјРёС‚Р°С†РёСЏ С‰РёРїРєРѕРІРѕР№ СЃС‚СЂСѓРЅС‹ вЂ” РјРµРґРёР°С‚РѕСЂРЅС‹Р№ РїР»С‘РЅРє СЃ Р»С‘РіРєРёРј РґРµРјРїС„РёСЂРѕРІР°РЅРёРµРј, С‰С‘Р»РєР°СЋС‰РёРј СѓРґР°СЂРѕРј Рё РµСЃС‚РµСЃС‚РІРµРЅРЅС‹Рј Р·Р°С‚СѓС…Р°РЅРёРµРј"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "СѓРїСЂСѓРіРёР№, Р·РІРѕРЅРєРёР№, С‚С‘РїР»С‹Р№ С‚РµРјР±СЂ; РјРіРЅРѕРІРµРЅРЅР°СЏ Р°С‚Р°РєР°, РґР»РёРЅРЅС‹Р№ decay СЃ РїР»Р°РІРЅС‹Рј СЃРїР°РґРѕРј, РєРѕСЂРѕС‚РєРёР№ С…РІРѕСЃС‚; Р»С‘РіРєРёР№ СЃСѓСЃС‚РµР№РЅ С„РёР»СЊС‚СЂР° РґРѕР±Р°РІР»СЏРµС‚ В«РґС‹С…Р°РЅРёРµВ» РїРѕСЃР»Рµ СѓРґР°СЂР°"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РёРіСЂРёРІС‹Р№, Р»С‘РіРєРёР№, РѕРїС‚РёРјРёСЃС‚РёС‡РЅС‹Р№ вЂ” Р·РІСѓРє, РєРѕС‚РѕСЂС‹Р№ РїРѕРґР±СЂР°СЃС‹РІР°РµС‚ РЅР°СЃС‚СЂРѕРµРЅРёРµ Рё Р·Р°РґР°С‘С‚ СЂРёС‚РјРёС‡РµСЃРєРёР№ РґСЂР°Р№РІ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "Р±Р°РЅР°РЅРіРёС‚Р°СЂРЅР°СЏ СЃС‚СЂСѓРЅР°, Р·Р°С‰РёРїРЅСѓС‚Р°СЏ РІ С‚СѓРјР°РЅРµ вЂ” СѓРїСЂСѓРіР°СЏ, РјРіРЅРѕРІРµРЅРЅРѕ Р·Р°С‚СѓС…Р°СЋС‰Р°СЏ, РЅРѕ РѕСЃС‚Р°РІР»СЏСЋС‰Р°СЏ РїСЂРёСЏС‚РЅРѕРµ РїРѕСЃР»РµРІРєСѓСЃРёРµ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "СѓРїСЂСѓРіРёР№ СЃС‚СЂСѓРЅРЅС‹Р№ РїР»С‘РЅРє"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "texture_atmos_001",
-                        "concept":  "sub_bass_infinite_drone",
-                        "category":  "texture_atmos",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.4,
-                                       "osc1_position":  0.0,
-                                       "osc1_octave":  0.0,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.0,
-                                       "osc2_detune":  0.47,
-                                       "osc2_semitones":  0.25,
-                                       "mix_osc1":  0.7,
-                                       "mix_osc2":  0.5,
-                                       "mix_noise":  0.0,
-                                       "lp_cutoff":  0.25,
-                                       "lp_resonance":  0.1,
-                                       "hp_cutoff":  0.0,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.3,
-                                       "amp_attack":  0.6,
-                                       "amp_decay":  0.5,
-                                       "amp_sustain":  0.95,
-                                       "amp_release":  0.75,
-                                       "fenv_attack":  0.6,
-                                       "fenv_decay":  0.4,
-                                       "fenv_sustain":  0.8,
-                                       "fenv_release":  0.7,
-                                       "fenv_amount":  0.5,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.85,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.03,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.2,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.15,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.45,
-                                       "drive_tone":  0.3,
-                                       "reverb_time":  0.55,
-                                       "reverb_damp":  0.3,
-                                       "reverb_mix":  0.4
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№ Р±РµСЃРєРѕРЅРµС‡РЅС‹Р№ РґСЂРѕРЅ РґР»СЏ ambient-С„РѕРЅРѕРІ, meditation-С‚СЂРµРєРѕРІ Рё СЃР°СѓРЅРґС‚СЂРµРєРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РЅРёР·РєРѕС‡Р°СЃС‚РѕС‚РЅС‹Р№ РІРёРѕР»РѕРЅС‡РµР»РµРІС‹Р№ РґСЂРѕРЅ РІ СЃСѓР±Р±Р°СЃРѕРІРѕРј СЂРµРіРёСЃС‚СЂРµ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "С‚С‘РјРЅС‹Р№, РіСѓСЃС‚РѕР№, СЃ РјРёРЅРёРјР°Р»СЊРЅС‹Рј РІРёР±СЂР°С‚Рѕ, РјСЏРіРєРѕР№ Р°С‚Р°РєРѕР№, Р°РЅР°Р»РѕРіРѕРІР°СЏ С‚РµРїР»РѕС‚Р°"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РјРµР»Р°РЅС…РѕР»РёС‡РЅРѕРµ Р·Р°РІРёСЃР°РЅРёРµ РІ РіР»СѓР±РёРЅРµ, РѕС‰СѓС‰РµРЅРёРµ Р±РµР·РІСЂРµРјРµРЅСЊСЏ Рё РїРѕРєРѕСЏ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РґР°Р»С‘РєРёР№ РіСѓР» РїРѕРґР·РµРјРЅС‹С… РІРѕРґ РІ РїРµС‰РµСЂРµ, РіРґРµ РІСЂРµРјСЏ РѕСЃС‚Р°РЅРѕРІРёР»РѕСЃСЊ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "С‚С‘РїР»С‹Р№ СЃСѓР±Р±Р°СЃРѕРІС‹Р№ РґСЂРѕРЅ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "texture_atmos_002",
-                        "concept":  "bright_airy_ambient_pad",
-                        "category":  "texture_atmos",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.4,
-                                       "osc1_position":  0.0,
-                                       "osc1_octave":  1.0,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.4,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.7,
-                                       "mix_osc2":  0.5,
-                                       "mix_noise":  0.04,
-                                       "lp_cutoff":  0.7,
-                                       "lp_resonance":  0.05,
-                                       "hp_cutoff":  0.0,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.3,
-                                       "amp_attack":  0.65,
-                                       "amp_decay":  0.85,
-                                       "amp_sustain":  0.7,
-                                       "amp_release":  0.85,
-                                       "fenv_attack":  0.15,
-                                       "fenv_decay":  0.5,
-                                       "fenv_sustain":  0.6,
-                                       "fenv_release":  0.6,
-                                       "fenv_amount":  0.3,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.25,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.02,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.1,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.2,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.7,
-                                       "reverb_damp":  0.2,
-                                       "reverb_mix":  0.6
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РІРѕР·РґСѓС€РЅС‹Р№ СЃРІРµС‚Р»С‹Р№ РїСЌРґ РґР»СЏ СЌРјР±РёРµРЅС‚-РєРѕРјРїРѕР·РёС†РёР№, РїРµСЂРµС…РѕРґРѕРІ Рё Р°С‚РјРѕСЃС„РµСЂРЅС‹С… СЃРµРєС†РёР№"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "С…СЂСѓСЃС‚Р°Р»СЊРЅРѕРµ РїРёР°РЅРѕ РІ РІС‹СЃРѕРєРѕРј СЂРµРіРёСЃС‚СЂРµ СЃ РјСЏРіРєРёРј СЃСѓСЃС‚РµР№РЅРѕРј"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "СЃРІРµС‚Р»С‹Р№, РІРѕР·РґСѓС€РЅС‹Р№, СЃ С‚РѕРЅРєРёРј РїСЂРёР·РІСѓРєРѕРј С€СѓРјР°, РїР»Р°РІРЅРѕРµ РЅР°СЂР°СЃС‚Р°РЅРёРµ, Р±РµСЃРєСЂР°Р№РЅРёР№ Р·Р°Р»"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "СѓРјРёСЂРѕС‚РІРѕСЂРµРЅРёРµ РЅР° СЂР°СЃСЃРІРµС‚Рµ, РїРµСЂРІС‹Р№ Р»СѓС‡ СЃРІРµС‚Р° РІ РїСѓСЃС‚РѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "СЃРѕР»РЅРµС‡РЅС‹Р№ СЃРІРµС‚, РїСЂРѕР±РёРІР°СЋС‰РёР№СЃСЏ СЃРєРІРѕР·СЊ РѕР±Р»Р°С‡РЅСѓСЋ РїРµР»РµРЅСѓ РЅР° Р±РµСЃРєСЂР°Р№РЅРµРј Р»СѓРіСѓ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "СЃРІРµС‚Р»С‹Р№ РІРѕР·РґСѓС€РЅС‹Р№ РїСЌРґ"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "texture_atmos_003",
-                        "concept":  "cosmic_metallic_texture",
-                        "category":  "texture_atmos",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.8,
-                                       "osc1_position":  0.5,
-                                       "osc1_octave":  0.75,
-                                       "osc2_table":  0.4,
-                                       "osc2_position":  0.3,
-                                       "osc2_detune":  0.52,
-                                       "osc2_semitones":  0.604,
-                                       "mix_osc1":  0.6,
-                                       "mix_osc2":  0.45,
-                                       "mix_noise":  0.1,
-                                       "lp_cutoff":  0.8,
-                                       "lp_resonance":  0.3,
-                                       "hp_cutoff":  0.2,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.4,
-                                       "amp_attack":  0.25,
-                                       "amp_decay":  0.7,
-                                       "amp_sustain":  0.8,
-                                       "amp_release":  0.8,
-                                       "fenv_attack":  0.4,
-                                       "fenv_decay":  0.65,
-                                       "fenv_sustain":  0.3,
-                                       "fenv_release":  0.75,
-                                       "fenv_amount":  0.6,
-                                       "fenv_to_wt":  0.35,
-                                       "lfo1_rate":  0.78,
-                                       "lfo1_shape":  0.33,
-                                       "lfo1_to_pitch":  0.04,
-                                       "lfo1_to_filter":  0.2,
-                                       "lfo2_rate":  0.15,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.35,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.3,
-                                       "drive_tone":  0.7,
-                                       "reverb_time":  0.8,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.65
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РєРѕСЃРјРёС‡РµСЃРєР°СЏ С‚РµРєСЃС‚СѓСЂР° РґР»СЏ sci-fi СЃР°СѓРЅРґС‚СЂРµРєРѕРІ,sfx-СЌС„С„РµРєС‚РѕРІ Рё СЌРєСЃРїРµСЂРёРјРµРЅС‚Р°Р»СЊРЅРѕР№ РјСѓР·С‹РєРё"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РїРѕС…РѕР¶Рµ РЅР° РєРѕР»РѕРєРѕР»СЊРЅС‹Р№ Р·РІРѕРЅ РІ РѕС‚РєСЂС‹С‚РѕРј РєРѕСЃРјРѕСЃРµ СЃ РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёРј СЂРµР·РѕРЅР°РЅСЃРѕРј"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёР№, Р·РІРѕРЅРєРёР№, СЃ РёРЅР°СЂРјРѕРЅРёС‡РЅС‹РјРё РѕР±РµСЂС‚РѕРЅР°РјРё, С„РёР»СЊС‚СЂРѕРІРѕР№ СЃРІРёРї, Р°РєС‚РёРІРЅР°СЏ СЌРІРѕР»СЋС†РёСЏ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РІРµР»РёС‡РёРµ Рё С…РѕР»РѕРґРЅР°СЏ РєСЂР°СЃРѕС‚Р° РєРѕСЃРјРѕСЃР°, РѕРґРёРЅРѕС‡РµСЃС‚РІРѕ СЃСЂРµРґРё Р·РІС‘Р·Рґ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёР№ Р·РІРѕРЅ СЃРїСѓС‚РЅРёРєР°, РґСЂРµР№С„СѓСЋС‰РµРіРѕ РІ РїСѓСЃС‚РѕС‚Рµ РјРµР¶РґСѓ РїР»Р°РЅРµС‚Р°РјРё"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РєРѕСЃРјРёС‡РµСЃРєР°СЏ РјРµС‚Р°Р»Р»РёС‡РµСЃРєР°СЏ С‚РµРєСЃС‚СѓСЂР°"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "texture_atmos_004",
-                        "concept":  "formant_vocal_morphing",
-                        "category":  "texture_atmos",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.6,
-                                       "osc1_position":  0.5,
-                                       "osc1_octave":  0.75,
-                                       "osc2_table":  0.6,
-                                       "osc2_position":  0.7,
-                                       "osc2_detune":  0.48,
-                                       "osc2_semitones":  0.646,
-                                       "mix_osc1":  0.6,
-                                       "mix_osc2":  0.45,
-                                       "mix_noise":  0.03,
-                                       "lp_cutoff":  0.55,
-                                       "lp_resonance":  0.15,
-                                       "hp_cutoff":  0.15,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.5,
-                                       "amp_attack":  0.65,
-                                       "amp_decay":  0.85,
-                                       "amp_sustain":  0.7,
-                                       "amp_release":  0.85,
-                                       "fenv_attack":  0.15,
-                                       "fenv_decay":  0.6,
-                                       "fenv_sustain":  0.5,
-                                       "fenv_release":  0.7,
-                                       "fenv_amount":  0.35,
-                                       "fenv_to_wt":  0.4,
-                                       "lfo1_rate":  0.82,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.03,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.15,
-                                       "lfo2_shape":  0.33,
-                                       "lfo2_to_wt":  0.3,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.25,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.7,
-                                       "reverb_damp":  0.45,
-                                       "reverb_mix":  0.55
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РІРѕРєР°Р»СЊРЅР°СЏ С‚РµРєСЃС‚СѓСЂР° РґР»СЏ ambient, electronica Рё С‚РµРєСЃС‚СѓСЂРЅС‹С… СЃР»РѕС‘РІ РІ РјСѓР·С‹РєРµ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "С…РѕСЂ РіРѕР»РѕСЃРѕРІ, С‚СЏРЅСѓС‰РёР№ РіР»Р°СЃРЅС‹Рµ РЈ-Рћ-Рђ РІ СЃСЂРµРґРЅРµРј СЂРµРіРёСЃС‚СЂРµ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "С„РѕСЂРјР°РЅС‚РЅС‹Р№, РіСЂСѓРґРЅРѕР№, СЃ РїСЂРёРґС‹С…Р°РЅРёРµРј, РјРѕСЂС„РёРЅРі РіР»Р°СЃРЅС‹С…, РјСЏРіРєРѕРµ РІРёР±СЂР°С‚Рѕ, РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµРЅРЅС‹Р№"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РіСЂСѓРїРїРѕРІР°СЏ РјРµРґРёС‚Р°С†РёСЏ, РјР°РЅС‚СЂР°, РїР»Р°РІРЅРѕРµ СЂР°СЃС‚РІРѕСЂРµРЅРёРµ РІ Р·РІСѓРєРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "С‚СѓРјР°РЅРЅС‹Рµ РіРѕР»РѕСЃР°, РґРѕРЅРѕСЃСЏС‰РёРµСЃСЏ СЃ РґР°Р»С‘РєРѕРіРѕ Р±РµСЂРµРіР° РІ РїСЂРµРґСЂР°СЃСЃРІРµС‚РЅС‹Р№ С‡Р°СЃ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "С„РѕСЂРјР°РЅС‚РЅС‹Р№ РІРѕРєР°Р»СЊРЅС‹Р№ РјРѕСЂС„РёРЅРі"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "percussive_fx_001",
-                        "concept":  "long_church_bell",
-                        "category":  "percussive_fx",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.8,
-                                       "osc1_position":  0.2,
-                                       "osc1_octave":  0.5,
-                                       "osc2_table":  0.8,
-                                       "osc2_position":  0.2,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  0.9,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.02,
-                                       "lp_cutoff":  0.65,
-                                       "lp_resonance":  0.35,
-                                       "hp_cutoff":  0.1,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.2,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.9,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.95,
-                                       "fenv_attack":  0.0,
-                                       "fenv_decay":  0.5,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.8,
-                                       "fenv_amount":  0.65,
-                                       "fenv_to_wt":  0.15,
-                                       "lfo1_rate":  0.0,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.22,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.08,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.15,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.75,
-                                       "reverb_damp":  0.4,
-                                       "reverb_mix":  0.55
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РїСЂРѕС‚СЏР¶С‘РЅРЅС‹Р№ РєРѕР»РѕРєРѕР»СЊРЅС‹Р№ Р·РІРѕРЅ РґР»СЏ РґСЂР°РјР°С‚РёС‡РµСЃРєРёС… РєСѓР»СЊРјРёРЅР°С†РёР№ Рё РїРµСЂРµС…РѕРґРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "Р±РѕР»СЊС€РѕР№ С†РµСЂРєРѕРІРЅС‹Р№ РєРѕР»РѕРєРѕР» РІ РІС‹СЃРѕРєРѕР№ С‚РѕРЅР°Р»СЊРЅРѕСЃС‚Рё"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёР№, РёРЅС‚Р°СЂРјРѕРЅРёС‡РЅС‹Р№, СЃР»С‹С€РµРЅ С‰РµР»С‡РѕРє РїСЂРё СѓРґР°СЂРµ, РґРѕР»РіРѕРµ Р·Р°С‚СѓС…Р°РЅРёРµ, С‚РѕСЂР¶РµСЃС‚РІРµРЅРЅР°СЏ СЏСЂРєРѕСЃС‚СЊ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РІРµР»РёС‡Р°РІРѕРµ СЃРїРѕРєРѕР№СЃС‚РІРёРµ, РѕС‰СѓС‰РµРЅРёРµ РІРµС‡РЅРѕСЃС‚Рё Рё С‚РѕСЂР¶РµСЃС‚РІРµРЅРЅРѕСЃС‚Рё РјРѕРјРµРЅС‚Р°"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "Р»СѓС‡ СЃРІРµС‚Р° РІ РІС‹СЃРѕРєРѕРј СЃРІРѕРґРµ СЃРѕР±РѕСЂР°, РјРµРґР»РµРЅРЅРѕ СѓРіР°СЃР°СЋС‰РёР№ РІ РєР°РјРµРЅРЅРѕР№ С‚РёС€РёРЅРµ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РїСЂРѕС‚СЏР¶С‘РЅРЅС‹Р№ С‚РѕСЂР¶РµСЃС‚РІРµРЅРЅС‹Р№ РєРѕР»РѕРєРѕР»"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "percussive_fx_002",
-                        "concept":  "temple_gong_deep",
-                        "category":  "percussive_fx",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  true,
-                        "params":  {
-                                       "osc1_table":  0.8,
-                                       "osc1_position":  0.0,
-                                       "osc1_octave":  0.25,
-                                       "osc2_table":  0.8,
-                                       "osc2_position":  0.1,
-                                       "osc2_detune":  0.48,
-                                       "osc2_semitones":  0.75,
-                                       "mix_osc1":  0.7,
-                                       "mix_osc2":  0.5,
-                                       "mix_noise":  0.01,
-                                       "lp_cutoff":  0.5,
-                                       "lp_resonance":  0.45,
-                                       "hp_cutoff":  0.2,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.15,
-                                       "amp_attack":  0.1,
-                                       "amp_decay":  0.85,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.9,
-                                       "fenv_attack":  0.05,
-                                       "fenv_decay":  0.65,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.85,
-                                       "fenv_amount":  0.55,
-                                       "fenv_to_wt":  0.25,
-                                       "lfo1_rate":  0.25,
-                                       "lfo1_shape":  0.33,
-                                       "lfo1_to_pitch":  0.03,
-                                       "lfo1_to_filter":  0.05,
-                                       "lfo2_rate":  0.08,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.12,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.7,
-                                       "drive_tone":  0.35,
-                                       "reverb_time":  0.95,
-                                       "reverb_damp":  0.5,
-                                       "reverb_mix":  0.75
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№ РіРѕРЅРі РґР»СЏ РјРµРґРёС‚Р°С‚РёРІРЅС‹С… СЃРµРєРІРµРЅС†РёР№ Рё СЌРјР±РёРµРЅС‚-С„РѕРЅРѕРІ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "С‚РёР±РµС‚СЃРєР°СЏ РїРѕСЋС‰Р°СЏ С‡Р°С€Р° РёР»Рё Р±СѓРґРґРёР№СЃРєРёР№ РіРѕРЅРі СЃ РѕРєС‚Р°РІРЅС‹Рј СЃСѓР±СЂРµР·РѕРЅР°РЅСЃРѕРј"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РЅРёР·РєРѕС‡Р°СЃС‚РѕС‚РЅС‹Р№, РјР°СЃСЃРёРІРЅС‹Р№, СЃ РїРµСЂРµРіСЂСѓР·РѕРј Рё РґР»РёРЅРЅС‹Рј С…РІРѕСЃС‚РѕРј, Р±РёРµРЅРёСЏ РѕС‚ РґРµС‚СЋРЅР°, С‚С‘РјРЅРѕРµ РЅР°СЃС‹С‰РµРЅРёРµ"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "С‚СЂРµРІРѕР¶РЅРѕРµ РѕР¶РёРґР°РЅРёРµ, РіР»СѓР±РёРЅР° Р±РµР·РґРЅС‹, РјРµРґР»РµРЅРЅРѕРµ РЅР°СЂР°СЃС‚Р°РЅРёРµ Рё СѓРіР°СЃР°РЅРёРµ РєРѕСЃРјРёС‡РµСЃРєРѕР№ РІРёР±СЂР°С†РёРё"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РєР°РјРµРЅСЊ, Р±СЂРѕС€РµРЅРЅС‹Р№ РІ РєРѕР»РѕРґРµС† Р±РµР· РґРЅР° вЂ” Р·РІСѓРє РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РёСЃРєР°Р¶С‘РЅРЅС‹Рј, Р·Р°РјРµРґР»РµРЅРЅС‹Рј"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "РіР»СѓР±РѕРєРёР№ РіСѓР»РєРёР№ РіРѕРЅРі СЃ РґР»РёРЅРЅС‹Рј С…РІРѕСЃС‚РѕРј"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "percussive_fx_003",
-                        "concept":  "bright_triangle_twang",
-                        "category":  "percussive_fx",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.8,
-                                       "osc1_position":  0.1,
-                                       "osc1_octave":  0.75,
-                                       "osc2_table":  0.8,
-                                       "osc2_position":  0.1,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  1.0,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.03,
-                                       "lp_cutoff":  0.75,
-                                       "lp_resonance":  0.25,
-                                       "hp_cutoff":  0.3,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.4,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.45,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.55,
-                                       "fenv_attack":  0.0,
-                                       "fenv_decay":  0.35,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.4,
-                                       "fenv_amount":  0.5,
-                                       "fenv_to_wt":  0.0,
-                                       "lfo1_rate":  0.0,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.2,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.05,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.0,
-                                       "drive_tone":  0.5,
-                                       "reverb_time":  0.5,
-                                       "reverb_damp":  0.35,
-                                       "reverb_mix":  0.4
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "РѕС‚СЂС‹РІРёСЃС‚С‹Р№ РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёР№ СѓРґР°СЂ РґР»СЏ СЂРёС‚РјРёС‡РµСЃРєРёС… Р°РєС†РµРЅС‚РѕРІ РІ С„РѕР»РєРµ Рё РїРѕРї-РјСѓР·С‹РєРµ"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "РјРµС‚Р°Р»Р»РёС‡РµСЃРєРёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє РІ РІРµСЂС…РЅРµРј СЂРµРіРёСЃС‚СЂРµ, С‡РёСЃС‚С‹Р№ Рё Р·РІРµРЅСЏС‰РёР№"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РІС‹СЃРѕРєРёР№, С‡РёСЃС‚С‹Р№, СЃРІРµСЂРєР°СЋС‰РёР№, РјРіРЅРѕРІРµРЅРЅР°СЏ Р°С‚Р°РєР°, РєРѕСЂРѕС‚РєРѕРµ Р·Р°С‚СѓС…Р°РЅРёРµ, РјРёРЅРёРјСѓРј РіСЂСЏР·Рё"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "Р»С‘РіРєР°СЏ РёРіСЂРёРІРѕСЃС‚СЊ, СЃРІРµСЂРєР°РЅРёРµ СѓС‚СЂРµРЅРЅРµР№ СЂРѕСЃС‹, Р±РµР·Р·Р°Р±РѕС‚РЅРѕРµ РјРµСЂС†Р°РЅРёРµ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "РєР°РїР»СЏ СЂРѕСЃС‹, СЃРєР°С‚РёРІС€Р°СЏСЃСЏ СЃ РІРµС‚РєРё Рё Р·РІСЏРєРЅСѓРІС€Р°СЏ Рѕ РјРµС‚Р°Р»Р»"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "С‡РёСЃС‚С‹Р№ Р·РІРµРЅСЏС‰РёР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРє"
-                                             }
-                                         ]
-                    },
-                    {
-                        "id":  "percussive_fx_004",
-                        "concept":  "crystal_glass_chime",
-                        "category":  "percussive_fx",
-                        "source":  "claude-opus-4-8",
-                        "osc2_active":  false,
-                        "params":  {
-                                       "osc1_table":  0.8,
-                                       "osc1_position":  0.4,
-                                       "osc1_octave":  1.0,
-                                       "osc2_table":  0.8,
-                                       "osc2_position":  0.4,
-                                       "osc2_detune":  0.5,
-                                       "osc2_semitones":  0.5,
-                                       "mix_osc1":  1.0,
-                                       "mix_osc2":  0.0,
-                                       "mix_noise":  0.01,
-                                       "lp_cutoff":  0.8,
-                                       "lp_resonance":  0.2,
-                                       "hp_cutoff":  0.15,
-                                       "hp_resonance":  0.0,
-                                       "filter_keytrack":  0.5,
-                                       "amp_attack":  0.0,
-                                       "amp_decay":  0.6,
-                                       "amp_sustain":  0.0,
-                                       "amp_release":  0.75,
-                                       "fenv_attack":  0.0,
-                                       "fenv_decay":  0.3,
-                                       "fenv_sustain":  0.0,
-                                       "fenv_release":  0.6,
-                                       "fenv_amount":  0.7,
-                                       "fenv_to_wt":  0.2,
-                                       "lfo1_rate":  0.0,
-                                       "lfo1_shape":  0.0,
-                                       "lfo1_to_pitch":  0.0,
-                                       "lfo1_to_filter":  0.0,
-                                       "lfo2_rate":  0.15,
-                                       "lfo2_shape":  0.0,
-                                       "lfo2_to_wt":  0.1,
-                                       "lfo2_to_amp":  0.0,
-                                       "drive_amount":  0.1,
-                                       "drive_tone":  0.6,
-                                       "reverb_time":  0.65,
-                                       "reverb_damp":  0.3,
-                                       "reverb_mix":  0.5
-                                   },
-                        "descriptions":  [
-                                             {
-                                                 "style":  "functional",
-                                                 "text":  "С…СЂСѓСЃС‚Р°Р»СЊРЅС‹Р№ Р·РІРѕРЅ РґР»СЏ Р°С‚РјРѕСЃС„РµСЂРЅС‹С… РїР°СЃСЃР°Р¶РµР№ Рё СЃРєР°Р·РѕС‡РЅС‹С… Р°СЂР°РЅР¶РёСЂРѕРІРѕРє"
-                                             },
-                                             {
-                                                 "style":  "instrument",
-                                                 "text":  "С…СЂСѓСЃС‚Р°Р»СЊРЅС‹Рµ Р±РѕРєР°Р»С‹ РёР»Рё РјСѓР·С‹РєР°Р»СЊРЅР°СЏ С€РєР°С‚СѓР»РєР° РІ С…СЂСѓСЃС‚Р°Р»СЊРЅРѕРј СЂРµРіРёСЃС‚СЂРµ"
-                                             },
-                                             {
-                                                 "style":  "psychoacoustic",
-                                                 "text":  "РїСЂРѕРЅР·РёС‚РµР»СЊРЅС‹Р№, РїСЂРѕР·СЂР°С‡РЅС‹Р№, СЃ С…РѕР»РѕРґРЅС‹Рј Р±Р»РµСЃРєРѕРј, РёРЅС‚Р°СЂРјРѕРЅРёС‡РЅС‹Р№ РІРµСЂС…РЅРёР№ СЂРµРіРёСЃС‚СЂ, Р»С‘РіРєР°СЏ СЌРІРѕР»СЋС†РёСЏ С‚РµРјР±СЂР°"
-                                             },
-                                             {
-                                                 "style":  "emotional",
-                                                 "text":  "РјРµС‡С‚Р°С‚РµР»СЊРЅРѕРµ РѕС‡Р°СЂРѕРІР°РЅРёРµ, РїРµСЂРµР»РёРІР°СЋС‰Р°СЏСЃСЏ РЅРµР¶РЅРѕСЃС‚СЊ, Р·РёРјРЅРµРµ РІРѕР»С€РµР±СЃС‚РІРѕ"
-                                             },
-                                             {
-                                                 "style":  "metaphor",
-                                                 "text":  "СЃРѕР»РЅРµС‡РЅС‹Р№ Р»СѓС‡, РїСЂРѕС€РµРґС€РёР№ СЃРєРІРѕР·СЊ Р»РµРґСЏРЅСѓСЋ РїСЂРёР·РјСѓ Рё СЂР°СЃСЃС‹РїР°РІС€РёР№СЃСЏ РёСЃРєСЂР°РјРё РЅР° СЃРЅРµРіСѓ"
-                                             },
-                                             {
-                                                 "style":  "telegraphic",
-                                                 "text":  "С…СЂСѓСЃС‚Р°Р»СЊРЅС‹Р№ РїСЂРѕР·СЂР°С‡РЅС‹Р№ Р·РІРѕРЅ"
-                                             }
-                                         ]
-                    }
-                ]
+{
+  "version": "3.0",
+  "entries": [
+    {
+      "id": "acoustic_emulation_001",
+      "concept": "classical_guitar_nylon_pluck",
+      "category": "acoustic_emulation",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.68,
+        "osc1_octave": 0.5,
+        "osc2_table": 0.4,
+        "osc2_position": 0.82,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.52,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.786063,
+        "lp_resonance": 0.021053,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.38,
+        "amp_attack": 0.194538,
+        "amp_decay": 0.903609,
+        "amp_sustain": 0.0,
+        "amp_release": 0.750409,
+        "fenv_attack": 0.25,
+        "fenv_decay": 0.514492,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.302936,
+        "fenv_amount": 0.75,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.302936,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.692377,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.28,
+        "reverb_damp": 0.55,
+        "reverb_mix": 0.1
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 68.0,
+        "osc1_octave": 0,
+        "osc2_table": "Acoustic",
+        "osc2_position": 82.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 52.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 4200.013877350147,
+        "lp_resonance": 0.7000035,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 38.0,
+        "amp_attack": 0.003000005178170812,
+        "amp_decay": 2.1999995229433127,
+        "amp_sustain": 0.0,
+        "amp_release": 1.5000047086668604,
+        "fenv_attack": 0.005,
+        "fenv_decay": 0.08000008998118988,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.050000094724579454,
+        "fenv_amount": 2.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.10000018944915891,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 1.929999716918203,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 28.000000000000004,
+        "reverb_damp": 55.00000000000001,
+        "reverb_mix": 10.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "классический щипковый тембр для испанской гитарной музыки, фламенко-аккордов и сольных пассажей"
+        },
+        {
+          "style": "instrument",
+          "text": "нейлоновая классическая гитара в среднем регистре, мягкий щипок медиатором"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "тёплый, округлый, с мягкой атакой и естественным сустейном; характерный струнный обертонный баланс без металлического призвука"
+        },
+        {
+          "style": "emotional",
+          "text": "уютный, расслабляющий, как летний вечер на веранде с гитарой в руках"
+        },
+        {
+          "style": "metaphor",
+          "text": "тёплый деревянный резонанс, пальцы скользят по струнам, звук лениво тает в воздухе"
+        },
+        {
+          "style": "telegraphic",
+          "text": "нейлоновая гитара, мягкий щипок"
+        }
+      ]
+    },
+    {
+      "id": "acoustic_emulation_002",
+      "concept": "steel_acoustic_guitar_strum",
+      "category": "acoustic_emulation",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.78,
+        "osc1_octave": 0.5,
+        "osc2_table": 0.0,
+        "osc2_position": 0.45,
+        "osc2_detune": 0.58,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.35,
+        "mix_noise": 0.08,
+        "lp_cutoff": 0.833512,
+        "lp_resonance": 0.073684,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.42,
+        "amp_attack": 0.150515,
+        "amp_decay": 0.931924,
+        "amp_sustain": 0.0,
+        "amp_release": 0.788257,
+        "fenv_attack": 0.194538,
+        "fenv_decay": 0.490113,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.273578,
+        "fenv_amount": 0.75,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.302936,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.692377,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.42,
+        "reverb_damp": 0.35,
+        "reverb_mix": 0.22
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 78.0,
+        "osc1_octave": 0,
+        "osc2_table": "Basic",
+        "osc2_position": 45.0,
+        "osc2_detune": 7.9999999999999964,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 35.0,
+        "mix_noise": 8.0,
+        "lp_cutoff": 5799.981097758031,
+        "lp_resonance": 1.199998,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 42.0,
+        "amp_attack": 0.0020000000399362093,
+        "amp_decay": 2.8000057443573447,
+        "amp_sustain": 0.0,
+        "amp_release": 2.000000045886563,
+        "fenv_attack": 0.003000005178170812,
+        "fenv_decay": 0.06499998938738258,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.03999992605593906,
+        "fenv_amount": 2.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.10000018944915891,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 1.929999716918203,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 42.0,
+        "reverb_damp": 35.0,
+        "reverb_mix": 22.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "стальная акустическая гитара для кантри, фолка и поп-аккомпанемента с переборами и power-чёрдами"
+        },
+        {
+          "style": "instrument",
+          "text": "стальная струна, бойлерский перебор в среднем регистре с характерным металлическим призвуком и широкой динамикой"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "яркий, звонкий, с выраженным metallic edge и долгим затуханием; небольшой шумовой компонент имитирует трение медиатора о струну"
+        },
+        {
+          "style": "emotional",
+          "text": "открытый, оптимистичный, приглашающий в дорогу — как саундтрек к путешествию через поля"
+        },
+        {
+          "style": "metaphor",
+          "text": "лунный свет на металлических струнах, звон разносится над степью, каждая нота оставляет светящийся след"
+        },
+        {
+          "style": "telegraphic",
+          "text": "стальная гитара, звонкий перебор"
+        }
+      ]
+    },
+    {
+      "id": "acoustic_emulation_003",
+      "concept": "cello_solo_bowed_vibrato",
+      "category": "acoustic_emulation",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.85,
+        "osc1_octave": 0.25,
+        "osc2_table": 0.4,
+        "osc2_position": 0.7,
+        "osc2_detune": 0.54,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.55,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.754999,
+        "lp_resonance": 0.010526,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.4,
+        "amp_attack": 0.674743,
+        "amp_decay": 0.377927,
+        "amp_sustain": 0.82,
+        "amp_release": 0.59201,
+        "fenv_attack": 0.536532,
+        "fenv_decay": 0.609703,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.394128,
+        "fenv_amount": 0.5,
+        "fenv_to_wt": 0.12,
+        "lfo1_rate": 0.822775,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.035,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.500817,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.6,
+        "reverb_damp": 0.48,
+        "reverb_mix": 0.2
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 85.0,
+        "osc1_octave": -1,
+        "osc2_table": "Acoustic",
+        "osc2_position": 70.0,
+        "osc2_detune": 4.0000000000000036,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 55.00000000000001,
+        "mix_noise": 0.0,
+        "lp_cutoff": 3400.009543353813,
+        "lp_resonance": 0.599997,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 40.0,
+        "amp_attack": 0.25000114879917285,
+        "amp_decay": 0.025000036159630246,
+        "amp_sustain": 82.0,
+        "amp_release": 0.4500002676345391,
+        "fenv_attack": 0.0699999942493477,
+        "fenv_decay": 0.18000025010942566,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.09999962110275888,
+        "fenv_amount": 0.0,
+        "fenv_to_wt": 12.0,
+        "lfo1_rate": 5.2000192898219515,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 7.000000000000001,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.44999940478996875,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 60.0,
+        "reverb_damp": 48.0,
+        "reverb_mix": 20.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "смычковая виолончель для камерного соло, оркестровых басовых партий и кинематографических триллер"
+        },
+        {
+          "style": "instrument",
+          "text": "виолончель в нижнем регистре со сливочным вибрато, плавный смычковый вход с долгим сустейном"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "глубокий, густой, с бархатистым вибрато и мягким входом; тёмный обертонный профиль без резкости, тёплый резонирующий низ"
+        },
+        {
+          "style": "emotional",
+          "text": "меланхоличный, повествовательный — голос, который рассказывает историю издалека"
+        },
+        {
+          "style": "metaphor",
+          "text": "гул подземелья, тёмный бархат, смычок медленно скользит по струнам в сыром подвале старого собора"
+        },
+        {
+          "style": "telegraphic",
+          "text": "виолончель, вибрато, меланхоличный бас"
+        }
+      ]
+    },
+    {
+      "id": "acoustic_emulation_004",
+      "concept": "violin_solo_bright_vibrato",
+      "category": "acoustic_emulation",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.78,
+        "osc1_octave": 0.5,
+        "osc2_table": 0.4,
+        "osc2_position": 0.9,
+        "osc2_detune": 0.45,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.48,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.817459,
+        "lp_resonance": 0.010526,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.38,
+        "amp_attack": 0.55103,
+        "amp_decay": 0.351728,
+        "amp_sustain": 0.84,
+        "amp_release": 0.547156,
+        "fenv_attack": 0.488561,
+        "fenv_decay": 0.562097,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.35628,
+        "fenv_amount": 0.5,
+        "fenv_to_wt": 0.15,
+        "lfo1_rate": 0.858068,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.025,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.527218,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.06,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.62,
+        "reverb_damp": 0.42,
+        "reverb_mix": 0.18
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 78.0,
+        "osc1_octave": 0,
+        "osc2_table": "Acoustic",
+        "osc2_position": 90.0,
+        "osc2_detune": -4.999999999999999,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 48.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 5199.985387067894,
+        "lp_resonance": 0.599997,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 38.0,
+        "amp_attack": 0.08000000319489681,
+        "amp_decay": 0.020000061065622413,
+        "amp_sustain": 84.0,
+        "amp_release": 0.3199988168961185,
+        "fenv_attack": 0.045000154446690636,
+        "fenv_decay": 0.11999963982455411,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.07499994953877519,
+        "fenv_amount": 0.0,
+        "fenv_to_wt": 15.0,
+        "lfo1_rate": 6.79998893970158,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 5.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.549999674225409,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 6.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 62.0,
+        "reverb_damp": 42.0,
+        "reverb_mix": 18.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "скрипка соло для классических пассажей, балладных мелодий и эмоциональных сольных линий в поп-музыке"
+        },
+        {
+          "style": "instrument",
+          "text": "скрипка в высокой позиции с ярким, певучим вибрато, быстрый смычковый вход с воздушной верхушкой тембра"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "яркий, проникающий, с активным вибрато и лёгким движением тембра; прозрачный верх, насыщенная середина, открытый резонирующий характер"
+        },
+        {
+          "style": "emotional",
+          "text": "страстный, выразительный — голос, который берёт за душу и не отпускает до последней ноты"
+        },
+        {
+          "style": "metaphor",
+          "text": "серебряная нить, натянутая между небесами и землёй, вибрато мерцает как свет дальнего океана"
+        },
+        {
+          "style": "telegraphic",
+          "text": "скрипка, яркая, певучее вибрато"
+        }
+      ]
+    },
+    {
+      "id": "synth_roles_001",
+      "concept": "pure_sub_sine",
+      "category": "synth_roles",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": false,
+      "params": {
+        "osc1_table": 0.0,
+        "osc1_position": 0.12,
+        "osc1_octave": 0.0,
+        "osc2_table": 0.0,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 1.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.323008,
+        "lp_resonance": 0.0,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.35,
+        "amp_attack": 0.25,
+        "amp_decay": 0.703455,
+        "amp_sustain": 0.88,
+        "amp_release": 0.364771,
+        "fenv_attack": 0.075257,
+        "fenv_decay": 0.459309,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.302936,
+        "fenv_amount": 0.5,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.302936,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.302936,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.2,
+        "reverb_damp": 0.5,
+        "reverb_mix": 0.05
+      },
+      "params_real": {
+        "osc1_table": "Basic",
+        "osc1_position": 12.0,
+        "osc1_octave": -2,
+        "osc2_table": "Basic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 100.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 180.0006030686254,
+        "lp_resonance": 0.5,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 35.0,
+        "amp_attack": 0.005,
+        "amp_decay": 0.39999903574505336,
+        "amp_sustain": 88.0,
+        "amp_release": 0.08000000550638768,
+        "fenv_attack": 0.0009999954048244243,
+        "fenv_decay": 0.050000024106408546,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.050000094724579454,
+        "fenv_amount": 0.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.10000018944915891,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.10000018944915891,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 20.0,
+        "reverb_damp": 50.0,
+        "reverb_mix": 5.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "чистый суббас для клубного трека — заполняет низами без mud-эффекта"
+        },
+        {
+          "style": "instrument",
+          "text": "глубокий синус с бархатной подложкой, аналоговый сабвуферный тон"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "тёмный, низкочастотный, предельно чистый, без обертонов, мгновенная атака"
+        },
+        {
+          "style": "emotional",
+          "text": "ощущение глубины и мощи — фундамент, на котором строится весь трек"
+        },
+        {
+          "style": "metaphor",
+          "text": "подводное течение, которое ощущается всем телом в танцующей толпе"
+        },
+        {
+          "style": "telegraphic",
+          "text": "чистый синусный саб"
+        }
+      ]
+    },
+    {
+      "id": "synth_roles_002",
+      "concept": "reese_bass_washed",
+      "category": "synth_roles",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.0,
+        "osc1_position": 0.58,
+        "osc1_octave": 0.0,
+        "osc2_table": 0.0,
+        "osc2_position": 0.71,
+        "osc2_detune": 0.92,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.85,
+        "mix_osc2": 0.68,
+        "mix_noise": 0.18,
+        "lp_cutoff": 0.567554,
+        "lp_resonance": 0.178947,
+        "hp_cutoff": 0.082267,
+        "hp_resonance": 0.031579,
+        "filter_keytrack": 0.25,
+        "amp_attack": 0.30103,
+        "amp_decay": 0.588297,
+        "amp_sustain": 0.92,
+        "amp_release": 0.418115,
+        "fenv_attack": 0.725772,
+        "fenv_decay": 0.784837,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.538666,
+        "fenv_amount": 0.625,
+        "fenv_to_wt": 0.35,
+        "lfo1_rate": 0.794676,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.06,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.380267,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.22,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.35,
+        "drive_tone": 0.45,
+        "reverb_time": 0.55,
+        "reverb_damp": 0.4,
+        "reverb_mix": 0.28
+      },
+      "params_real": {
+        "osc1_table": "Basic",
+        "osc1_position": 57.99999999999999,
+        "osc1_octave": -2,
+        "osc2_table": "Basic",
+        "osc2_position": 71.0,
+        "osc2_detune": 42.00000000000001,
+        "osc2_semitones": 0,
+        "mix_osc1": 85.0,
+        "mix_osc2": 68.0,
+        "mix_noise": 18.0,
+        "lp_cutoff": 949.9968141453537,
+        "lp_resonance": 2.1999965,
+        "hp_cutoff": 34.999888772240986,
+        "hp_resonance": 0.8000005,
+        "filter_keytrack": 25.0,
+        "amp_attack": 0.008000000319489681,
+        "amp_decay": 0.15000058632629726,
+        "amp_sustain": 92.0,
+        "amp_release": 0.11999970018319361,
+        "fenv_attack": 0.39999816991697473,
+        "fenv_decay": 0.7999973000874506,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.3000009486163781,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 35.0,
+        "lfo1_rate": 4.200000216978936,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 12.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.18000011118360873,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 22.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 35.0,
+        "drive_tone": 45.0,
+        "reverb_time": 55.00000000000001,
+        "reverb_damp": 40.0,
+        "reverb_mix": 28.000000000000004
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "reese-бас для драм-н-бейса и темного техно — с характерным детюном и вибрато"
+        },
+        {
+          "style": "instrument",
+          "text": "расстроенный аналоговый бас с мягким вибрато и дышащим тембром"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "тёмный, гулкий, шероховатый от детюна, биения между осцилляторами, лёгкое вибрато, текстурированный шумом"
+        },
+        {
+          "style": "emotional",
+          "text": "тревожное покачивание в глубине — постоянное движение без возможности остановиться"
+        },
+        {
+          "style": "metaphor",
+          "text": "два генератора в старой студии, которые никак не могут быть в унисон"
+        },
+        {
+          "style": "telegraphic",
+          "text": "расстроенный рейс с вибрато"
+        }
+      ]
+    },
+    {
+      "id": "synth_roles_003",
+      "concept": "acid_303_squelch",
+      "category": "synth_roles",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": false,
+      "params": {
+        "osc1_table": 0.0,
+        "osc1_position": 0.82,
+        "osc1_octave": 0.25,
+        "osc2_table": 0.0,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.95,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.40759,
+        "lp_resonance": 0.978947,
+        "hp_cutoff": 0.0,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.72,
+        "amp_attack": 0.0,
+        "amp_decay": 0.687777,
+        "amp_sustain": 0.0,
+        "amp_release": 0.023987,
+        "fenv_attack": 0.075257,
+        "fenv_decay": 0.609703,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.0,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.23573,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.302936,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.88,
+        "drive_tone": 0.72,
+        "reverb_time": 0.25,
+        "reverb_damp": 0.6,
+        "reverb_mix": 0.08
+      },
+      "params_real": {
+        "osc1_table": "Basic",
+        "osc1_position": 82.0,
+        "osc1_octave": -1,
+        "osc2_table": "Basic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 95.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 319.99979499000955,
+        "lp_resonance": 9.7999965,
+        "hp_cutoff": 20.0,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 72.0,
+        "amp_attack": 0.0005,
+        "amp_decay": 0.349998749497463,
+        "amp_sustain": 0.0,
+        "amp_release": 0.006000007743023485,
+        "fenv_attack": 0.0009999954048244243,
+        "fenv_decay": 0.18000025010942566,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.005,
+        "fenv_amount": 4.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.060000076053636206,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.10000018944915891,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 88.0,
+        "drive_tone": 72.0,
+        "reverb_time": 25.0,
+        "reverb_damp": 60.0,
+        "reverb_mix": 8.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "кислотный бас для чикаго-хауса и рейва — 303-й свист с ядерным резонансом"
+        },
+        {
+          "style": "instrument",
+          "text": "скрипучий фильтрованный синтезатор с характерным «сквишем» при атаке"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "пронзительный, острый, предельно высокий резонанс, резкий свист на срезе, мгновенная атака и короткий стаккато"
+        },
+        {
+          "style": "emotional",
+          "text": "нарастающее напряжение и освобождение — каждый щипок как маленькая победа"
+        },
+        {
+          "style": "metaphor",
+          "text": "зубы младенца, кусающего пластиковое кольцо — визг и хруст полимера"
+        },
+        {
+          "style": "telegraphic",
+          "text": "кислотный 303 сквиш"
+        }
+      ]
+    },
+    {
+      "id": "synth_roles_004",
+      "concept": "acoustic_pluck_bass",
+      "category": "synth_roles",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": false,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.48,
+        "osc1_octave": 0.5,
+        "osc2_table": 0.0,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 1.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.786063,
+        "lp_resonance": 0.094737,
+        "hp_cutoff": 0.119212,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.45,
+        "amp_attack": 0.187047,
+        "amp_decay": 0.760459,
+        "amp_sustain": 0.0,
+        "amp_release": 0.47146,
+        "fenv_attack": 0.095053,
+        "fenv_decay": 0.498814,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.326923,
+        "fenv_amount": 0.8125,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.302936,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.302936,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.35,
+        "reverb_damp": 0.55,
+        "reverb_mix": 0.12
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 48.0,
+        "osc1_octave": 0,
+        "osc2_table": "Basic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 100.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 4200.013877350147,
+        "lp_resonance": 1.4000015000000001,
+        "hp_cutoff": 44.999859074129674,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 45.0,
+        "amp_attack": 0.0027999998258845965,
+        "amp_decay": 0.6500025052748144,
+        "amp_sustain": 0.0,
+        "amp_release": 0.18000045632210643,
+        "fenv_attack": 0.0012000020952300918,
+        "fenv_decay": 0.06999999737736184,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.06000019109987689,
+        "fenv_amount": 2.5,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.10000018944915891,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.10000018944915891,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 35.0,
+        "reverb_damp": 55.00000000000001,
+        "reverb_mix": 12.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "щипковый бас для дип-хауса и трип-хопа — чёткий, упругий, с естественным затуханием"
+        },
+        {
+          "style": "instrument",
+          "text": "бас-гитара пиццикато с лёгким резонансом корпуса"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "яркий, упругий, струнная окраска, быстрый бросок фильтра, короткий decay, чистый без грязи"
+        },
+        {
+          "style": "emotional",
+          "text": "игривый щелчок, эластичная пружина — звук, который поднимает настроение"
+        },
+        {
+          "style": "metaphor",
+          "text": "медиатор по струне — каждый звук как маленькое «дзинь!»"
+        },
+        {
+          "style": "telegraphic",
+          "text": "упругий щипок с фильтром"
+        }
+      ]
+    },
+    {
+      "id": "texture_atmos_001",
+      "concept": "abyssal_infinite_drone",
+      "category": "texture_atmos",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.2,
+        "osc1_position": 0.33,
+        "osc1_octave": 0.0,
+        "osc2_table": 0.2,
+        "osc2_position": 0.58,
+        "osc2_detune": 0.57,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.85,
+        "mix_osc2": 0.72,
+        "mix_noise": 0.08,
+        "lp_cutoff": 0.361577,
+        "lp_resonance": 0.021053,
+        "hp_cutoff": 0.049464,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.15,
+        "amp_attack": 0.98107,
+        "amp_decay": 0.858642,
+        "amp_sustain": 0.98,
+        "amp_release": 0.928334,
+        "fenv_attack": 0.905812,
+        "fenv_decay": 0.947602,
+        "fenv_sustain": 0.45,
+        "fenv_release": 0.812244,
+        "fenv_amount": 0.625,
+        "fenv_to_wt": 0.22,
+        "lfo1_rate": 0.23573,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.15,
+        "lfo2_rate": 0.182385,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.35,
+        "lfo2_to_amp": 0.12,
+        "drive_amount": 0.18,
+        "drive_tone": 0.25,
+        "reverb_time": 0.94,
+        "reverb_damp": 0.72,
+        "reverb_mix": 0.82
+      },
+      "params_real": {
+        "osc1_table": "Organ",
+        "osc1_position": 33.0,
+        "osc1_octave": -2,
+        "osc2_table": "Organ",
+        "osc2_position": 57.99999999999999,
+        "osc2_detune": 6.999999999999995,
+        "osc2_semitones": 0,
+        "mix_osc1": 85.0,
+        "mix_osc2": 72.0,
+        "mix_noise": 8.0,
+        "lp_cutoff": 234.00015199119343,
+        "lp_resonance": 0.7000035,
+        "hp_cutoff": 28.000039702680247,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 15.0,
+        "amp_attack": 4.2000069043994035,
+        "amp_decay": 1.4999991137608413,
+        "amp_sustain": 98.0,
+        "amp_release": 5.800005218703896,
+        "fenv_attack": 2.0999937603822327,
+        "fenv_decay": 3.2000102841272198,
+        "fenv_sustain": 45.0,
+        "fenv_release": 2.4000031522733396,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 22.0,
+        "lfo1_rate": 0.060000076053636206,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.3,
+        "lfo2_rate": 0.039999849358831344,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 35.0,
+        "lfo2_to_amp": 12.0,
+        "drive_amount": 18.0,
+        "drive_tone": 25.0,
+        "reverb_time": 94.0,
+        "reverb_damp": 72.0,
+        "reverb_mix": 82.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "бесконечный суббасовый дрон для медленных даунтемпо-треков и звуковых инсталляций"
+        },
+        {
+          "style": "instrument",
+          "text": "низкий органный хор с тяжёлым сустейном, растворяющийся в реверберации"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "глубокий, массивный, с медленным наплывом и едва заметным дыханием тембра; тёмный и гулкий"
+        },
+        {
+          "style": "emotional",
+          "text": "ощущение бездонности, медитативная тишина с низкочастотным давлением, как будто звук приходит из земли"
+        },
+        {
+          "style": "metaphor",
+          "text": "гул пещеры в глубинах, где время течёт иначе"
+        },
+        {
+          "style": "telegraphic",
+          "text": "бездонный органный дрон"
+        }
+      ]
+    },
+    {
+      "id": "texture_atmos_002",
+      "concept": "crystalline_breath_pad",
+      "category": "texture_atmos",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.4,
+        "osc1_position": 0.15,
+        "osc1_octave": 0.75,
+        "osc2_table": 0.4,
+        "osc2_position": 0.42,
+        "osc2_detune": 0.32,
+        "osc2_semitones": 0.75,
+        "mix_osc1": 0.65,
+        "mix_osc2": 0.48,
+        "mix_noise": 0.03,
+        "lp_cutoff": 0.897119,
+        "lp_resonance": 0.0,
+        "hp_cutoff": 0.323008,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.4,
+        "amp_attack": 0.889076,
+        "amp_decay": 0.751061,
+        "amp_sustain": 0.88,
+        "amp_release": 0.885869,
+        "fenv_attack": 0.80103,
+        "fenv_decay": 0.898147,
+        "fenv_sustain": 0.3,
+        "fenv_release": 0.750409,
+        "fenv_amount": 0.625,
+        "fenv_to_wt": 0.15,
+        "lfo1_rate": 0.326923,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.02,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.438396,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.18,
+        "lfo2_to_amp": 0.08,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.78,
+        "reverb_damp": 0.15,
+        "reverb_mix": 0.68
+      },
+      "params_real": {
+        "osc1_table": "Acoustic",
+        "osc1_position": 15.0,
+        "osc1_octave": 1,
+        "osc2_table": "Acoustic",
+        "osc2_position": 42.0,
+        "osc2_detune": -18.0,
+        "osc2_semitones": 12,
+        "mix_osc1": 65.0,
+        "mix_osc2": 48.0,
+        "mix_noise": 3.0,
+        "lp_cutoff": 8939.990998007182,
+        "lp_resonance": 0.5,
+        "hp_cutoff": 180.0006030686254,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 40.0,
+        "amp_attack": 1.8000062138103365,
+        "amp_decay": 0.6000011881944509,
+        "amp_sustain": 88.0,
+        "amp_release": 4.20000827020599,
+        "fenv_attack": 0.8000000319489681,
+        "fenv_decay": 2.0999976681180454,
+        "fenv_sustain": 30.0,
+        "fenv_release": 1.5000047086668604,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 15.0,
+        "lfo1_rate": 0.12000038219975379,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 4.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.2800002028539714,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 18.0,
+        "lfo2_to_amp": 8.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 78.0,
+        "reverb_damp": 15.0,
+        "reverb_mix": 68.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "воздушный амбиент-пэд для верхнего регистра, парящий над драм-машиной"
+        },
+        {
+          "style": "instrument",
+          "text": "хрустальный арфо-пианинный слой с лёгким мерцанием и высокой реверберацией"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "светлый, сверкающий, с мягкой атакой и плавным затуханием; открытый, воздушный, чуть звенящий"
+        },
+        {
+          "style": "emotional",
+          "text": "мечтательное парение, чувство лёгкости и свободы, как утренний свет в высоких горах"
+        },
+        {
+          "style": "metaphor",
+          "text": "лучи рассвета, пробивающиеся сквозь кристаллический туман"
+        },
+        {
+          "style": "telegraphic",
+          "text": "светлый парящий пэд"
+        }
+      ]
+    },
+    {
+      "id": "texture_atmos_003",
+      "concept": "void_cosmic_dust",
+      "category": "texture_atmos",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.8,
+        "osc1_position": 0.55,
+        "osc1_octave": 0.5,
+        "osc2_table": 1.0,
+        "osc2_position": 0.28,
+        "osc2_detune": 0.82,
+        "osc2_semitones": 0.395833,
+        "mix_osc1": 0.7,
+        "mix_osc2": 0.45,
+        "mix_noise": 0.22,
+        "lp_cutoff": 0.847984,
+        "lp_resonance": 0.073684,
+        "hp_cutoff": 0.229058,
+        "hp_resonance": 0.021053,
+        "filter_keytrack": 0.55,
+        "amp_attack": 0.807612,
+        "amp_decay": 0.931924,
+        "amp_sustain": 0.75,
+        "amp_release": 0.861882,
+        "fenv_attack": 0.725772,
+        "fenv_decay": 0.886396,
+        "fenv_sustain": 0.55,
+        "fenv_release": 0.794676,
+        "fenv_amount": 0.75,
+        "fenv_to_wt": 0.4,
+        "lfo1_rate": 0.38738,
+        "lfo1_shape": 0.33,
+        "lfo1_to_pitch": 0.06,
+        "lfo1_to_filter": 0.25,
+        "lfo2_rate": 0.467753,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.55,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.35,
+        "drive_tone": 0.78,
+        "reverb_time": 0.88,
+        "reverb_damp": 0.38,
+        "reverb_mix": 0.75
+      },
+      "params_real": {
+        "osc1_table": "Metallic",
+        "osc1_position": 55.00000000000001,
+        "osc1_octave": 0,
+        "osc2_table": "Digital",
+        "osc2_position": 28.000000000000004,
+        "osc2_detune": 31.999999999999996,
+        "osc2_semitones": -5,
+        "mix_osc1": 70.0,
+        "mix_osc2": 45.0,
+        "mix_noise": 22.0,
+        "lp_cutoff": 6400.005921212531,
+        "lp_resonance": 1.199998,
+        "hp_cutoff": 94.99984055697787,
+        "hp_resonance": 0.7000035,
+        "filter_keytrack": 55.00000000000001,
+        "amp_attack": 0.8499981966828162,
+        "amp_decay": 2.8000057443573447,
+        "amp_sustain": 75.0,
+        "amp_release": 3.500002375071562,
+        "fenv_attack": 0.39999816991697473,
+        "fenv_decay": 1.8999939408033661,
+        "fenv_sustain": 55.00000000000001,
+        "fenv_release": 2.100000108489468,
+        "fenv_amount": 2.0,
+        "fenv_to_wt": 40.0,
+        "lfo1_rate": 0.18999973696626665,
+        "lfo1_shape": "triangle",
+        "lfo1_to_pitch": 12.0,
+        "lfo1_to_filter": 0.5,
+        "lfo2_rate": 0.3499989033357889,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 55.00000000000001,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 35.0,
+        "drive_tone": 78.0,
+        "reverb_time": 88.0,
+        "reverb_damp": 38.0,
+        "reverb_mix": 75.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "космическая текстурная подложка с эволюционирующим тембром для sci-fi сцен и спейс-музыки"
+        },
+        {
+          "style": "instrument",
+          "text": "металлический зонный слой с FM-обертонами и цифровым мерцанием, обработанный дисторшном"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "холодный, зернистый, с активной тембральной эволюцией; диссонирующий, но гипнотический, неземной"
+        },
+        {
+          "style": "emotional",
+          "text": "трепет перед бесконечностью космоса, ощущение холодной красоты и космического одиночества"
+        },
+        {
+          "style": "metaphor",
+          "text": "космическая пыль в лучах далёкой звезды, мерцающая в абсолютной тишине вакуума"
+        },
+        {
+          "style": "telegraphic",
+          "text": "холодная космическая текстура"
+        }
+      ]
+    },
+    {
+      "id": "texture_atmos_004",
+      "concept": "vowel_breath_evolution",
+      "category": "texture_atmos",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": false,
+      "params": {
+        "osc1_table": 0.6,
+        "osc1_position": 0.35,
+        "osc1_octave": 0.25,
+        "osc2_table": 0.6,
+        "osc2_position": 0.72,
+        "osc2_detune": 0.22,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.15,
+        "lp_cutoff": 0.786063,
+        "lp_resonance": 0.031579,
+        "hp_cutoff": 0.263401,
+        "hp_resonance": 0.073684,
+        "filter_keytrack": 0.25,
+        "amp_attack": 0.769795,
+        "amp_decay": 0.703455,
+        "amp_sustain": 0.82,
+        "amp_release": 0.832524,
+        "fenv_attack": 0.694538,
+        "fenv_decay": 0.913825,
+        "fenv_sustain": 0.4,
+        "fenv_release": 0.774395,
+        "fenv_amount": 0.625,
+        "fenv_to_wt": 0.68,
+        "lfo1_rate": 0.509308,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.03,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.406668,
+        "lfo2_shape": 0.33,
+        "lfo2_to_wt": 0.45,
+        "lfo2_to_amp": 0.05,
+        "drive_amount": 0.08,
+        "drive_tone": 0.4,
+        "reverb_time": 0.82,
+        "reverb_damp": 0.55,
+        "reverb_mix": 0.72
+      },
+      "params_real": {
+        "osc1_table": "Vocal",
+        "osc1_position": 35.0,
+        "osc1_octave": -1,
+        "osc2_table": "Vocal",
+        "osc2_position": 72.0,
+        "osc2_detune": -28.000000000000004,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 15.0,
+        "lp_cutoff": 4200.013877350147,
+        "lp_resonance": 0.8000005,
+        "hp_cutoff": 119.99977365937326,
+        "hp_resonance": 1.199998,
+        "filter_keytrack": 25.0,
+        "amp_attack": 0.599998278524058,
+        "amp_decay": 0.39999903574505336,
+        "amp_sustain": 82.0,
+        "amp_release": 2.7999914194092783,
+        "fenv_attack": 0.3000005178170812,
+        "fenv_decay": 2.4000001243437783,
+        "fenv_sustain": 40.0,
+        "fenv_release": 1.799994291681534,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 68.0,
+        "lfo1_rate": 0.47999972109923356,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 6.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.22000029657312348,
+        "lfo2_shape": "triangle",
+        "lfo2_to_wt": 45.0,
+        "lfo2_to_amp": 5.0,
+        "drive_amount": 8.0,
+        "drive_tone": 40.0,
+        "reverb_time": 82.0,
+        "reverb_damp": 55.00000000000001,
+        "reverb_mix": 72.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "формантная вокальная текстура с медленным движением гласных для эмбиента и вокала"
+        },
+        {
+          "style": "instrument",
+          "text": "хоровой голос без слов, поющий гласные У→О→А с едва уловимым дыханием"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "тёплый, органический, с живым движением формант; бархатистый, с придыханием, эмоционально окрашенный"
+        },
+        {
+          "style": "emotional",
+          "text": "томящаяся красота человеческого голоса, тоска по чему-то утраченному, щемящая нежность"
+        },
+        {
+          "style": "metaphor",
+          "text": "шёпот призрака в пустом зале, голоса без слов, растворяющиеся в эхе"
+        },
+        {
+          "style": "telegraphic",
+          "text": "поющий формантный пэд"
+        }
+      ]
+    },
+    {
+      "id": "percussive_fx_001",
+      "concept": "temple_gong_ceremonial",
+      "category": "percussive_fx",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": false,
+      "params": {
+        "osc1_table": 0.8,
+        "osc1_position": 0.2,
+        "osc1_octave": 0.25,
+        "osc2_table": 0.8,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.0,
+        "mix_noise": 0.08,
+        "lp_cutoff": 0.75926,
+        "lp_resonance": 0.210526,
+        "hp_cutoff": 0.101898,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.3,
+        "amp_attack": 0.25,
+        "amp_decay": 0.98763,
+        "amp_sustain": 0.6,
+        "amp_release": 0.932794,
+        "fenv_attack": 0.30103,
+        "fenv_decay": 0.784837,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.750409,
+        "fenv_amount": 0.6875,
+        "fenv_to_wt": 0.3,
+        "lfo1_rate": 0.273578,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.01,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.211743,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.15,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.25,
+        "drive_tone": 0.3,
+        "reverb_time": 0.92,
+        "reverb_damp": 0.35,
+        "reverb_mix": 0.65
+      },
+      "params_real": {
+        "osc1_table": "Metallic",
+        "osc1_position": 20.0,
+        "osc1_octave": -1,
+        "osc2_table": "Metallic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 0.0,
+        "mix_noise": 8.0,
+        "lp_cutoff": 3500.0009592734896,
+        "lp_resonance": 2.499997,
+        "hp_cutoff": 40.0001296415411,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 30.0,
+        "amp_attack": 0.005,
+        "amp_decay": 4.5000127614781285,
+        "amp_sustain": 60.0,
+        "amp_release": 5.999996238421213,
+        "fenv_attack": 0.008000000319489681,
+        "fenv_decay": 0.7999973000874506,
+        "fenv_sustain": 0.0,
+        "fenv_release": 1.5000047086668604,
+        "fenv_amount": 1.5,
+        "fenv_to_wt": 30.0,
+        "lfo1_rate": 0.07999985211187811,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 2.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.04999999885283595,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 15.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 25.0,
+        "drive_tone": 30.0,
+        "reverb_time": 92.0,
+        "reverb_damp": 35.0,
+        "reverb_mix": 65.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "глухой ритуальный гонг для медитативных секвенций и переходов"
+        },
+        {
+          "style": "instrument",
+          "text": "тибетский храмовый гонг с мощным резонансным телом"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "низкий, массивный, гулкий, с медленным затуханием и тёплым перегруженным afterglow"
+        },
+        {
+          "style": "emotional",
+          "text": "ощущение древнего ритуала, сакральное и торжественное погружение в звук"
+        },
+        {
+          "style": "metaphor",
+          "text": "волна медного звона, прокатившаяся по сводам заброшенного храма"
+        },
+        {
+          "style": "telegraphic",
+          "text": "глухой ритуальный гонг"
+        }
+      ]
+    },
+    {
+      "id": "percussive_fx_002",
+      "concept": "crystal_chime_ethereal",
+      "category": "percussive_fx",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.8,
+        "osc1_position": 0.65,
+        "osc1_octave": 1.0,
+        "osc2_table": 0.0,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.75,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.35,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.940394,
+        "lp_resonance": 0.0,
+        "hp_cutoff": 0.203795,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.7,
+        "amp_attack": 0.075257,
+        "amp_decay": 0.940024,
+        "amp_sustain": 0.0,
+        "amp_release": 0.817615,
+        "fenv_attack": 0.075257,
+        "fenv_decay": 0.669679,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.605872,
+        "fenv_amount": 0.5,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.326923,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.423486,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.2,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.78,
+        "reverb_damp": 0.2,
+        "reverb_mix": 0.72
+      },
+      "params_real": {
+        "osc1_table": "Metallic",
+        "osc1_position": 65.0,
+        "osc1_octave": 2,
+        "osc2_table": "Basic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 12,
+        "mix_osc1": 80.0,
+        "mix_osc2": 35.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 12000.018790160173,
+        "lp_resonance": 0.5,
+        "hp_cutoff": 79.9999743737471,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 70.0,
+        "amp_attack": 0.0009999954048244243,
+        "amp_decay": 2.999995334756458,
+        "amp_sustain": 0.0,
+        "amp_release": 2.500009415108498,
+        "fenv_attack": 0.0009999954048244243,
+        "fenv_decay": 0.30000088337477065,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.5000018944933836,
+        "fenv_amount": 0.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.12000038219975379,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.2499999885283596,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 20.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 78.0,
+        "reverb_damp": 20.0,
+        "reverb_mix": 72.0
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "воздушный хрустальный звон для арпеджио и верхних партий в эмбиент-композициях"
+        },
+        {
+          "style": "instrument",
+          "text": "хрустальные бокалы или водяные колокольчики в высокой октаве"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "высокий, прозрачный, искрящийся, с мягким сустейном и долгим диффузным хвостом"
+        },
+        {
+          "style": "emotional",
+          "text": "мечтательное мерцание, лёгкая ностальгия и умиротворение"
+        },
+        {
+          "style": "metaphor",
+          "text": "лунный свет, рассыпавшийся на осколки в тихом пруду ночного сада"
+        },
+        {
+          "style": "telegraphic",
+          "text": "хрустальный мерцающий звон"
+        }
+      ]
+    },
+    {
+      "id": "percussive_fx_003",
+      "concept": "triangle_metal_ping",
+      "category": "percussive_fx",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.8,
+        "osc1_position": 0.4,
+        "osc1_octave": 0.75,
+        "osc2_table": 0.8,
+        "osc2_position": 0.6,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.4,
+        "mix_noise": 0.0,
+        "lp_cutoff": 0.973197,
+        "lp_resonance": 0.0,
+        "hp_cutoff": 0.296205,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.85,
+        "amp_attack": 0.0,
+        "amp_decay": 0.918618,
+        "amp_sustain": 0.0,
+        "amp_release": 0.721051,
+        "fenv_attack": 0.0,
+        "fenv_decay": 0.459309,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.538666,
+        "fenv_amount": 0.75,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.302936,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.302936,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 0.5,
+        "reverb_time": 0.55,
+        "reverb_damp": 0.25,
+        "reverb_mix": 0.28
+      },
+      "params_real": {
+        "osc1_table": "Metallic",
+        "osc1_position": 40.0,
+        "osc1_octave": 1,
+        "osc2_table": "Metallic",
+        "osc2_position": 60.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 40.0,
+        "mix_noise": 0.0,
+        "lp_cutoff": 14999.954549357453,
+        "lp_resonance": 0.5,
+        "hp_cutoff": 150.00004804923958,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 85.0,
+        "amp_attack": 0.0005,
+        "amp_decay": 2.500002410641436,
+        "amp_sustain": 0.0,
+        "amp_release": 1.1999992752161628,
+        "fenv_attack": 0.0005,
+        "fenv_decay": 0.050000024106408546,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.3000009486163781,
+        "fenv_amount": 2.0,
+        "fenv_to_wt": 0.0,
+        "lfo1_rate": 0.10000018944915891,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 0.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.10000018944915891,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 0.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.0,
+        "drive_tone": 50.0,
+        "reverb_time": 55.00000000000001,
+        "reverb_damp": 25.0,
+        "reverb_mix": 28.000000000000004
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "классический треугольник для оркестровых партий и ритмических акцентов"
+        },
+        {
+          "style": "instrument",
+          "text": "металлический треугольник с чистым, ярким ударом"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "мгновенная атака, пронзительный, чистый, с чётким металлическим призвуком и коротким сустейном"
+        },
+        {
+          "style": "emotional",
+          "text": "игривый и лёгкий, вызывает ощущение праздника и движения"
+        },
+        {
+          "style": "metaphor",
+          "text": "солнечный луч, ударивший в подвешенный на верёвке кусок блестящего металла"
+        },
+        {
+          "style": "telegraphic",
+          "text": "чистый металлический пинг"
+        }
+      ]
+    },
+    {
+      "id": "percussive_fx_004",
+      "concept": "long_bell_meditative",
+      "category": "percussive_fx",
+      "source": "claude-opus-4-8[1m]",
+      "osc2_active": true,
+      "params": {
+        "osc1_table": 0.8,
+        "osc1_position": 0.3,
+        "osc1_octave": 0.5,
+        "osc2_table": 0.0,
+        "osc2_position": 0.0,
+        "osc2_detune": 0.5,
+        "osc2_semitones": 0.5,
+        "mix_osc1": 0.8,
+        "mix_osc2": 0.5,
+        "mix_noise": 0.05,
+        "lp_cutoff": 0.811694,
+        "lp_resonance": 0.315789,
+        "hp_cutoff": 0.059606,
+        "hp_resonance": 0.0,
+        "filter_keytrack": 0.4,
+        "amp_attack": 0.194538,
+        "amp_decay": 1.0,
+        "amp_sustain": 0.0,
+        "amp_release": 0.87945,
+        "fenv_attack": 0.25,
+        "fenv_decay": 0.858642,
+        "fenv_sustain": 0.0,
+        "fenv_release": 0.817615,
+        "fenv_amount": 0.625,
+        "fenv_to_wt": 0.4,
+        "lfo1_rate": 0.211743,
+        "lfo1_shape": 0.0,
+        "lfo1_to_pitch": 0.015,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.273578,
+        "lfo2_shape": 0.0,
+        "lfo2_to_wt": 0.25,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 0.08,
+        "drive_tone": 0.35,
+        "reverb_time": 0.85,
+        "reverb_damp": 0.45,
+        "reverb_mix": 0.58
+      },
+      "params_real": {
+        "osc1_table": "Metallic",
+        "osc1_position": 30.0,
+        "osc1_octave": 0,
+        "osc2_table": "Basic",
+        "osc2_position": 0.0,
+        "osc2_detune": 0.0,
+        "osc2_semitones": 0,
+        "mix_osc1": 80.0,
+        "mix_osc2": 50.0,
+        "mix_noise": 5.0,
+        "lp_cutoff": 5000.010485808579,
+        "lp_resonance": 3.4999955,
+        "hp_cutoff": 29.999953024673115,
+        "hp_resonance": 0.5,
+        "filter_keytrack": 40.0,
+        "amp_attack": 0.003000005178170812,
+        "amp_decay": 5.0,
+        "amp_sustain": 0.0,
+        "amp_release": 4.000007761512957,
+        "fenv_attack": 0.005,
+        "fenv_decay": 1.4999991137608413,
+        "fenv_sustain": 0.0,
+        "fenv_release": 2.500009415108498,
+        "fenv_amount": 1.0,
+        "fenv_to_wt": 40.0,
+        "lfo1_rate": 0.04999999885283595,
+        "lfo1_shape": "sine",
+        "lfo1_to_pitch": 3.0,
+        "lfo1_to_filter": 0.0,
+        "lfo2_rate": 0.07999985211187811,
+        "lfo2_shape": "sine",
+        "lfo2_to_wt": 25.0,
+        "lfo2_to_amp": 0.0,
+        "drive_amount": 8.0,
+        "drive_tone": 35.0,
+        "reverb_time": 85.0,
+        "reverb_damp": 45.0,
+        "reverb_mix": 57.99999999999999
+      },
+      "descriptions": [
+        {
+          "style": "functional",
+          "text": "длинно звучащий колокол для медитативных секвенций и атмосферных подложек"
+        },
+        {
+          "style": "instrument",
+          "text": "большой церковный колокол с глубоким основным тоном и долгим растворением в пространстве"
+        },
+        {
+          "style": "psychoacoustic",
+          "text": "глубокий, тёплый, с выраженным резонансом на срезе фильтра, медленное затухание с лёгким вибрато и breathing тембра"
+        },
+        {
+          "style": "emotional",
+          "text": "меланхоличное одиночество, тихая печаль и светлая скорбь торжественного ритуала"
+        },
+        {
+          "style": "metaphor",
+          "text": "последний удар колокола над заснеженной долиной — звук тает в морозном воздухе"
+        },
+        {
+          "style": "telegraphic",
+          "text": "длинный тёплый колокол"
+        }
+      ]
+    }
+  ]
 }

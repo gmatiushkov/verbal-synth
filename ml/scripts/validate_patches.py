@@ -108,9 +108,10 @@ def consistency_flags(entry, real):
     rate_hz = real.get("lfo1_rate", 0)           # Гц
     if vib and pitch_cents < 2 and real.get("lfo1_to_filter", 0) < 0.05 and real.get("lfo2_to_wt", 0) < 1:
         flags.append("описание обещает вибрато/движение, но модуляция ≈0")
-    # вибрато заявлено, но LFO слишком медленный (< ~3 Гц → плавающий строй)
-    if vib and pitch_cents >= 2 and rate_hz < 3:
-        flags.append(f"вибрато: lfo1_rate {rate_hz:.2f}Гц медленный — будет 'плавающий строй' (вибрато обычно в районе нескольких Гц)")
+    # вибрато заявлено с ЗАМЕТНОЙ глубиной, но LFO медленный → 'плавающий строй', а не вибрато.
+    # Малая глубина (<15ц) на медленном LFO = намеренный тонкий дрейф (дыхание дрона/пэда) — не флажим.
+    if vib and pitch_cents >= 15 and rate_hz < 3:
+        flags.append(f"вибрато: глубина {pitch_cents:.0f}ц при lfo1_rate {rate_hz:.2f}Гц — медленно: будет 'плавающий строй', а не вибрато (вибрато ~5-6 Гц)")
     # обещана плавная/нарастающая атака, но amp_attack почти мгновенный
     atk_ms = real.get("amp_attack", 0) * 1000.0
     soft_atk = any(w in text for w in (
