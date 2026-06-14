@@ -36,6 +36,8 @@ import sys
 import time
 from pathlib import Path
 
+import param_convert as pc  # конвертер реальные↔[0,1] (зеркало C++)
+
 # ── Пути ──────────────────────────────────────────────────────────────────────
 ROOT      = Path(__file__).resolve().parents[1]          # .../ml
 CONFIG    = ROOT / "config"
@@ -46,12 +48,20 @@ SYS_TMPL  = CONFIG / "system_prompt.md"
 WT_DOC    = CONFIG / "wavetable_doc.json"
 API_CFG   = CONFIG / "api_config.local.json"
 
+# Заводские пресеты для few-shot (реальные звучащие патчи) — берутся из сборки.
+PRESET_DIRS = [
+    ROOT.parent / "build" / "VerbalSynth_artefacts" / "Release" / "Patches",
+    ROOT.parent / "build" / "VerbalSynth_artefacts" / "Debug" / "Patches",
+]
+FEWSHOT_PRESETS = ["Piano", "Violin", "Overdrive Guitar"]
+
 DEFAULT_MODEL = "claude-opus-4-8"
 
 
 # ── Утилиты загрузки ──────────────────────────────────────────────────────────
 def load_json(path: Path):
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig: терпим к BOM (его добавляет, напр., PowerShell Out-File -Encoding utf8)
+    with open(path, encoding="utf-8-sig") as f:
         return json.load(f)
 
 
@@ -68,79 +78,115 @@ def load_api_config():
     return base, token, (model or DEFAULT_MODEL)
 
 
-# ── Сборка system-промпта ─────────────────────────────────────────────────────
+# ── Сборка system-промпта (реальные единицы) ──────────────────────────────────
+def _range_str(p) -> str:
+    """Человекочитаемый диапазон параметра для таблицы промпта."""
+    kind = p["kind"]
+    if kind in ("log", "linpct", "morphpct"):
+        u = p.get("unit", "")
+        return f"{p['real_min']}…{p['real_max']} {u}".strip()
+    if kind == "q":
+        return f"{p['real_min']}…{p['real_max']} Q"
+    if kind == "detune":
+        return f"{p['real_min']}…{p['real_max']} центов"
+    if kind == "semis":
+        return f"{p['real_min']}…{p['real_max']} полутонов (целые)"
+    if kind == "octave":
+        return "−2…+2 октавы (целые)"
+    if kind == "fenvamt":
+        return f"{p['real_min']}…{p['real_max']} октав (0=нейтрально)"
+    if kind == "modsemi":
+        return f"{p['real_min']}…{p['real_max']} центов"
+    if kind == "modoct":
+        return f"{p['real_min']}…{p['real_max']} октав"
+    if kind == "bank":
+        return "имя банка"
+    if kind == "lfoshape":
+        return "имя формы"
+    return ""
+
+
 def build_param_table(param_ref) -> str:
-    """Компактный, но полный список параметров — desc уже содержит ключевые точки."""
     lines = []
     for p in param_ref["params"]:
-        extra = ""
-        if "min" in p and "max" in p:
-            extra = f" [{p['min']}–{p['max']} {p.get('unit', '')}]".rstrip()
-        lines.append(f"[{p['i']:>2}] {p['name']} ({p['kind']}){extra}: {p['desc']}")
+        rng = _range_str(p)
+        rng = f" [{rng}]" if rng else ""
+        lines.append(f"[{p['i']:>2}] {p['name']}{rng}: {p['desc']}")
     return "\n".join(lines)
 
 
 def build_wavetable_doc(wt_doc, param_ref) -> str:
     """name + perceptual_summary + position_map для каждого банка."""
-    # name -> селектор osc_table (из param_reference.banks: {"0.0":"Basic",...})
-    name_to_sel = {v: k for k, v in param_ref["banks"].items()}
     blocks = []
     for bank in wt_doc["banks"]:
         name = bank["name"]
-        sel = name_to_sel.get(name, "?")
         ps = bank.get("perceptual_summary", "").strip()
         pm = bank.get("position_map", {})
         pm_lines = "; ".join(f"{k} — {v}" for k, v in pm.items())
-        blocks.append(f"### {name} (osc_table={sel})\n{ps}\nПозиция (морф): {pm_lines}")
+        blocks.append(f"### {name}\n{ps}\nПозиция (морф 0–100%): {pm_lines}")
     return "\n\n".join(blocks)
+
+
+def _load_preset(name):
+    for d in PRESET_DIRS:
+        f = d / f"{name}.json"
+        if f.exists():
+            return load_json(f)
+    return None
+
+
+def _fewshot_value(pname, real):
+    """Аккуратно округлённое реальное значение для few-shot (в единицах, что просим у Claude)."""
+    if isinstance(real, str):
+        return real
+    unit = pc.unit_of(pname)
+    kind = pc.PARAM_SPEC[pname][0]
+    if kind in ("octave", "semis"):
+        return f"{int(round(real))}"
+    if unit == "s":                       # времена в секундах, 3 значимых
+        if real < 0.01:
+            return f"{real:.4f}"
+        if real < 1:
+            return f"{real:.3f}"
+        return f"{real:.2f}"
+    if unit == "Hz":
+        return f"{real:.2f}" if real < 100 else f"{real:.0f}"
+    if unit == "Q":
+        return f"{real:.1f}"
+    # проценты, центы, октавы-модуляции → целое
+    return f"{round(real)}"
+
+
+def build_fewshot() -> str:
+    """Реальные заводские патчи → блок few-shot в реальных единицах (аккуратно округлённый)."""
+    blocks = []
+    for name in FEWSHOT_PRESETS:
+        norm = _load_preset(name)
+        if not norm:
+            continue
+        lines = [f"### {name}"]
+        for pname in pc.PARAM_ORDER:
+            if pname not in norm:
+                continue
+            real = pc.norm_to_real(pname, norm[pname])
+            val = _fewshot_value(pname, real)
+            unit = "" if isinstance(real, str) else f" {pc.unit_of(pname)}"
+            lines.append(f"  {pname}: {val}{unit}")
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks) if blocks else "(эталоны недоступны)"
 
 
 def build_system_prompt(param_ref, wt_doc) -> str:
     tmpl = SYS_TMPL.read_text(encoding="utf-8")
     tmpl = tmpl.replace("{{PARAM_TABLE}}", build_param_table(param_ref))
     tmpl = tmpl.replace("{{WAVETABLE_DOC}}", build_wavetable_doc(wt_doc, param_ref))
+    tmpl = tmpl.replace("{{BANK_NAMES}}", ", ".join(pc.BANK_NAMES))
+    tmpl = tmpl.replace("{{LFO_SHAPES}}", ", ".join(pc.LFO_SHAPE_NAMES))
+    tmpl = tmpl.replace("{{FEWSHOT}}", build_fewshot())
     return tmpl
 
 
-# ── JSON-схема вывода (structured outputs) ────────────────────────────────────
 STYLES = ["functional", "instrument", "psychoacoustic", "emotional", "metaphor", "telegraphic"]
-
-
-def build_output_schema(param_ref):
-    names = [p["name"] for p in param_ref["params"]]
-    params_schema = {
-        "type": "object",
-        "properties": {n: {"type": "number", "minimum": 0, "maximum": 1} for n in names},
-        "required": names,
-        "additionalProperties": False,
-    }
-    desc_schema = {
-        "type": "object",
-        "properties": {
-            "style": {"type": "string", "enum": STYLES},
-            "text": {"type": "string"},
-        },
-        "required": ["style", "text"],
-        "additionalProperties": False,
-    }
-    patch_schema = {
-        "type": "object",
-        "properties": {
-            "concept": {"type": "string"},
-            "category": {"type": "string"},
-            "osc2_active": {"type": "boolean"},
-            "params": params_schema,
-            "descriptions": {"type": "array", "items": desc_schema, "minItems": 6, "maxItems": 6},
-        },
-        "required": ["concept", "category", "osc2_active", "params", "descriptions"],
-        "additionalProperties": False,
-    }
-    return {
-        "type": "object",
-        "properties": {"patches": {"type": "array", "items": patch_schema}},
-        "required": ["patches"],
-        "additionalProperties": False,
-    }
 
 
 # ── User-сообщение на батч ────────────────────────────────────────────────────
@@ -155,8 +201,9 @@ def build_user_message(category, targets_slice, n, axes) -> str:
         f"Обязательно варьируй патчи по осям разнообразия:\n{axes_txt}\n\n"
         f"Требования: никаких близнецов (соседние патчи различаются ≥3 осей); "
         f"часть моно-OSC, часть слойные (OSC2); используй разные банки/приёмы там, где это уместно. "
-        f"Для каждого патча — все 38 параметров (значения дискретных строго из snap-наборов) и 6 описаний "
-        f"({', '.join(STYLES)}). Верни СТРОГО JSON по схеме, без текста вне JSON."
+        f"Для каждого патча — все 38 параметров в РЕАЛЬНЫХ единицах (банки и формы LFO — строками; "
+        f"октавы/полутоны — целыми; времена в секундах) и 6 описаний "
+        f"({', '.join(STYLES)}). Верни СТРОГО JSON по формату из system-промпта, без текста вне JSON."
     )
 
 
@@ -174,65 +221,66 @@ def extract_json(text: str):
     return json.loads(text)
 
 
-def call_model(client, model, system_blocks, user_text, schema, max_tokens, effort, verbose):
+def _one_call(client, kwargs, anthropic, verbose):
+    """Один запрос (стрим → create fallback). Возвращает (data, usage). Бросает при пустом/битом."""
+    try:
+        with client.messages.stream(**kwargs) as stream:
+            msg = stream.get_final_message()
+    except (anthropic.APIError, TypeError) as stream_err:
+        if verbose:
+            print(f"    [stream→create fallback: {type(stream_err).__name__}]")
+        msg = client.messages.create(**kwargs)
+    text = "".join(b.text for b in msg.content if getattr(b, "type", None) == "text")
+    if not text.strip():
+        raise ValueError("пустой текстовый ответ")
+    return extract_json(text), getattr(msg, "usage", None)
+
+
+def call_model(client, model, system_blocks, user_text, max_tokens, effort, verbose,
+               max_retries=4):
     """
-    Пытается structured outputs + thinking, при отказе прокси/SDK деградирует.
-    Возвращает (dict, usage|None).
+    JSON через требование в промпте + extract_json (structured outputs у прокси нестабилен).
+    Прокси периодически отдаёт ПУСТОЙ ответ — это транзиентно, поэтому батч повторяется
+    с экспоненциальной паузой. Возвращает (dict, usage|None).
     """
     import anthropic
 
     base = dict(model=model, max_tokens=max_tokens, system=system_blocks,
                 messages=[{"role": "user", "content": user_text}])
-
-    attempts = [
-        dict(thinking={"type": "adaptive"},
-             output_config={"format": {"type": "json_schema", "name": "patch_batch", "schema": schema},
-                            "effort": effort}),
-        dict(thinking={"type": "adaptive"},
-             output_config={"format": {"type": "json_schema", "name": "patch_batch", "schema": schema}}),
-        dict(thinking={"type": "adaptive"}),
-        dict(),
-    ]
+    # adaptive thinking даёт лучшее проектирование; plain — запасной, если thinking отвергнут.
+    attempts = [dict(thinking={"type": "adaptive"}), dict()]
 
     last_err = None
-    for i, extra in enumerate(attempts):
-        try:
-            kwargs = {**base, **extra}
-            # стримим, чтобы не упереться в таймаут на длинном выводе
+    for r in range(max_retries):
+        for i, extra in enumerate(attempts):
             try:
-                with client.messages.stream(**kwargs) as stream:
-                    msg = stream.get_final_message()
-            except (anthropic.APIError, TypeError) as stream_err:
+                data, usage = _one_call(client, {**base, **extra}, anthropic, verbose)
+                if i > 0 and verbose:
+                    print(f"    [использован запасной вариант запроса #{i}]")
+                return data, usage
+            except (anthropic.BadRequestError, anthropic.NotFoundError, TypeError) as e:
+                last_err = e
                 if verbose:
-                    print(f"    [stream→create fallback: {type(stream_err).__name__}]")
-                msg = client.messages.create(**kwargs)
-
-            text = "".join(b.text for b in msg.content if getattr(b, "type", None) == "text")
-            if not text.strip():
-                raise ValueError("пустой текстовый ответ")
-            data = extract_json(text)
-            usage = getattr(msg, "usage", None)
-            if i > 0 and verbose:
-                print(f"    [деградация: использован вариант запроса #{i}]")
-            return data, usage
-        except (anthropic.BadRequestError, anthropic.NotFoundError, TypeError) as e:
-            last_err = e
+                    print(f"    [вариант #{i} отклонён: {type(e).__name__}: {e}; пробую проще]")
+                continue
+            except (json.JSONDecodeError, ValueError, anthropic.APIError) as e:
+                last_err = e
+                if verbose:
+                    print(f"    [попытка {r+1}/{max_retries}, вариант #{i}: {type(e).__name__}: {e}]")
+                continue
+        if r < max_retries - 1:
+            delay = 2 ** r  # 1,2,4 c
             if verbose:
-                print(f"    [вариант #{i} отклонён: {type(e).__name__}: {e}; пробую проще]")
-            continue
-        except (json.JSONDecodeError, ValueError) as e:
-            last_err = e
-            if verbose:
-                print(f"    [не удалось разобрать JSON (вариант #{i}): {e}]")
-            continue
-    raise RuntimeError(f"Все варианты запроса не удались. Последняя ошибка: {last_err}")
+                print(f"    [пустой/битый ответ прокси — повтор батча через {delay}c]")
+            time.sleep(delay)
+    raise RuntimeError(f"Все попытки не удались. Последняя ошибка: {last_err}")
 
 
 # ── Хранилище патчей (чекпойнт) ───────────────────────────────────────────────
 def load_store(out_path: Path):
     if out_path.exists():
         return load_json(out_path)
-    return {"version": "2.0", "entries": []}
+    return {"version": "3.0", "entries": []}
 
 
 def save_store(out_path: Path, store):
@@ -257,8 +305,20 @@ def next_index(store, cat_id):
     return mx + 1
 
 
+def convert_patch_params(real_params):
+    """Реальные параметры от Claude → (params_real_clean, params_norm).
+       Неизвестные ключи игнорируются; недостающие заполнит param_convert дефолтом."""
+    # Берём только известные параметры; конверсия real→norm зеркалит C++.
+    norm = pc.patch_real_to_norm(real_params)               # {name: [0..1]}, все 38
+    # обратно в реальные из norm — даёт «очищенные» реальные (после кламп/снап) для ревью
+    real_clean = pc.patch_norm_to_real(norm)
+    # сколько ключей Claude реально прислал из 38
+    present = sum(1 for k in pc.PARAM_ORDER if k in real_params and real_params[k] is not None)
+    return real_clean, norm, present
+
+
 # ── Основной цикл генерации одной категории ───────────────────────────────────
-def generate_category(client, model, system_blocks, schema, store, out_path,
+def generate_category(client, model, system_blocks, store, out_path,
                       category, axes, target_count, batch_size, max_tokens, effort, verbose):
     have = count_by_category(store, category["id"])
     need = max(0, target_count - have)
@@ -280,7 +340,7 @@ def generate_category(client, model, system_blocks, schema, store, out_path,
 
         try:
             data, usage = call_model(client, model, system_blocks, user_text,
-                                     schema, max_tokens, effort, verbose)
+                                     max_tokens, effort, verbose)
         except Exception as e:
             print(f"    ОШИБКА батча: {e}\n    Прерываю категорию (прогресс сохранён).")
             break
@@ -293,8 +353,17 @@ def generate_category(client, model, system_blocks, schema, store, out_path,
         added = 0
         idx = next_index(store, category["id"])
         for p in patches:
-            if "params" not in p or len(p["params"]) < 38:
-                print(f"    ⚠ патч без полного набора params — пропуск ({p.get('concept')})")
+            raw = p.get("params")
+            if not isinstance(raw, dict):
+                print(f"    ⚠ патч без объекта params — пропуск ({p.get('concept')})")
+                continue
+            try:
+                real_clean, norm, present = convert_patch_params(raw)
+            except Exception as e:
+                print(f"    ⚠ конверсия не удалась ({p.get('concept')}): {e} — пропуск")
+                continue
+            if present < 30:  # слишком мало реальных параметров — подозрительно
+                print(f"    ⚠ патч прислал лишь {present}/38 параметров — пропуск ({p.get('concept')})")
                 continue
             entry = {
                 "id": f"{category['id']}_{idx:03d}",
@@ -302,7 +371,8 @@ def generate_category(client, model, system_blocks, schema, store, out_path,
                 "category": category["id"],
                 "source": model,
                 "osc2_active": bool(p.get("osc2_active", False)),
-                "params": p["params"],
+                "params": norm,                 # нормализованные [0..1] — для синта/обучения
+                "params_real": real_clean,       # реальные единицы — для ревью глазами
                 "descriptions": p.get("descriptions", []),
             }
             store["entries"].append(entry)
@@ -321,7 +391,7 @@ def generate_category(client, model, system_blocks, schema, store, out_path,
 
 # ── main ──────────────────────────────────────────────────────────────────────
 def main():
-    ap = argparse.ArgumentParser(description="Генерация датасета патчей VerbalSynth (v2).")
+    ap = argparse.ArgumentParser(description="Генерация датасета патчей VerbalSynth (v3, реальные единицы).")
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument("--test", action="store_true", help="по N патчей на каждую категорию (см. --count)")
     mode.add_argument("--all", action="store_true", help="полный датасет по долям share")
@@ -345,7 +415,6 @@ def main():
     cats = {c["id"]: c for c in taxonomy["categories"]}
 
     system_prompt = build_system_prompt(param_ref, wt_doc)
-    schema = build_output_schema(param_ref)
 
     # план: список (category, target_count)
     if args.category:
@@ -407,7 +476,7 @@ def main():
     total_new = 0
     for category, target in plan:
         total_new += generate_category(
-            client, model, system_blocks, schema, store, out_path,
+            client, model, system_blocks, store, out_path,
             category, axes, target, args.batch_size, args.max_tokens, args.effort, verbose)
 
     dt = time.time() - t0

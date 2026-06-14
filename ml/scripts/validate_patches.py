@@ -26,6 +26,8 @@ import json
 import sys
 from pathlib import Path
 
+import param_convert as pc  # конвертер реальные↔[0,1] (зеркало C++)
+
 ROOT      = Path(__file__).resolve().parents[1]
 CONFIG    = ROOT / "config"
 DATA      = ROOT / "data"
@@ -33,28 +35,18 @@ PARAM_REF = CONFIG / "param_reference.json"
 
 
 def load_json(path: Path):
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig: терпим к BOM (его добавляет, напр., PowerShell Out-File -Encoding utf8)
+    with open(path, encoding="utf-8-sig") as f:
         return json.load(f)
 
 
-def nearest(value, choices):
-    return min(choices, key=lambda c: abs(c - value))
-
-
-def build_param_meta(param_ref):
-    """Возвращает (ordered_names, name->param, snap_sets)."""
-    params = sorted(param_ref["params"], key=lambda p: p["i"])
-    names = [p["name"] for p in params]
-    by_name = {p["name"]: p for p in params}
-    return names, by_name, param_ref["snap"]
-
-
-def clamp_snap(patch_params, names, by_name, snap_sets):
-    """Возвращает (clean_dict, changed_count). Чинит кламп+снап, заполняет пропуски 0.5."""
+def clamp_snap_norm(patch_norm):
+    """Норм. параметры → очищенные норм. (кламп [0,1] + снап дискретных) через param_convert.
+       Возвращает (clean_norm, changed_count). Пропуски → 0.5."""
     clean = {}
     changed = 0
-    for name in names:
-        raw = patch_params.get(name, None)
+    for name in pc.PARAM_ORDER:
+        raw = patch_norm.get(name, None)
         if raw is None:
             clean[name] = 0.5
             changed += 1
@@ -62,43 +54,70 @@ def clamp_snap(patch_params, names, by_name, snap_sets):
         try:
             v = float(raw)
         except (TypeError, ValueError):
-            v = 0.5
+            clean[name] = 0.5
             changed += 1
-        cv = min(1.0, max(0.0, v))
-        if cv != v:
+            continue
+        # норм → реальное → норм: кламп и снап дискретных делает сам конвертер
+        snapped = round(pc.real_to_norm(name, pc.norm_to_real(name, v)), 6)
+        if abs(snapped - v) > 1e-6:
             changed += 1
-        meta = by_name[name]
-        if meta.get("kind") == "discrete" and "snap" in meta:
-            sv = nearest(cv, snap_sets[meta["snap"]])
-            if abs(sv - cv) > 1e-9:
-                changed += 1
-            cv = sv
-        clean[name] = round(cv, 6)
+        clean[name] = snapped
     return clean, changed
 
 
-def quality_flags(p):
-    """Список строк-предупреждений по правилам param_reference.validation_rules."""
+def real_of(norm_params):
+    """{name: norm} → {name: real} для флагов в человекочитаемых единицах."""
+    return {n: pc.norm_to_real(n, norm_params[n]) for n in pc.PARAM_ORDER}
+
+
+def quality_flags(real):
+    """Предупреждения по физике звука — в РЕАЛЬНЫХ единицах (мс, Гц, Q, %)."""
     flags = []
-    g = p.get
+    g = real.get
+    # уровни в процентах
     mix_sum = g("mix_osc1", 0) + g("mix_osc2", 0) + g("mix_noise", 0)
-    if mix_sum <= 0.2:
-        flags.append(f"анти-тишина: сумма миксов {mix_sum:.2f} ≤ 0.2")
-    if g("amp_sustain", 0) < 0.05 and g("amp_decay", 0) < 0.1 and g("amp_release", 0) < 0.1:
-        flags.append("анти-тишина: очень короткая огибающая (sustain/decay/release малы)")
-    if mix_sum > 1.7 and g("drive_amount", 0) > 0.6:
-        flags.append(f"возможный клип: миксы {mix_sum:.2f} + drive {g('drive_amount',0):.2f}")
+    if mix_sum <= 20:
+        flags.append(f"анти-тишина: сумма уровней {mix_sum:.0f}% слишком мала")
+    sus = g("amp_sustain", 0)            # %
+    dec_ms = g("amp_decay", 0) * 1000.0  # с→мс
+    rel_ms = g("amp_release", 0) * 1000.0
+    atk_ms = g("amp_attack", 0) * 1000.0
+    # «щелчок»: затухающий (sustain≈0), но и decay, и release очень коротки
+    if sus < 10 and dec_ms < 120 and rel_ms < 120:
+        flags.append(f"возможный 'щелчок': sustain {sus:.0f}% + decay {dec_ms:.0f}мс / release {rel_ms:.0f}мс — нота едва прозвучит")
+    # неестественный «тянущийся щипок»: маленький ненулевой sustain у ударного профиля (резкая атака)
+    if 3 < sus < 18 and atk_ms < 20:
+        flags.append(f"sustain {sus:.0f}%: для щипкового/ударного звука обычно 0% (затухает) либо высокий")
+    # резонансный фильтр-свип заявлен (резонанс + ненулевой fenv_amount), но fenv_decay = щелчок
+    fenv_oct = abs(g("fenv_amount", 0))          # октавы свипа (0=нейтр)
+    fdec_ms = g("fenv_decay", 0) * 1000.0
+    if g("lp_resonance", 0) > 4 and fenv_oct > 1.0 and fdec_ms < 120:
+        flags.append(f"фильтр-свип: резонанс Q{g('lp_resonance',0):.1f} + амплитуда {fenv_oct:.1f}окт, но fenv decay {fdec_ms:.0f}мс короткий — щелчок вместо свипа")
+    # клиппинг: высокие уровни + сильный drive
+    if mix_sum > 170 and g("drive_amount", 0) > 60:
+        flags.append(f"возможный клип: уровни {mix_sum:.0f}% + drive {g('drive_amount',0):.0f}%")
     return flags
 
 
-def consistency_flags(entry, p):
-    """Описания обещают движение/вибрато, но модуляция выключена."""
+def consistency_flags(entry, real):
+    """Описания обещают движение/вибрато/атаку, но реальные параметры не соответствуют."""
     flags = []
     text = " ".join(d.get("text", "") for d in entry.get("descriptions", [])).lower()
     vib = any(w in text for w in ("вибрато", "вибрир", "колышет", "колыш"))
-    if vib and p.get("lfo1_to_pitch", 0) < 0.01 and p.get("lfo1_to_filter", 0) < 0.01 \
-            and p.get("lfo2_to_wt", 0) < 0.01:
-        flags.append("описание обещает вибрато/движение, но LFO-модуляция ≈0")
+    pitch_cents = real.get("lfo1_to_pitch", 0)   # центы
+    rate_hz = real.get("lfo1_rate", 0)           # Гц
+    if vib and pitch_cents < 2 and real.get("lfo1_to_filter", 0) < 0.05 and real.get("lfo2_to_wt", 0) < 1:
+        flags.append("описание обещает вибрато/движение, но модуляция ≈0")
+    # вибрато заявлено, но LFO слишком медленный (< ~3 Гц → плавающий строй)
+    if vib and pitch_cents >= 2 and rate_hz < 3:
+        flags.append(f"вибрато: lfo1_rate {rate_hz:.2f}Гц медленный — будет 'плавающий строй' (вибрато обычно в районе нескольких Гц)")
+    # обещана плавная/нарастающая атака, но amp_attack почти мгновенный
+    atk_ms = real.get("amp_attack", 0) * 1000.0
+    soft_atk = any(w in text for w in (
+        "мягкая атака", "плавная атака", "медленная атака", "мягкий вход", "плавно нараста",
+        "медленно нараста", "плавный наплыв", "наплыв", "разгорает", "вплыва", "вырастает из тишины"))
+    if soft_atk and atk_ms < 30:
+        flags.append(f"описание обещает плавную/нарастающую атаку, но amp_attack {atk_ms:.0f}мс почти мгновенный")
     return flags
 
 
@@ -126,8 +145,6 @@ def main():
     in_path = Path(args.infile)
     if not in_path.exists():
         sys.exit(f"Файл не найден: {in_path}")
-    param_ref = load_json(PARAM_REF)
-    names, by_name, snap_sets = build_param_meta(param_ref)
 
     store = load_json(in_path)
     entries = store.get("entries", [])
@@ -145,12 +162,19 @@ def main():
     jsonl_rows = []
 
     for entry in entries:
-        clean, changed = clamp_snap(entry.get("params", {}), names, by_name, snap_sets)
+        # Вход: норм. параметры в entry["params"] (формат v3 от generate_dataset).
+        # Если их нет, но есть реальные (params_real) — конвертируем их.
+        norm_in = entry.get("params")
+        if not norm_in and entry.get("params_real"):
+            norm_in = pc.patch_real_to_norm(entry["params_real"])
+        clean, changed = clamp_snap_norm(norm_in or {})
         total_changed += changed
-        flags = quality_flags(clean) + consistency_flags(entry, clean)
+        real = real_of(clean)
+        flags = quality_flags(real) + consistency_flags(entry, real)
 
         v_entry = dict(entry)
-        v_entry["params"] = clean
+        v_entry["params"] = clean                 # очищенные норм. [0..1]
+        v_entry["params_real"] = pc.patch_norm_to_real(clean)  # реальные (для ревью)
         v_entry["flags"] = flags
         validated_entries.append(v_entry)
 
@@ -161,16 +185,16 @@ def main():
         if skip:
             continue
 
-        # экспорт плоского JSON под синтезатор
+        # экспорт плоского JSON под синтезатор — НОРМАЛИЗОВАННЫЕ значения (формат PresetManager)
         if not args.no_export:
             concept = sanitize_filename(entry.get("concept") or entry.get("id", "patch"))
             fname = f"{args.prefix}{concept}.json"
             with open(export_dir / fname, "w", encoding="utf-8") as f:
                 json.dump(clean, f, ensure_ascii=False, indent=2)
 
-        # строки датасета
+        # строки датасета — вектор 38 норм. в строгом порядке
         if args.jsonl:
-            vec = [clean[n] for n in names]
+            vec = pc.norm_vector(clean)
             for d in entry.get("descriptions", []):
                 text = (d.get("text") or "").strip()
                 if not text:
@@ -186,7 +210,7 @@ def main():
                 })
 
     # запись валидированных
-    out_store = {"version": store.get("version", "2.0"),
+    out_store = {"version": store.get("version", "3.0"),
                  "count": len(validated_entries), "entries": validated_entries}
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out_store, f, ensure_ascii=False, indent=2)
