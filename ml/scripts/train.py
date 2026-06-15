@@ -57,9 +57,9 @@ HIGH_W = {"amp_attack", "amp_decay", "amp_sustain", "amp_release",
 CONT_SCALE = 10.0   # вес регрессии относительно классификации в общем лоссе
 
 
-def load_rows():
+def load_rows(data_path=DATA):
     rows = []
-    with open(DATA, encoding="utf-8") as f:
+    with open(data_path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -114,20 +114,24 @@ def main():
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--val-frac", type=float, default=0.1)
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--data", default=str(DATA), help="путь к dataset.jsonl (деф. v3)")
+    ap.add_argument("--out-dir", default=str(MODELS),
+                    help="куда писать модель/meta/кэш (деф. ml/models — ЖИВАЯ v3-модель; для v5 укажи ml/models/v5)")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    MODELS.mkdir(parents=True, exist_ok=True)
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
 
-    rows = load_rows()
+    rows = load_rows(Path(args.data))
     texts = [r[1] for r in rows]
     Y_all = np.asarray([r[2] for r in rows], dtype=np.float32)
     n_patches = len({r[0] for r in rows})
     print(f"Датасет: {len(rows)} строк, {n_patches} патчей")
 
-    emb = get_embeddings(texts, MODELS / "emb_cache.npz")
+    emb = get_embeddings(texts, out_dir / "emb_cache.npz")
     assert emb.shape[1] == INPUT_DIM, f"энкодер выдал {emb.shape[1]} вместо {INPUT_DIM}"
 
     tr, va, n_tr_p, n_va_p = split_by_patch(rows, args.val_frac, args.seed)
@@ -192,7 +196,7 @@ def main():
             print(f"  эп {ep:3d}: full MAE {full_mae:.4f} (best {best:.4f}) · cont {cont_mae:.4f} · acc {acc_s}")
 
     model.load_state_dict(best_state)
-    torch.save(best_state, MODELS / "synth_predictor.pt")
+    torch.save(best_state, out_dir / "synth_predictor.pt")
 
     cont_mae, accs, full_mae = evaluate()
     model.eval()
@@ -222,8 +226,8 @@ def main():
         "cat_accuracy": {n: round(a, 4) for n, a in accs.items()},
         "epochs": args.epochs, "seed": args.seed,
     }
-    (MODELS / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Сохранено: {MODELS / 'synth_predictor.pt'} + meta.json")
+    (out_dir / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Сохранено: {out_dir / 'synth_predictor.pt'} + meta.json")
 
 
 if __name__ == "__main__":
