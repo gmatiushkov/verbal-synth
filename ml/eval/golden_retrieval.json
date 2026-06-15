@@ -1,0 +1,741 @@
+{
+  "version": "0.1-draft",
+  "purpose": "ЗОЛОТОЙ identity-эвал retrieval: запрос → ожидаемый прототип. primary — строгая цель (точный прототип, ЧЕРНОВИК — проверить/пин руками), expected — приемлемая семья роли (мягкая). Метрика: top-1 (#1∈?) и top-3. Промпты без роли = [].",
+  "how_to_edit": "Поправь primary под РЕАЛЬНОЕ намерение (различай вибрафон/маримбу и т.п.); expected — допустимые альтернативы. Пустой expected исключается из метрики.",
+  "prompts": [
+    {
+      "text": "тёплая классическая гитара",
+      "role": "guitar",
+      "primary": 1,
+      "primary_target": "классическая гитара (щипок)",
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "text": "яркая стальная гитара",
+      "role": "guitar",
+      "primary": 2,
+      "primary_target": "стальная акустическая гитара",
+      "expected": [
+        2,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "text": "банджо",
+      "role": "guitar",
+      "primary": 3,
+      "primary_target": "банджо",
+      "expected": [
+        3,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "text": "скрипка с вибрато",
+      "role": "string",
+      "primary": 10,
+      "primary_target": "скрипка (вибрато, яркая)",
+      "expected": [
+        10,
+        9,
+        11,
+        67
+      ]
+    },
+    {
+      "text": "глубокая виолончель смычком",
+      "role": "string",
+      "primary": 9,
+      "primary_target": "виолончель (смычок, вибрато)",
+      "expected": [
+        9,
+        11,
+        10,
+        67
+      ]
+    },
+    {
+      "text": "церковный орган",
+      "role": "organ",
+      "primary": 25,
+      "primary_target": "церковный орган",
+      "expected": [
+        25,
+        26,
+        54,
+        73
+      ]
+    },
+    {
+      "text": "рок-орган хаммонд с лесли",
+      "role": "organ",
+      "primary": 26,
+      "primary_target": "орган Хаммонд с лесли",
+      "expected": [
+        26,
+        25,
+        54,
+        73
+      ]
+    },
+    {
+      "text": "мягкое фортепиано",
+      "role": "piano",
+      "primary": 27,
+      "primary_target": "фортепиано (мягкий плак)",
+      "expected": [
+        27
+      ]
+    },
+    {
+      "text": "электропиано родес",
+      "role": "epiano",
+      "primary": 28,
+      "primary_target": "электропиано/родес",
+      "expected": [
+        28,
+        29,
+        75,
+        76
+      ]
+    },
+    {
+      "text": "флейта",
+      "role": "flute",
+      "primary": 12,
+      "primary_target": "флейта (с придыханием)",
+      "expected": [
+        12,
+        13
+      ]
+    },
+    {
+      "text": "саксофон джазовый",
+      "role": "reed",
+      "primary": 18,
+      "primary_target": "саксофон (язычковый)",
+      "expected": [
+        18,
+        15,
+        16,
+        17,
+        22,
+        23,
+        24,
+        40,
+        41
+      ]
+    },
+    {
+      "text": "труба фанфары",
+      "role": "brass",
+      "primary": 19,
+      "primary_target": "труба (открытая/сурдина)",
+      "expected": [
+        19,
+        78,
+        20,
+        21
+      ]
+    },
+    {
+      "text": "колокольчик",
+      "role": "bell",
+      "primary": 31,
+      "primary_target": "челеста",
+      "expected": [
+        31,
+        32,
+        37,
+        64,
+        103,
+        106,
+        108,
+        107,
+        109,
+        112
+      ]
+    },
+    {
+      "text": "хрустальный звон",
+      "role": "bell",
+      "primary": 31,
+      "primary_target": "челеста",
+      "expected": [
+        31,
+        109,
+        32,
+        37,
+        64,
+        103,
+        107,
+        108,
+        106,
+        112
+      ]
+    },
+    {
+      "text": "вибрафон джазовый",
+      "role": "mallet",
+      "primary": 33,
+      "primary_target": "вибрафон",
+      "expected": [
+        33,
+        34,
+        35,
+        36,
+        39,
+        74,
+        111,
+        125,
+        135
+      ]
+    },
+    {
+      "text": "маримба деревянная",
+      "role": "mallet",
+      "primary": 34,
+      "primary_target": "маримба/ксилофон",
+      "expected": [
+        34,
+        125,
+        33,
+        35,
+        36,
+        39,
+        74,
+        111,
+        135
+      ]
+    },
+    {
+      "text": "хор ааа голоса",
+      "role": "choir_pad",
+      "primary": 42,
+      "primary_target": "хор/вокальный ах",
+      "expected": [
+        42,
+        83,
+        68,
+        63,
+        87
+      ]
+    },
+    {
+      "text": "тёплый аналоговый бас",
+      "role": "saw_bass",
+      "primary": 49,
+      "primary_target": "пилообразный синт-бас (аналоговый)",
+      "expected": [
+        49
+      ]
+    },
+    {
+      "text": "пилообразный синт-бас",
+      "role": "saw_bass",
+      "primary": 49,
+      "primary_target": "пилообразный синт-бас (аналоговый)",
+      "expected": [
+        49
+      ]
+    },
+    {
+      "text": "чистый суббас",
+      "role": "sub_bass",
+      "primary": 45,
+      "primary_target": "суббас (чистый син)",
+      "expected": [
+        45,
+        46
+      ]
+    },
+    {
+      "text": "reese бас грязный",
+      "role": "reese_bass",
+      "primary": 47,
+      "primary_target": "reese-бас (детюн, грязный)",
+      "expected": [
+        47,
+        50,
+        51,
+        53
+      ]
+    },
+    {
+      "text": "кислотный 303 бас",
+      "role": "acid_bass",
+      "primary": 48,
+      "primary_target": "acid-бас (резонанс+огибающая)",
+      "expected": [
+        48
+      ]
+    },
+    {
+      "text": "supersaw лид для транса",
+      "role": "saw_lead",
+      "primary": 55,
+      "primary_target": "supersaw-лид",
+      "expected": [
+        55,
+        59,
+        60,
+        56,
+        58
+      ]
+    },
+    {
+      "text": "пронзительный соло лид",
+      "role": "saw_lead",
+      "primary": 56,
+      "primary_target": "пронзительный соло-лид",
+      "expected": [
+        56,
+        55,
+        58,
+        59,
+        60
+      ]
+    },
+    {
+      "text": "квадратный чиптюн лид",
+      "role": "square_lead",
+      "primary": 57,
+      "primary_target": "PWM/квадратный лид",
+      "expected": [
+        57,
+        62
+      ]
+    },
+    {
+      "text": "тёплый аналоговый пэд",
+      "role": "warm_pad",
+      "primary": 65,
+      "primary_target": "тёплый аналоговый пэд",
+      "expected": [
+        65,
+        69,
+        70,
+        82,
+        102,
+        86,
+        101,
+        126
+      ]
+    },
+    {
+      "text": "стеклянный кристаллический пэд",
+      "role": "glass_pad",
+      "primary": 66,
+      "primary_target": "стеклянный/кристаллический пэд",
+      "expected": [
+        66,
+        85,
+        89,
+        90
+      ]
+    },
+    {
+      "text": "хоровой пэд",
+      "role": "choir_pad",
+      "primary": 68,
+      "primary_target": "хоровой пэд",
+      "expected": [
+        68,
+        83,
+        42,
+        63,
+        87
+      ]
+    },
+    {
+      "text": "короткий упругий плак",
+      "role": "pluck",
+      "primary": 52,
+      "primary_target": "pluck-бас",
+      "expected": [
+        52,
+        71,
+        72,
+        30,
+        77
+      ]
+    },
+    {
+      "text": "арп секвенс",
+      "role": "pluck",
+      "primary": 77,
+      "primary_target": "арп-звук",
+      "expected": [
+        77,
+        30,
+        52,
+        71,
+        72
+      ]
+    },
+    {
+      "text": "металлический гул",
+      "role": "drone",
+      "primary": 80,
+      "primary_target": "металлический резонансный дрон",
+      "expected": [
+        80,
+        79,
+        81,
+        96,
+        97,
+        84
+      ]
+    },
+    {
+      "text": "тёмный низкий дрон",
+      "role": "drone",
+      "primary": 79,
+      "primary_target": "бесконечный дрон (низкий)",
+      "expected": [
+        79,
+        80,
+        81,
+        84,
+        96,
+        97
+      ]
+    },
+    {
+      "text": "космическая текстура",
+      "role": "drone",
+      "primary": 84,
+      "primary_target": "космическая текстура",
+      "expected": [
+        84,
+        79,
+        80,
+        81,
+        96,
+        97
+      ]
+    },
+    {
+      "text": "ветер шум воздуха",
+      "role": "noise_texture",
+      "primary": 92,
+      "primary_target": "ветер/шумовой бриз",
+      "expected": [
+        92,
+        88,
+        93,
+        98,
+        99,
+        100,
+        91,
+        94,
+        95,
+        122
+      ]
+    },
+    {
+      "text": "тревожный хоррор гул",
+      "role": "drone",
+      "primary": 81,
+      "primary_target": "диссонансный хоррор-дрон",
+      "expected": [
+        81,
+        79,
+        80,
+        96,
+        97,
+        84
+      ]
+    },
+    {
+      "text": "ангельский шиммер",
+      "role": "choir_pad",
+      "primary": 83,
+      "primary_target": "ангельский хоровой шиммер-дрон",
+      "expected": [
+        83,
+        42,
+        68,
+        63,
+        87
+      ]
+    },
+    {
+      "text": "ледяной арктический эмбиент",
+      "role": "glass_pad",
+      "primary": 85,
+      "primary_target": "ледяной/арктический эмбиент",
+      "expected": [
+        85,
+        66,
+        89,
+        90
+      ]
+    },
+    {
+      "text": "храмовый гонг",
+      "role": "gong",
+      "primary": 104,
+      "primary_target": "храмовый гонг",
+      "expected": [
+        104,
+        105,
+        110,
+        123
+      ]
+    },
+    {
+      "text": "поющая тибетская чаша",
+      "role": "gong",
+      "primary": 105,
+      "primary_target": "поющая чаша (singing bowl)",
+      "expected": [
+        105,
+        104,
+        110,
+        123
+      ]
+    },
+    {
+      "text": "лазерный sci-fi звук",
+      "role": "digital_fx",
+      "primary": 119,
+      "primary_target": "лазер/sci-fi свип (фильтр-свип / LFO)",
+      "expected": [
+        119,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118
+      ]
+    },
+    {
+      "text": "цифровой глитч",
+      "role": "digital_fx",
+      "primary": 114,
+      "primary_target": "глитч/артефакт",
+      "expected": [
+        114,
+        113,
+        115,
+        116,
+        117,
+        118,
+        119
+      ]
+    },
+    {
+      "text": "райзер подъём вверх",
+      "role": "riser_fx",
+      "primary": 120,
+      "primary_target": "взлёт/ризер (медленный подъём)",
+      "expected": [
+        120,
+        121
+      ]
+    },
+    {
+      "text": "тёмный кинематографичный удар",
+      "role": "gong",
+      "primary": 123,
+      "primary_target": "удар/импакт (тёмный)",
+      "expected": [
+        123,
+        104,
+        110,
+        105
+      ]
+    },
+    {
+      "text": "длинный затухающий колокол",
+      "role": "bell",
+      "primary": 103,
+      "primary_target": "колокол (длинный затухающий)",
+      "expected": [
+        103,
+        37,
+        31,
+        32,
+        64,
+        106,
+        108,
+        107,
+        109,
+        112
+      ]
+    },
+    {
+      "text": "треугольник звонкий тинь",
+      "role": "bell",
+      "primary": 107,
+      "primary_target": "треугольник",
+      "expected": [
+        107,
+        108,
+        31,
+        32,
+        37,
+        64,
+        103,
+        109,
+        106,
+        112
+      ]
+    },
+    {
+      "text": "снэйр малый барабан",
+      "role": "snare_clap",
+      "primary": 129,
+      "primary_target": "снэр (нойз+тон)",
+      "expected": [
+        129,
+        130,
+        134,
+        140
+      ]
+    },
+    {
+      "text": "клэп хлопок",
+      "role": "snare_clap",
+      "primary": 130,
+      "primary_target": "клэп",
+      "expected": [
+        130,
+        129,
+        134,
+        140
+      ]
+    },
+    {
+      "text": "закрытый хай-хэт",
+      "role": "hihat",
+      "primary": 131,
+      "primary_target": "хай-хэт закрытый (короткий)",
+      "expected": [
+        131,
+        132,
+        136,
+        137
+      ]
+    },
+    {
+      "text": "открытый хэт шипящий",
+      "role": "hihat",
+      "primary": 132,
+      "primary_target": "хай-хэт открытый",
+      "expected": [
+        132,
+        131,
+        136,
+        137
+      ]
+    },
+    {
+      "text": "808 кик сабовый",
+      "role": "kick",
+      "primary": 127,
+      "primary_target": "синт-кик (808, сабовый синус)",
+      "expected": [
+        127,
+        128,
+        124
+      ]
+    },
+    {
+      "text": "жёсткий 909 кик",
+      "role": "kick",
+      "primary": 128,
+      "primary_target": "синт-кик (909, жёсткий)",
+      "expected": [
+        128,
+        127,
+        124
+      ]
+    },
+    {
+      "text": "том настроенный барабан",
+      "role": "tom",
+      "primary": 133,
+      "primary_target": "том (настроенный, питч-дроп)",
+      "expected": [
+        133,
+        38,
+        138
+      ]
+    },
+    {
+      "text": "крэш тарелка",
+      "role": "cymbal",
+      "primary": 139,
+      "primary_target": "крэш/райд (металл+нойз)",
+      "expected": [
+        139
+      ]
+    },
+    {
+      "text": "очень яркий резкий звук",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    },
+    {
+      "text": "глухой тёмный тембр",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    },
+    {
+      "text": "короткий отрывистый щелчок",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    },
+    {
+      "text": "длинный тянущийся бесконечный звук",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    },
+    {
+      "text": "очень низкий бас",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    },
+    {
+      "text": "звонкий высокий тон",
+      "role": null,
+      "primary": null,
+      "primary_target": null,
+      "expected": []
+    }
+  ]
+}

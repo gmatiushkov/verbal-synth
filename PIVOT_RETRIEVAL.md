@@ -101,12 +101,20 @@ params(38 norm), descriptors[], attributes{register/brightness/body/bank...}}`.
    (~40) + список пробелов (~100); чистка Patches от старых имён/`[V5]`.
 3. **Стриминговая генерация пробелов:** `gen_library.py` (Claude, по 1 цели, чекпойнт+импорт в синт сразу) →
    юзер тюнит по ходу; `sync_library.py` тянет правки обратно.
-4. **Retrieval MVP:** энкодер A/B → индекс по синоним-запросам прототипов → `predict.py` отдаёт top-1 прототип.
-5. **Фаза 2:** модификаторы осей.
+4. ✅ **Retrieval MVP:** `retrieval.py` (фразовый max-pool косинус по target+descriptors, кэш
+   эмбеддингов) → `predict.py` отдаёт params top-1 прототипа из library.json НА ЛЕТУ (синт
+   зовёт без перебилда C++; диагностика в stderr, чист stdout). Регрессия — в `predict_regression.py`.
+   Identity-эвал (`eval_retrieval.py` + `golden_retrieval.json`): **strict top-1 81%, role top-1 89%,
+   role top-3 98%** (MiniLM, 140 прототипов). Промахи — общий эпитет матчит чужой прототип
+   («вибрафон джазовый»→орган); решается синоним-запросами/фазой-2.
+5. **Фаза 2:** модификаторы осей. + добить синоним-формулировки (§4) и энкодер A/B (`--encoder`).
 
 ## 8. Инвентарь файлов
 
 - `ml/data/library/library.json` — источник правды (прототипы).
+- `ml/scripts/retrieval.py` — ЯДРО retrieval (фразовый поиск, кэш эмбеддингов `ml/models/retrieval_*.npz`).
+- `ml/scripts/predict.py` — боевой инференс для синта (retrieval top-1 → params). `predict_regression.py` — архив регрессии.
+- `ml/scripts/eval_retrieval.py` + `ml/eval/golden_retrieval.json` (билдер `ml/eval/build_golden_retrieval.py`) — identity-эвал.
 - `ml/scripts/build_library.py` / `gen_library.py` / `sync_library.py` — сборка/генерация/синк библиотеки.
 - `ml/config/system_prompt_reference.md` — промпт генерации патча-кандидата (params, реальные единицы).
 - `ml/config/v5/taxonomy_to_role.json` — 140 целей (порядок нумерации), descriptors, axis_preset.
