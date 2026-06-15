@@ -61,7 +61,7 @@ def deps_on(p):
         on |= {"osc2_table", "osc2_position", "osc2_detune", "osc2_semitones"}
     if abs(v("fenv_amount") - 0.5) > 0.02 or v("fenv_to_wt") > 0.02:
         on |= {"fenv_attack", "fenv_decay", "fenv_sustain", "fenv_release"}
-    if abs(v("lfo1_to_pitch") - 0.5) > 0.02 or abs(v("lfo1_to_filter") - 0.5) > 0.02:
+    if v("lfo1_to_pitch") > 0.02 or v("lfo1_to_filter") > 0.02:   # униполярные (выкл = norm 0)
         on |= {"lfo1_rate", "lfo1_shape"}
     if v("lfo2_to_wt") > 0.02 or v("lfo2_to_amp") > 0.02:
         on |= {"lfo2_rate", "lfo2_shape"}
@@ -173,10 +173,10 @@ def main():
           f"({100*disc_total/max(1,disc_cells):.0f}%)")
     print("=" * 78)
 
-    print("\nХудшие ПАРАМЕТРЫ (средняя |Δ| norm по якорям, топ-12):")
-    ranked = sorted(((sum(v)/len(v), k, len(v)) for k, v in per_param_err.items()), reverse=True)
-    for mae, name, cnt in ranked[:12]:
-        print(f"  {name:<16} {mae:.3f}")
+    print("\nХудшие ПАРАМЕТРЫ (по ВКЛАДУ в MAE = сумма |Δ|; avg — когда активен; топ-14):")
+    ranked = sorted(((sum(v), sum(v) / len(v), k, len(v)) for k, v in per_param_err.items()), reverse=True)
+    for tot, mae, name, cnt in ranked[:14]:
+        print(f"  {name:<16} вклад={tot:5.2f}  avg={mae:.3f} (актив. {cnt}/{n})")
     if disc_miss:
         print("  -- дискретные несовпадения:")
         for name, c in sorted(disc_miss.items(), key=lambda x: -x[1]):

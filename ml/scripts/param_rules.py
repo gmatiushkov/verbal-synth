@@ -41,23 +41,23 @@ CALIB_BASE = {
     "cymbal":      {"osc1_position": 20, "mix_osc1": 86},
     "drone":       {"osc2_position": 52, "mix_osc2": 59},
     "epiano":      {"osc2_position": 11, "mix_osc2": 70},
-    "flute":       {"osc1_position": 8, "mix_osc1": 65, "mix_osc2": 45},
+    "flute":       {"osc1_position": 8, "osc2_position": 0, "mix_osc1": 65, "mix_osc2": 45},
     "glass_pad":   {"osc2_position": 28, "mix_osc2": 62, "osc2_detune": 12},
-    "gong":        {"osc1_position": 0, "mix_osc2": 81, "osc2_semitones": 12, "mix_noise": 27},
-    "hihat":       {"osc1_position": 75, "mix_osc1": 91, "mix_osc2": 26, "osc2_detune": 10},
-    "kick":        {"mix_osc1": 80, "mix_osc2": 22, "osc2_semitones": 12},
-    "mallet":      {"mix_osc2": 67},
-    "noise_texture": {"osc1_position": 80, "mix_osc2": 16, "mix_noise": 91},
-    "pluck":       {"osc1_position": 67, "mix_osc2": 52},
-    "pure_tone":   {"mix_osc1": 80, "mix_osc2": 19},
-    "reed":        {"mix_osc2": 66, "mix_noise": 14},
-    "riser_fx":    {"osc1_position": 85, "mix_osc2": 67, "osc2_detune": 18, "mix_noise": 86},
-    "saw_bass":    {"osc1_position": 69, "mix_osc2": 55, "osc2_semitones": -12},
+    "gong":        {"osc1_position": 0, "osc2_position": 76, "mix_osc2": 81, "osc2_semitones": 12, "mix_noise": 27},
+    "hihat":       {"osc1_position": 75, "osc2_position": 50, "mix_osc1": 91, "mix_osc2": 26, "osc2_detune": 10},
+    "kick":        {"mix_osc1": 80, "osc2_position": 0, "mix_osc2": 22, "osc2_semitones": 12},
+    "mallet":      {"osc2_position": 20, "mix_osc2": 67},
+    "noise_texture": {"osc1_position": 80, "osc2_position": 16, "mix_osc2": 16, "mix_noise": 91},
+    "pluck":       {"osc1_position": 67, "osc2_position": 84, "mix_osc2": 52},
+    "pure_tone":   {"osc2_position": 7, "mix_osc1": 80, "mix_osc2": 19},
+    "reed":        {"osc2_position": 54, "mix_osc2": 66, "mix_noise": 14},
+    "riser_fx":    {"osc1_position": 85, "osc2_position": 56, "mix_osc2": 67, "osc2_detune": 18, "mix_noise": 86},
+    "saw_bass":    {"osc1_position": 69, "osc2_position": 77, "mix_osc2": 55, "osc2_semitones": -12},
     "saw_lead":    {"osc1_position": 71, "osc2_position": 69},
-    "snare_clap":  {"osc1_position": 14, "mix_osc2": 13},
+    "snare_clap":  {"osc1_position": 14, "osc2_position": 0, "mix_osc2": 13},
     "sub_bass":    {"mix_osc1": 100},
-    "tom":         {"mix_osc2": 65},
-    "square_lead": {"osc1_position": 54, "mix_osc2": 68, "osc2_detune": 11, "mix_noise": 9},
+    "tom":         {"osc2_position": 27, "mix_osc2": 65},
+    "square_lead": {"osc1_position": 54, "osc2_position": 54, "mix_osc2": 68, "osc2_detune": 11, "mix_noise": 9},
 }
 
 
@@ -82,8 +82,12 @@ def _apply_calibration(real, spec, roles, attrs):
 def _clamp_rules(real, role_name):
     """Слой 3a: относительные ограничения/связки поверх каркаса (resolve_skeleton)."""
     # (1) затухающие роли — sustain ~0 (убрать паразитный sustain из body=long/sustained/drone)
+    #     и keytrack=0 (ударные/перкуссия/one-shot не трекают клавиатуру — у якорей там 0)
     if role_name in DECAY_ROLES:
         real["amp_sustain"] = min(float(real.get("amp_sustain", 0) or 0), 2.0)
+        real["filter_keytrack"] = 0
+    else:
+        real["filter_keytrack"] = 45      # тон-роли трекают фильтр по клавиатуре (медиана якорей ~45)
     # (2) per-role param_bounds
     for p, (lo, hi) in PARAM_BOUNDS.get(role_name, {}).items():
         if p in real:
