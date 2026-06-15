@@ -36,8 +36,10 @@ except (AttributeError, ValueError):
     pass
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO = ROOT.parent
 REF_STORE = ROOT / "data" / "reference" / "reference_anchors.json"
 MAP_PATH = ROOT / "config" / "v5" / "taxonomy_to_role.json"
+PATCHES_DIR = REPO / "build" / "VerbalSynth_artefacts" / "Release" / "Patches"
 
 DISCRETE = [n for n in pc.PARAM_ORDER if pc.PARAM_SPEC[n][0] in ("bank", "octave", "semis", "lfoshape")]
 CONT = [n for n in pc.PARAM_ORDER if n not in DISCRETE]
@@ -92,6 +94,28 @@ def map_index(mp):
     return idx
 
 
+def factory_anchors(mp, have_targets):
+    """Заводские/golden патчи как независимые эталоны: цель из карты с reference-файлом, params из Patches.
+    Пропускаем цели, уже покрытые [REF]-якорями, и дубли файла."""
+    out, seen = [], set()
+    for _cat, entries in mp["mapping"].items():
+        for e in entries:
+            ref = e.get("reference")
+            if not ref or ref == "none" or e["target"] in have_targets or ref in seen:
+                continue
+            f = PATCHES_DIR / ref
+            if not f.exists():
+                continue
+            try:
+                params = json.loads(io.open(f, encoding="utf-8-sig").read())
+            except Exception:
+                continue
+            seen.add(ref)
+            out.append({"target": e["target"], "role": e["role"], "params": params,
+                        "approved": True, "source": "factory", "preset_file": ref})
+    return out
+
+
 def real_equal(name, a, b):
     """Совпадение дискретного параметра по реальному значению."""
     ra, rb = pc.norm_to_real(name, a), pc.norm_to_real(name, b)
@@ -105,6 +129,7 @@ def main():
     ap.add_argument("--mode", default="baseline", help="режим param_rules.generate")
     ap.add_argument("--top", type=int, default=10, help="сколько худших звуков печатать")
     ap.add_argument("--no-mask", action="store_true", help="не маскировать неактивные параметры (сырая метрика)")
+    ap.add_argument("--factory", action="store_true", help="добавить заводские/golden патчи как эталоны (покрыть все роли)")
     args = ap.parse_args()
 
     store = _load(REF_STORE)
@@ -115,6 +140,11 @@ def main():
     anchors = [e for e in store["entries"] if e.get("approved") and isinstance(e.get("params"), dict)]
     if not anchors:
         raise SystemExit("Нет утверждённых якорей с params в reference_anchors.json")
+    n_ref = len(anchors)
+    if args.factory:
+        fa = factory_anchors(mp, {a["target"] for a in anchors})
+        anchors += fa
+        print(f"(+{len(fa)} заводских эталонов к {n_ref} [REF])")
 
     per_param_err = defaultdict(list)      # name → [|Δ| по якорям] (непрерывные, активные)
     disc_miss = defaultdict(int)           # name → число несовпадений (дискретные, активные)
