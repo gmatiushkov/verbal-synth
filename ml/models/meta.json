@@ -121,17 +121,17 @@
       1.0
     ]
   },
-  "rows": 6178,
-  "patches": 1030,
-  "val_patches": 103,
-  "full_mae": 0.13332,
-  "baseline_mae": 0.16486,
+  "rows": 3360,
+  "patches": 560,
+  "val_patches": 56,
+  "full_mae": 0.0855,
+  "baseline_mae": 0.1199,
   "cat_accuracy": {
-    "osc1_table": 0.4757,
-    "osc1_octave": 0.5081,
-    "osc2_table": 0.4142,
-    "lfo1_shape": 0.835,
-    "lfo2_shape": 0.7816
+    "osc1_table": 0.7798,
+    "osc1_octave": 0.7143,
+    "osc2_table": 0.7738,
+    "lfo1_shape": 0.8839,
+    "lfo2_shape": 0.8958
   },
   "epochs": 160,
   "seed": 42
