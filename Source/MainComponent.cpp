@@ -76,7 +76,10 @@ MainComponent::MainComponent()
     mGenerateBtn.setColour(juce::TextButton::textColourOffId,  juce::Colour(UI::BTN_TEXT));
     mGenerateBtn.setColour(juce::TextButton::buttonOnColourId, juce::Colour(UI::KNOB_FILL));
     mGenerateBtn.setWantsKeyboardFocus(false);
+    mGenerateBtn.onClick = [this]() { onGenerateClicked(); };
     addAndMakeVisible(mGenerateBtn);
+
+    mPromptInput.onReturnKey = [this]() { onGenerateClicked(); };
 
     // ── MIDI keyboard ──
     mKeyboard.setAvailableRange(24, 108);
@@ -326,6 +329,123 @@ void MainComponent::loadInitPreset()
     mCurrentPresetName  = initPresetName();
     mPresetDirty        = false;
     updatePresetLabel();
+}
+
+// ── Generate: текст → патч через ml/scripts/predict.py ───────────────────────
+juce::File MainComponent::locatePredictScript() const
+{
+    // Идём вверх от .exe, пока не найдём ml/scripts/predict.py в дереве проекта.
+    juce::File dir = juce::File::getSpecialLocation(juce::File::currentApplicationFile)
+                         .getParentDirectory();
+    for (int i = 0; i < 8 && dir.exists(); ++i)
+    {
+        const auto cand = dir.getChildFile("ml").getChildFile("scripts").getChildFile("predict.py");
+        if (cand.existsAsFile())
+            return cand;
+        dir = dir.getParentDirectory();
+    }
+    return {};
+}
+
+bool MainComponent::parsePatchJson(const juce::String& jsonText, SynthPatch& out)
+{
+    // predict.py печатает в stdout одну строку JSON {param: value}. Вырезаем
+    // объект на случай посторонних строк и парсим как PresetManager::loadPreset.
+    const juce::String body = jsonText.fromFirstOccurrenceOf("{", true, false)
+                                      .upToLastOccurrenceOf("}", true, false);
+    const juce::var parsed = juce::JSON::parse(body);
+    auto* obj = parsed.getDynamicObject();
+    if (obj == nullptr)
+        return false;
+
+    float* data = out.data();
+    const auto names = SynthPatch::paramNames();
+    int found = 0;
+    for (int i = 0; i < SynthPatch::kNumParams; ++i)
+    {
+        const juce::Identifier key(names[i].data());
+        if (obj->hasProperty(key))
+        {
+            data[i] = juce::jlimit(0.f, 1.f, static_cast<float>(static_cast<double>(obj->getProperty(key))));
+            ++found;
+        }
+    }
+    return found == SynthPatch::kNumParams;
+}
+
+void MainComponent::onGenerateClicked()
+{
+    if (mGenerating.exchange(true))   // уже идёт генерация
+        return;
+
+    const juce::String prompt = mPromptInput.getText().trim();
+    if (prompt.isEmpty())
+    {
+        mGenerating = false;
+        return;
+    }
+
+    const juce::File script = locatePredictScript();
+    if (! script.existsAsFile())
+    {
+        mGenerating = false;
+        juce::NativeMessageBox::showMessageBoxAsync(
+            juce::MessageBoxIconType::WarningIcon, "Generate",
+            "Не найден ml/scripts/predict.py рядом с проектом.");
+        return;
+    }
+
+    mGenerateBtn.setEnabled(false);
+    mGenerateBtn.setButtonText("...");
+
+    juce::Component::SafePointer<MainComponent> safe(this);
+    juce::Thread::launch([safe, prompt, script]()
+    {
+        SynthPatch patch;
+        bool ok = false;
+
+        juce::ChildProcess proc;
+        juce::StringArray args;
+        args.add("python");
+        args.add(script.getFullPathName());
+        args.add(prompt);
+
+        if (proc.start(args, juce::ChildProcess::wantStdOut))
+        {
+            const juce::String output = proc.readAllProcessOutput();
+            ok = parsePatchJson(output, patch);
+            if (! ok)
+            {
+                DBG("Generate: не удалось распарсить ответ predict.py:\n" << output);
+            }
+        }
+        else
+        {
+            DBG("Generate: не удалось запустить python predict.py");
+        }
+
+        juce::MessageManager::callAsync([safe, patch, ok]()
+        {
+            if (auto* self = safe.getComponent())
+            {
+                if (ok)
+                {
+                    self->mLoadingPreset = true;
+                    self->mEngine.applyPatch(patch);
+                    self->mPatchPanel.setPatch(patch);
+                    self->mLoadingPreset = false;
+
+                    self->mCurrentPresetIndex = -1;          // не привязан к пресету
+                    self->mCurrentPresetName  = "Generated";
+                    self->markDirty();
+                    self->updatePresetLabel();
+                }
+                self->mGenerateBtn.setEnabled(true);
+                self->mGenerateBtn.setButtonText("Generate");
+                self->mGenerating = false;
+            }
+        });
+    });
 }
 
 // ── Computer keyboard → MIDI note map ────────────────────────────────────────

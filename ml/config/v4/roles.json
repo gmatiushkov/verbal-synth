@@ -1,0 +1,286 @@
+{
+  "version": "4.0-draft",
+  "purpose": "Роль-шаблоны для v4. Роль = ЯКОРЬ идентичности (банк, базовая октава, конфиг осцилляторов, semitones=унисон). 'base' — опорные параметры идентичности в реальных единицах. 'vary_axes' — какие оси (attributes.json) сэмплер варьирует для этой роли. 'register_range' / 'typical' ограничивают уровни осей разумными для роли. Claude рендерит патч, уважая base, и не превращает роль в другую. ЧЕРНОВИК — список расширяемый.",
+
+  "roles": {
+    "sub_bass": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -2, "osc1_position": 0, "mix_osc1": 90, "mix_osc2": 0, "osc2_semitones": 0, "amp_attack": 0.004, "amp_sustain": 85, "amp_release": 0.25 },
+      "register_range": ["sub", "low"],
+      "vary_axes": ["brightness", "body", "texture"],
+      "typical": { "brightness": ["dark", "warm"], "body": ["sustained", "long"], "texture": ["clean", "saturated"], "space": ["dry"] },
+      "notes": "Чистый низкий синус (Basic pos 0). Сухой, semitones=0, без LFO. Яркий вариант — position до ~40%."
+    },
+    "saw_bass": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -1, "osc1_position": 85, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.008, "amp_sustain": 75, "amp_release": 0.2 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "attack", "texture", "filter_motion", "space"],
+      "typical": { "brightness": ["dark", "warm", "neutral"], "texture": ["clean", "saturated", "gritty"], "space": ["dry", "room"] },
+      "notes": "Пилообразный бас (Basic яркая позиция ~85% = квазиквадрат; Basic не даёт истинной пилы). semitones=0. Тёмный вариант — position ниже. Обычно сухой/комната."
+    },
+    "reese_bass": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -1, "osc1_position": 75, "mix_osc1": 90, "mix_osc2": 63, "osc2_position": 74, "osc2_detune": 42, "osc2_semitones": 0, "mix_noise": 10, "amp_attack": 0.007, "amp_sustain": 88, "amp_release": 0.08 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "texture", "filter_motion", "movement"],
+      "typical": { "brightness": ["dark", "warm", "neutral"], "texture": ["gritty", "distorted"], "movement": ["static", "filter_wobble"], "space": ["dry"] },
+      "notes": "Детюн-пила (Basic ярко ~90%, unison_thick встроен в base), грязный. LFO→фильтр уместен. semitones=0."
+    },
+    "acid_bass": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -1, "osc1_position": 68, "mix_osc1": 80, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.83, "amp_sustain": 0, "amp_release": 0.006 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "filter_motion", "texture"],
+      "typical": { "filter_motion": ["pluck_wah", "strong_sweep"], "texture": ["gritty", "distorted"], "space": ["dry", "room"] },
+      "notes": "303-сквелч (Basic ярко ~80%): резонанс + огибающая фильтра. filter_motion обязателен."
+    },
+    "saw_lead": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 95, "mix_osc1": 80, "mix_osc2": 70, "osc2_position": 95, "osc2_detune": 22, "osc2_semitones": 0, "amp_attack": 0.01, "amp_sustain": 80, "amp_release": 0.25 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "attack", "texture", "space", "movement"],
+      "typical": { "brightness": ["bright", "piercing", "neutral"], "movement": ["static", "vibrato"], "space": ["room", "hall"] },
+      "notes": "Суперпила-лид (Basic ярко ~95%, unison в base). Яркий. semitones=0 (детюн для толщины — да, транспозиция — нет)."
+    },
+    "square_lead": {
+      "category": "synth_roles",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 100, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.01, "amp_sustain": 78, "amp_release": 0.2 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "movement", "space"],
+      "typical": { "movement": ["vibrato", "filter_wobble", "static"], "space": ["room"] },
+      "notes": "Квадрат/PWM-лид: Basic pos ~100% (квазиквадрат) или банк Digital. На Digital помни ИНВЕРСИЮ позиции (0%=ярче). Вибрато уместно."
+    },
+    "warm_pad": {
+      "category": "synth_roles",
+      "banks": ["Basic", "Organ"],
+      "base": { "osc1_octave": 0, "osc1_position": 35, "mix_osc1": 75, "mix_osc2": 55, "osc2_position": 35, "osc2_detune": 12, "osc2_semitones": 0, "amp_attack": 0.6, "amp_sustain": 85, "amp_release": 2.2 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "attack", "movement", "space", "texture", "thickness"],
+      "typical": { "brightness": ["dark", "warm", "neutral"], "attack": ["soft", "swell"], "body": ["long", "drone"], "movement": ["static", "wt_morph", "filter_wobble"], "thickness": ["unison_thick", "octave_stack"], "space": ["hall", "vast"] },
+      "notes": "Тёплый аналоговый пэд (Basic мягкая позиция ~35%). Мягкая атака, длинный, зал. Унисон-детюн в base; для богатства допустим octave_stack (osc2 +12)."
+    },
+    "glass_pad": {
+      "category": "synth_roles",
+      "banks": ["Metallic", "Digital"],
+      "base": { "osc1_octave": 0, "osc1_position": 20, "mix_osc1": 75, "mix_osc2": 45, "osc2_position": 20, "osc2_semitones": 0, "amp_attack": 0.5, "amp_sustain": 80, "amp_release": 2.5 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "movement", "space", "thickness"],
+      "typical": { "brightness": ["bright", "piercing"], "movement": ["wt_morph", "tremolo"], "thickness": ["thin", "octave_stack"], "space": ["hall", "vast"] },
+      "notes": "Стеклянный/кристаллический пэд (Metallic ~20% = стеклянный хрусталь; на Digital помни инверсию). Мерцание (wt_morph). Октава сверху (octave_stack) добавляет блеск."
+    },
+    "choir_pad": {
+      "category": "acoustic_emulation",
+      "banks": ["Vocal"],
+      "base": { "osc1_octave": 0, "osc1_position": 50, "mix_osc1": 80, "mix_osc2": 57, "osc2_position": 50, "osc2_detune": 15, "osc2_semitones": 0, "amp_attack": 0.12, "amp_sustain": 90, "amp_release": 0.8 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "movement", "space", "vowel"],
+      "typical": { "vowel": ["o_round", "a_open", "e_mid"], "movement": ["static", "vibrato", "wt_morph"], "space": ["hall", "vast"] },
+      "notes": "Хоровой/вокальный пэд (банк Vocal, форманты). Калибровано по Voices Singing Yao: attack≈0.12с, release≈0.8с (НЕ длинный пэд-хвост — голоса довольно собранные), mix_osc1≈80, унисон-детюн ~15ц для хорового размытия, сильный fenv_to_wt=живое 'пропевание' гласной. osc1_position = ГЛАСНАЯ (ось vowel, залочена; base=А открытая 50%). Для смены гласной — медленный lfo2_to_wt или fenv_to_wt."
+    },
+    "epiano": {
+      "category": "acoustic_emulation",
+      "banks": ["Acoustic"],
+      "base": { "osc1_octave": 0, "osc1_position": 25, "mix_osc1": 80, "mix_osc2": 40, "osc2_position": 25, "osc2_detune": 7, "osc2_semitones": 0, "amp_attack": 0.004, "amp_decay": 0.6, "amp_sustain": 35, "amp_release": 0.4 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "texture", "space", "movement"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "movement": ["static", "tremolo"], "space": ["dry", "room"] },
+      "notes": "Электропиано/родес (Acoustic ~25%). Быстрая атака, спад, низкий sustain. Лёгкий детюн второго осц. (±5..10 ц) = биения молоточков по нескольким струнам/тайнам. Тремоло (Rhodes vibe) уместно."
+    },
+    "piano": {
+      "category": "acoustic_emulation",
+      "banks": ["Acoustic"],
+      "base": { "osc1_octave": 0, "osc1_position": 50, "mix_osc1": 80, "mix_osc2": 60, "osc2_position": 79, "osc2_detune": 8, "osc2_semitones": 0, "amp_attack": 0.003, "amp_decay": 2.0, "amp_sustain": 0, "amp_release": 0.32 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "texture", "space"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "texture": ["clean", "saturated", "gritty"], "space": ["dry", "room", "hall"] },
+      "notes": "Акустическое фортепиано/рояль. Калибровано по эталону Piano.json: Acoustic position≈50% (osc1)/79% (osc2), мгновенная атака, ДЛИННЫЙ натуральный спад (decay≈2с), sustain=0 (нота звенит и угасает, НЕ держится), release≈0.3с. Лёгкий детюн (±8..14 ц) = несколько струн на клавишу. Яркий = жёсткий/хонки-тонк, тёплый = мягкий фетровый. Отличие от epiano — акустический рояль, не электрический родес."
+    },
+    "organ": {
+      "category": "acoustic_emulation",
+      "banks": ["Organ"],
+      "base": { "osc1_octave": 0, "osc1_position": 45, "mix_osc1": 80, "mix_osc2": 55, "osc2_position": 90, "osc2_detune": 4, "osc2_semitones": 12, "mix_noise": 4, "amp_attack": 0.004, "amp_decay": 0.02, "amp_sustain": 82, "amp_release": 0.03 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "movement", "texture", "space"],
+      "typical": { "movement": ["leslie", "tremolo", "static"], "texture": ["clean", "saturated", "gritty"], "space": ["room", "hall"] },
+      "notes": "Орган Хаммонд (банк Organ). Калибровано по эталонам Church/Rock Leslie: osc1_position≈45% (тело Хаммонда), osc2_position≈90% (верхние драубары — даёт яркость/характер), короткий release≈30мс. ВТОРОЙ ОСЦ. = drawbar-слой: по умолчанию +12 (октава); для церковного органа +7 (квинта). Позиция: НИЗ=тонко/мало обертонов, ВЫШЕ=полнее (НЕ V-кривая — поправлено). 'Вращающийся динамик/Лесли' → movement=leslie (СИНУС). Рок-орган → +gritty+drive."
+    },
+    "bell": {
+      "category": "percussive_fx",
+      "banks": ["Metallic"],
+      "base": { "osc1_octave": 1, "osc1_position": 10, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 1.5, "amp_sustain": 0, "amp_release": 1.8 },
+      "register_range": ["mid", "high", "very_high"],
+      "vary_axes": ["brightness", "space", "body"],
+      "typical": { "brightness": ["bright", "piercing"], "body": ["pluck", "long"], "movement": ["static"], "space": ["hall", "vast"] },
+      "notes": "Колокол/звон (Metallic). Позиция: ~0-20% тёплый колокольчик, выше — резче/стальнее. Мгновенная атака, затухание, без LFO. Высокий регистр."
+    },
+    "mallet": {
+      "category": "percussive_fx",
+      "banks": ["Acoustic", "Metallic"],
+      "base": { "osc1_octave": 0, "osc1_position": 15, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.7, "amp_sustain": 0, "amp_release": 0.5 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "body", "space", "texture"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "body": ["pluck", "staccato"], "space": ["dry", "room", "hall"] },
+      "notes": "Мелодическая ударная (маримба/ксилофон/калимба деревянные → Acoustic ~15-25%; вибрафон/глокеншпиль/музыкальная шкатулка → Metallic ~10-20%). Мгновенная атака, звенящий спад, sustain=0. Ниже и деревяннее колокола, короче по хвосту. Музыкальная шкатулка = Metallic + высокий регистр + лёгкое тремоло."
+    },
+    "pluck": {
+      "category": "synth_roles",
+      "banks": ["Basic", "Acoustic"],
+      "base": { "osc1_octave": 0, "osc1_position": 40, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.002, "amp_decay": 0.4, "amp_sustain": 0, "amp_release": 0.3 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "texture", "space", "filter_motion"],
+      "typical": { "filter_motion": ["static", "pluck_wah"], "space": ["dry", "room"] },
+      "notes": "Короткий перкуссивный плак (Basic ~40%, ярче для острых; Acoustic ~25% для струнного). Тело pluck/staccato."
+    },
+    "string": {
+      "category": "acoustic_emulation",
+      "banks": ["Acoustic"],
+      "base": { "osc1_octave": 0, "osc1_position": 78, "mix_osc1": 80, "mix_osc2": 0, "osc2_position": 66, "osc2_detune": 0, "osc2_semitones": 0, "amp_attack": 0.3, "amp_sustain": 81, "amp_release": 0.35, "fenv_to_wt": 15 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "attack", "movement", "space"],
+      "typical": { "movement": ["vibrato", "static"], "space": ["hall", "room"] },
+      "notes": "Струнные (смычок). Калибровано по Violin/Cello: Acoustic position≈66-78% (НЕ ~25%), СОЛО = один осциллятор (mix_osc2=0, без детюна), attack≈0.3с, release≈0.35с. Вибрато (синус→pitch) уместно. Для секции/ансамбля — thickness (mix_osc2 + детюн)."
+    },
+    "flute": {
+      "category": "acoustic_emulation",
+      "banks": ["Acoustic", "Vocal"],
+      "base": { "osc1_octave": 1, "osc1_position": 20, "mix_osc1": 82, "mix_noise": 12, "osc2_semitones": 0, "amp_attack": 0.12, "amp_sustain": 82, "amp_release": 0.3 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "movement", "space", "texture"],
+      "typical": { "movement": ["vibrato", "static"], "texture": ["noisy", "clean"], "space": ["room", "hall"] },
+      "notes": "Флейта с придыханием (Acoustic ~20%, немного шума в base). Свистящая, воздушная. На банке Vocal — позиция = гласная."
+    },
+    "brass": {
+      "category": "acoustic_emulation",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 80, "mix_osc1": 85, "mix_osc2": 40, "osc2_position": 80, "osc2_detune": 8, "osc2_semitones": 0, "amp_attack": 0.05, "amp_sustain": 82, "amp_release": 0.25 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "attack", "filter_motion", "movement", "space", "texture"],
+      "typical": { "brightness": ["neutral", "bright", "piercing"], "attack": ["fast", "medium"], "filter_motion": ["static", "gentle_sweep"], "movement": ["static", "vibrato"], "space": ["room", "hall"] },
+      "notes": "Медные духовые (труба/саксофон/тромбон/валторна/фанфары). Basic яркая тростниково-гудящая позиция ~80%. Характерный 'блат' атаки → средне-быстрая атака + лёгкий fenv-свип, открывающий ноту. Вибрато на длинных нотах. Секция/ансамбль = детюн osc2. Громкий/жёсткий = piercing+gritty. Сакс = с придыханием (немного noise)."
+    },
+    "drone": {
+      "category": "texture_atmos",
+      "banks": ["Basic", "Organ", "Metallic"],
+      "base": { "osc1_octave": -1, "osc1_position": 40, "mix_osc1": 78, "mix_osc2": 50, "osc2_position": 40, "osc2_detune": 14, "osc2_semitones": 0, "amp_attack": 1.2, "amp_sustain": 100, "amp_release": 4.0 },
+      "register_range": ["sub", "low", "mid"],
+      "vary_axes": ["brightness", "movement", "texture", "space"],
+      "typical": { "attack": ["soft", "swell"], "movement": ["wt_morph", "filter_wobble", "static"], "space": ["vast", "hall"] },
+      "notes": "Бесконечный дрон (Basic/Organ/Metallic, ~40%). Наплыв, эволюция тембра (wt_morph двигает позицию), бескрайнее пространство."
+    },
+    "riser_fx": {
+      "category": "percussive_fx",
+      "banks": ["Digital", "Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 10, "mix_osc1": 70, "mix_noise": 25, "osc2_semitones": 0, "amp_attack": 1.5, "amp_sustain": 90, "amp_release": 0.3 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "filter_motion", "texture", "space"],
+      "typical": { "filter_motion": ["strong_sweep"], "space": ["hall", "vast"] },
+      "notes": "Ризер/подъём через ФИЛЬТР-свип (питч-свипа нет). Нарастающая атака + сильный fenv. Банк Digital: помни ИНВЕРСИЮ позиции (0%=ярче/жёстче). fenv_to_wt может добавить тембральный подъём."
+    },
+    "kick": {
+      "category": "drums",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -2, "osc1_position": 0, "mix_osc1": 92, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.25, "amp_sustain": 0, "amp_release": 0.1 },
+      "register_range": ["sub", "low"],
+      "vary_axes": ["brightness", "texture"],
+      "typical": { "brightness": ["dark", "warm"], "texture": ["clean", "saturated", "distorted"], "space": ["dry"] },
+      "notes": "Синт-кик (808/909). Сабовый синус (Basic pos 0), мгновенная атака, короткий. Сухой."
+    },
+    "snare_clap": {
+      "category": "drums",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 30, "mix_osc1": 50, "mix_noise": 55, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.2, "amp_sustain": 0, "amp_release": 0.15 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "texture", "space"],
+      "typical": { "space": ["dry", "room"] },
+      "notes": "Снэр/клэп: шум+тон (Basic ~30%). Короткий."
+    },
+    "hihat": {
+      "category": "drums",
+      "banks": ["Metallic"],
+      "base": { "osc1_octave": 2, "osc1_position": 90, "mix_osc1": 35, "mix_noise": 65, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.08, "amp_sustain": 0, "amp_release": 0.05 },
+      "register_range": ["very_high"],
+      "vary_axes": ["brightness", "body", "space"],
+      "typical": { "body": ["staccato", "pluck"], "space": ["dry"] },
+      "notes": "Хай-хэт: металл+шум (Metallic ~90% = резкий стальной), оч.высокий, короткий. Open = длиннее body."
+    },
+    "guitar": {
+      "category": "acoustic_emulation",
+      "banks": ["Acoustic"],
+      "base": { "osc1_octave": 0, "osc1_position": 69, "osc2_position": 88, "mix_osc1": 80, "mix_osc2": 56, "osc2_detune": 0, "osc2_semitones": 0, "amp_attack": 0.003, "amp_decay": 2.0, "amp_sustain": 0, "amp_release": 0.12 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "attack", "body", "texture", "movement", "space"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "body": ["pluck", "staccato"], "movement": ["static", "tremolo"], "space": ["room", "hall"] },
+      "notes": "Щипковая струна с ладами (нейлон/сталь/банджо/мандолина/балалайка/ситар/кото/арфа). Калибровано по Guitar.json: Acoustic osc1≈69%/osc2≈88% (корпус+струна), быстрая атака (3мс), длинный натуральный спад (decay≈2с), sustain=0, release≈0.12с. Отличие от pluck: устойчивая струнная идентичность + два слоя осц. Мандолина=tremolo; банджо/ситар ярче+gritty; ситар=body sustained (дрон). semitones=0."
+    },
+    "reed": {
+      "category": "acoustic_emulation",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 90, "mix_osc1": 85, "mix_noise": 6, "osc2_semitones": 0, "amp_attack": 0.04, "amp_sustain": 80, "amp_release": 0.2 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "attack", "body", "movement", "texture", "thickness", "space"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "body": ["sustained", "drone"], "movement": ["static", "vibrato"], "space": ["room", "hall"] },
+      "notes": "Язычковые (кларнет/гобой/фагот/саксофон/гармошка/аккордеон/фисгармония/волынка). Basic яркая позиция ~90% (нечётные/носовые обертоны трости) + лёгкое придыхание (noise). Сустейн-инструмент. Аккордеон=unison_thick (расстроенные язычки); волынка/шарманка=body drone; сакс=noisy+vibrato. semitones=0."
+    },
+    "pure_tone": {
+      "category": "acoustic_emulation",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 1, "osc1_position": 0, "mix_osc1": 90, "osc2_semitones": 0, "amp_attack": 0.05, "amp_sustain": 85, "amp_release": 0.25 },
+      "register_range": ["mid", "high", "very_high"],
+      "vary_axes": ["brightness", "attack", "movement", "space"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "attack": ["soft", "medium"], "movement": ["vibrato", "static"], "space": ["room", "hall"] },
+      "notes": "Чистый тон без обертонов (Basic pos 0 = синус): свист/окарина/терменвокс/мягкий флейтовый лид. Вибрато почти всегда (живая высота). Тонкий одноголосый. semitones=0."
+    },
+    "noise_texture": {
+      "category": "texture_atmos",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": 0, "osc1_position": 30, "mix_osc1": 20, "mix_noise": 70, "osc2_semitones": 0, "amp_attack": 0.8, "amp_sustain": 90, "amp_release": 2.5, "reverb_mix": 40 },
+      "register_range": ["low", "mid", "high"],
+      "vary_axes": ["brightness", "attack", "movement", "texture", "filter_motion", "space"],
+      "typical": { "brightness": ["dark", "neutral", "bright"], "attack": ["soft", "swell"], "movement": ["static", "tremolo", "filter_wobble", "wt_morph"], "space": ["hall", "vast"] },
+      "notes": "Шум-доминантные атмосферы (ветер/океан/дождь/статика/винил-крэкл/придыхание/гранула/whoosh). mix_noise высокий (~70), тон-осц подмешан слабо. filter_motion=whoosh/свип; tremolo=океан/рой; реверб в base. semitones=0."
+    },
+    "gong": {
+      "category": "percussive_fx",
+      "banks": ["Metallic"],
+      "base": { "osc1_octave": 0, "osc1_position": 70, "mix_osc1": 85, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 2.5, "amp_sustain": 0, "amp_release": 3.0, "reverb_mix": 45 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "body", "texture", "movement", "space"],
+      "typical": { "brightness": ["warm", "neutral", "bright"], "body": ["long"], "movement": ["static", "tremolo"], "space": ["hall", "vast"] },
+      "notes": "Инармоничный удар по металлу с длинным затуханием (Metallic ~70% = резкий/инармоничный): храмовый гонг/поющая чаша/анвил/тёмный импакт. Мгновенная атака, длинный хвост, sustain=0. Поющая чаша=tremolo (биения); тёмный импакт=dark+distorted. semitones=0."
+    },
+    "digital_fx": {
+      "category": "percussive_fx",
+      "banks": ["Digital"],
+      "base": { "osc1_octave": 1, "osc1_position": 0, "mix_osc1": 80, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.2, "amp_sustain": 30, "amp_release": 0.15, "drive_amount": 30 },
+      "register_range": ["mid", "high"],
+      "vary_axes": ["brightness", "attack", "body", "texture", "filter_motion", "movement"],
+      "typical": { "brightness": ["bright", "piercing"], "body": ["staccato", "pluck"], "texture": ["clean", "gritty", "distorted"], "filter_motion": ["static", "strong_sweep"] },
+      "notes": "Цифровые/чиптюн/глитч/UI/лазер/бит-краш (банк Digital — ИНВЕРСИЯ позиции: 0%=жёстче/резче). Короткие или со свипом (лазер=strong_sweep). Лёгкий drive в base. DTMF/UI=clean; глитч/бит-краш=distorted. semitones=0."
+    },
+    "tom": {
+      "category": "drums",
+      "banks": ["Basic"],
+      "base": { "osc1_octave": -1, "osc1_position": 20, "mix_osc1": 88, "mix_noise": 8, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 0.3, "amp_sustain": 0, "amp_release": 0.15 },
+      "register_range": ["low", "mid"],
+      "vary_axes": ["brightness", "body", "texture", "space"],
+      "typical": { "brightness": ["dark", "warm"], "body": ["pluck", "staccato"], "texture": ["clean", "saturated"], "space": ["dry", "room"] },
+      "notes": "Настроенная мембрана/тональная перкуссия (том/литавры/конга/бонго). Basic низ-средняя позиция, мгновенная атака, спад, sustain=0. Питч-дроп недостижим в движке — аппроксимируем коротким спадом. Литавры=ниже/saturated; конга=выше/warm. semitones=0."
+    },
+    "cymbal": {
+      "category": "drums",
+      "banks": ["Metallic"],
+      "base": { "osc1_octave": 2, "osc1_position": 90, "mix_osc1": 35, "mix_noise": 65, "osc2_semitones": 0, "amp_attack": 0.001, "amp_decay": 1.2, "amp_sustain": 0, "amp_release": 1.0 },
+      "register_range": ["very_high"],
+      "vary_axes": ["brightness", "body", "texture", "space"],
+      "typical": { "brightness": ["bright", "piercing"], "body": ["long", "pluck"], "texture": ["noisy"], "space": ["room", "hall"] },
+      "notes": "Тарелки крэш/райд (Metallic ~90% + высокий mix_noise): металл+шум, длиннее хай-хэта. Очень высокий регистр, мгновенная атака, длинный шипящий хвост, sustain=0. semitones=0."
+    }
+  }
+}

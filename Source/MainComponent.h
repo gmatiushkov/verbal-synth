@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <unordered_map>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "SynthEngine.h"
@@ -43,6 +44,12 @@ private:
     // Top bar — prompt / generate
     juce::TextEditor mPromptInput;
     juce::TextButton mGenerateBtn;
+
+    // Generate (text → patch через ml/scripts/predict.py)
+    void onGenerateClicked();
+    juce::File locatePredictScript() const;
+    static bool parsePatchJson(const juce::String& jsonText, SynthPatch& out);
+    std::atomic<bool> mGenerating { false };
 
     // Preset manager state
     PresetManager mPresetManager;

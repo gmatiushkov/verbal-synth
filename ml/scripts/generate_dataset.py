@@ -251,6 +251,8 @@ def _one_call(client, kwargs, anthropic, verbose):
     # Нестриминговый create стабильнее; стрим оставляем запасным. Запрет инструментов — в промпте.
     try:
         msg = client.messages.create(**kwargs)
+    except (anthropic.AuthenticationError, anthropic.PermissionDeniedError):
+        raise  # 401/403 — неверный/просроченный ключ: не транзиентно, стрим не поможет
     except (anthropic.APIError, TypeError) as create_err:
         if verbose:
             print(f"    [create→stream fallback: {type(create_err).__name__}]")
@@ -292,6 +294,10 @@ def call_model(client, model, system_blocks, user_text, max_tokens, effort, verb
                 if (r > 0 or i > 0) and verbose:
                     print("    [использован дешёвый вариант запроса (без thinking)]")
                 return data, usage
+            except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
+                raise RuntimeError(
+                    f"Ключ API отклонён ({type(e).__name__}: {e}). Обновите auth_token "
+                    f"в ml/config/api_config.local.json — повторы бессмысленны.") from e
             except (anthropic.BadRequestError, anthropic.NotFoundError, TypeError) as e:
                 last_err = e
                 if verbose:

@@ -1,1 +1,7 @@
-anthropic>=0.40.0
+# ML — генерация датасета + обучение/инференс головы text→patch
+anthropic>=0.40.0        # Фаза 1: генерация датасета
+torch>=2.3               # Фаза 3: обучение/инференс
+sentence-transformers>=2.7
+numpy>=1.26
+onnx>=1.16               # экспорт головы в ONNX
+onnxruntime>=1.18

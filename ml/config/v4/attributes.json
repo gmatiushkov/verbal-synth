@@ -1,0 +1,152 @@
+{
+  "version": "4.0-draft",
+  "purpose": "Схема перцептивно-функциональных атрибутов для генерации датасета v4 (подход A6-Claude). Звук = роль-якорь (roles.json) + значения осей ниже. Каждый уровень оси привязан к ЯКОРНЫМ значениям параметров в РЕАЛЬНЫХ единицах (мс/с, Гц, центы, %, окт, Q, имена банков/форм) — те же единицы, что в param_convert.py. Это ОРИЕНТИРЫ для Claude (можно ±), а не жёсткий рендер: роль задаёт идентичность, оси модулируют. Всё, что спека не трогает → НЕЙТРАЛЬ (см. neutral_defaults). Слова-дескрипторы для каждого уровня — в lexicon.json по ключу 'ось.уровень'.",
+
+  "units": "log Гц (lp/hp_cutoff 20..18000), c (attack 0.0005..5, decay 0.001..5, release 0.005..10), Гц (lfo_rate 0.01..20), центы (detune ±50, lfo_to_pitch 0..200), полутоны (semitones ±24), окт (fenv_amount ±4, lfo_to_filter 0..2), Q (0.5..10), % (уровни/реверб/drive/keytrack/to_wt/to_amp), bank/shape — имена",
+
+  "neutral_defaults": {
+    "note": "Значения по умолчанию, если ось их не задаёт (A3 — убирает шум типа '+2 semitones из ниоткуда'). Снапятся пост-обработчиком. ВНИМАНИЕ: osc1_position/osc2_position здесь — лишь страховочный фолбэк; роль ОБЯЗАНА задать позицию под свой банк (см. position_semantics), 30% — не нейтраль, а заглушка.",
+    "osc1_octave": 0, "osc2_detune": 0, "osc2_semitones": 0,
+    "osc1_position": 30, "osc2_position": 30,
+    "mix_osc2": 0, "mix_noise": 0,
+    "hp_cutoff": 20, "hp_resonance": 0.5, "lp_resonance": 0.7, "filter_keytrack": 30,
+    "fenv_amount": 0, "fenv_to_wt": 0,
+    "lfo1_to_pitch": 0, "lfo1_to_filter": 0, "lfo2_to_wt": 0, "lfo2_to_amp": 0,
+    "drive_amount": 0, "reverb_mix": 8, "reverb_time": 25, "reverb_damp": 50
+  },
+
+  "position_semantics": {
+    "note": "osc*_position (0..100%) = МОРФ ПОЗИЦИЯ внутри банка. Смысл и НАПРАВЛЕНИЕ зависят от банка (источник: wavetable_doc.json). Роль задаёт базовую позицию под свой банк; ось brightness двигает её там, где позиция = яркость источника (couples_brightness); для Vocal позицию задаёт ось vowel. НЕ оставляй позицию случайной/50% — это слышимый тембральный выбор. osc2_position обычно = osc1_position (если osc2 включён и не задумано иное).",
+    "Basic":    { "meaning": "синус → квазиквадрат (только нечётные обертоны)", "couples_brightness": "ПРЯМО: выше позиция = ярче/носовее", "anchors": { "0": "чистый синус — тёплый, без обертонов (саб, мягкий пэд, кик)", "40": "мягкий треугольный, лёгкая гнусавость (H3)", "70": "насыщенный гудящий тон", "100": "яркий квазиквадрат, 'кларнетный' — лид/органный тон" } },
+    "Organ":    { "meaning": "drawbar-слои; снизу мало обертонов, выше — полнее/ярче (ПОПРАВЛЕНО по эталонам Church/Rock Leslie — НЕ V-образно)", "couples_brightness": "ПРЯМО (умеренно): выше позиция = больше драубаров/ярче", "anchors": { "0": "тонкий, мало обертонов — слабо читается как орган", "45": "полный тёплый Хаммонд, узнаваемое органное тело (эталон osc1≈42-49%)", "90": "яркие верхние драубары/перкуссия (эталон osc2≈86-96%)", "100": "максимум обертонов, самый яркий 'полный орган'" } },
+    "Acoustic": { "meaning": "струнно/ударно-акустический; позиция ВЛИЯЕТ заметнее, чем считалось (ПОПРАВЛЕНО по эталонам Piano/Violin/Cello/Guitar)", "couples_brightness": "ПРЯМО (умеренно): выше = ярче/жёстче/насыщеннее", "anchors": { "25": "мягкий тёплый тон", "50": "натуральное тело — фортепиано/мягкая струна (эталон Piano osc1≈51%)", "70": "насыщеннее — гитара/клавесинный край (эталон Guitar≈69%, Violin≈77%)", "90": "яркий/жёсткий — стальная струна/скрипка верх (эталон Cello osc1≈89%)" } },
+    "Vocal":    { "meaning": "ГЛАСНАЯ-форманта: U→O→A→E→I", "couples_brightness": "через гласную (U тёмная … I светлая)", "use_vowel_axis": true, "anchors": { "0": "У (oo) — тёмная, закрытая", "25": "О (oh) — округлая, грудная", "50": "А (ah) — открытая, широкая", "75": "Э (eh) — средне-светлая", "100": "И (ee) — самая яркая, тонкая" } },
+    "Metallic": { "meaning": "тёплый колокол → резкий стальной металл", "couples_brightness": "ПРЯМО: выше позиция = резче/металличнее", "anchors": { "0": "мягкий тёплый колокольчик/треугольник", "20": "стеклянный хрусталь — прозрачный звон", "60": "стальной, острый, верхний звон", "100": "резкий диссонансный удар, шипящее затухание" } },
+    "Digital":  { "meaning": "квадрат/чиптюн — ВНИМАНИЕ: яркость ИНВЕРТИРОВАНА", "couples_brightness": "ОБРАТНО: 0%=ярче всего (жёсткий NES), 100%=мягче и лучше отзывается на LP-фильтр", "anchors": { "0": "жёсткий яркий NES-квадрат — агрессивный", "60": "умеренный лид/PWM-тон", "100": "наименее яркий квадрат, хорошо фильтруется" } }
+  },
+
+  "axes": {
+    "register": {
+      "params": ["osc1_octave"],
+      "levels": {
+        "sub":       { "osc1_octave": -2 },
+        "low":       { "osc1_octave": -1 },
+        "mid":       { "osc1_octave": 0 },
+        "high":      { "osc1_octave": 1 },
+        "very_high": { "osc1_octave": 2 }
+      }
+    },
+
+    "brightness": {
+      "params": ["lp_cutoff", "drive_tone"],
+      "note": "Яркость = в основном lp_cutoff (фильтр). НО позиция WT тоже несёт яркость источника: двигай osc1_position СОГЛАСНО position_semantics — в Basic/Metallic вверх с яркостью, в Digital ВНИЗ (инверсия), в Organ/Acoustic позиция в основном от роли. Фильтр и позиция работают вместе, не дублируй вслепую.",
+      "levels": {
+        "dark":      { "lp_cutoff": 400,   "drive_tone": 20 },
+        "warm":      { "lp_cutoff": 850,   "drive_tone": 35 },
+        "neutral":   { "lp_cutoff": 2500,  "drive_tone": 50 },
+        "bright":    { "lp_cutoff": 6000,  "drive_tone": 65 },
+        "piercing":  { "lp_cutoff": 11000, "drive_tone": 80 }
+      }
+    },
+
+    "attack": {
+      "params": ["amp_attack"],
+      "levels": {
+        "instant": { "amp_attack": 0.001 },
+        "fast":    { "amp_attack": 0.012 },
+        "medium":  { "amp_attack": 0.08 },
+        "soft":    { "amp_attack": 0.4 },
+        "swell":   { "amp_attack": 1.5 }
+      }
+    },
+
+    "body": {
+      "params": ["amp_decay", "amp_sustain", "amp_release"],
+      "note": "Профиль удержания ноты (D/S/R). Атака — отдельная ось.",
+      "levels": {
+        "staccato":  { "amp_decay": 0.12, "amp_sustain": 0,  "amp_release": 0.08 },
+        "pluck":     { "amp_decay": 0.5,  "amp_sustain": 0,  "amp_release": 0.3 },
+        "sustained": { "amp_decay": 0.3,  "amp_sustain": 80, "amp_release": 0.45 },
+        "long":      { "amp_decay": 0.4,  "amp_sustain": 75, "amp_release": 2.5 },
+        "drone":     { "amp_decay": 0.5,  "amp_sustain": 100,"amp_release": 4.0 }
+      }
+    },
+
+    "filter_motion": {
+      "params": ["fenv_amount", "fenv_decay", "fenv_sustain", "lp_resonance"],
+      "note": "Движение фильтра огибающей (fenv → LP cutoff). fenv_amount в октавах (+ вверх).",
+      "levels": {
+        "static":       { "fenv_amount": 0,   "lp_resonance": 0.7 },
+        "gentle_sweep": { "fenv_amount": 1.0, "fenv_decay": 0.8, "fenv_sustain": 20, "lp_resonance": 1.5 },
+        "pluck_wah":    { "fenv_amount": 1.5, "fenv_decay": 0.25,"fenv_sustain": 0,  "lp_resonance": 3.0 },
+        "strong_sweep": { "fenv_amount": 2.5, "fenv_decay": 1.2, "fenv_sustain": 10, "lp_resonance": 5.0 }
+      }
+    },
+
+    "movement": {
+      "params": ["lfo1_rate","lfo1_shape","lfo1_to_pitch","lfo1_to_filter","lfo2_rate","lfo2_shape","lfo2_to_wt","lfo2_to_amp"],
+      "note": "Периодическое движение (LFO). Синус = натуральное вибрато/тремоло. ВАЖНО: высоту двигает только lfo*_to_pitch (нет pitch-envelope).",
+      "levels": {
+        "static":         { },
+        "vibrato":        { "lfo1_shape": "sine", "lfo1_rate": 5.5, "lfo1_to_pitch": 25 },
+        "tremolo":        { "lfo2_shape": "sine", "lfo2_rate": 5.0, "lfo2_to_amp": 25 },
+        "filter_wobble":  { "lfo1_shape": "triangle", "lfo1_rate": 3.0, "lfo1_to_filter": 0.6 },
+        "wt_morph":       { "lfo2_shape": "sine", "lfo2_rate": 0.3, "lfo2_to_wt": 30 },
+        "leslie":         { "lfo1_shape": "sine", "lfo1_rate": 6.0, "lfo1_to_pitch": 12, "lfo2_shape": "sine", "lfo2_rate": 6.0, "lfo2_to_amp": 18 }
+      }
+    },
+
+    "texture": {
+      "params": ["drive_amount", "mix_noise"],
+      "levels": {
+        "clean":     { "drive_amount": 0,  "mix_noise": 0 },
+        "saturated": { "drive_amount": 25, "mix_noise": 0 },
+        "gritty":    { "drive_amount": 55, "mix_noise": 5 },
+        "distorted": { "drive_amount": 85, "mix_noise": 0 },
+        "noisy":     { "drive_amount": 15, "mix_noise": 30 }
+      }
+    },
+
+    "space": {
+      "params": ["reverb_mix", "reverb_time"],
+      "levels": {
+        "dry":   { "reverb_mix": 5,  "reverb_time": 20 },
+        "room":  { "reverb_mix": 25, "reverb_time": 40 },
+        "hall":  { "reverb_mix": 50, "reverb_time": 70 },
+        "vast":  { "reverb_mix": 75, "reverb_time": 95 }
+      }
+    },
+
+    "thickness": {
+      "params": ["mix_osc2", "osc2_detune", "osc2_semitones"],
+      "note": "Толщина/слойность. semitones≠0 ТОЛЬКО для октавного стека (±12) — иначе унисон.",
+      "levels": {
+        "thin":         { "mix_osc2": 0 },
+        "unison_thick": { "mix_osc2": 60, "osc2_detune": 15, "osc2_semitones": 0 },
+        "octave_stack": { "mix_osc2": 55, "osc2_detune": 5,  "osc2_semitones": 12 }
+      }
+    },
+
+    "vowel": {
+      "params": ["osc1_position", "osc2_position", "lfo2_to_wt", "fenv_to_wt"],
+      "applies_to_bank": "Vocal",
+      "note": "ТОЛЬКО для банка Vocal (хор/вокальный пэд, иногда флейта на Vocal). Позиция WT = гласная (морф U→O→A→E→I). Для 'пропевания'/живого голоса добавь медленный lfo2_to_wt (плавная смена гласной) ИЛИ fenv_to_wt (формантный бросок в атаке). Вне банка Vocal ось не применяется.",
+      "levels": {
+        "u_dark":   { "osc1_position": 0,   "osc2_position": 0 },
+        "o_round":  { "osc1_position": 25,  "osc2_position": 25 },
+        "a_open":   { "osc1_position": 50,  "osc2_position": 50 },
+        "e_mid":    { "osc1_position": 75,  "osc2_position": 75 },
+        "i_bright": { "osc1_position": 100, "osc2_position": 100 }
+      }
+    },
+
+    "character": {
+      "params": ["качественная ось — мягкие сдвиги нескольких параметров, интерпретирует Claude"],
+      "note": "Настроение/характер. Не жёсткие якоря, а смещения: тёплый→ниже cutoff+саж; холодный→ярче+металл-банк+меньше реверба; тревожный→диссонанс-детюн+тёмный+дрон; эпичный→зал+толсто+яркий; мечтательный→мягкая атака+зал+вибрато; агрессивный→дисторшн+яркий+быстрая атака; меланхоличный→тёплый+длинный+зал; игривый→стаккато+яркий+питч-вибрато.",
+      "levels": {
+        "warm_cozy": {}, "cold_metallic": {}, "anxious": {}, "epic": {},
+        "dreamy": {}, "aggressive": {}, "melancholic": {}, "playful": {}, "neutral": {}
+      }
+    }
+  }
+}
