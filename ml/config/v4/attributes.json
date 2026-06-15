@@ -66,10 +66,12 @@
       "levels": {
         "staccato":  { "amp_decay": 0.12, "amp_sustain": 0,  "amp_release": 0.08 },
         "pluck":     { "amp_decay": 0.5,  "amp_sustain": 0,  "amp_release": 0.3 },
+        "ring":      { "amp_decay": 1.8,  "amp_sustain": 0,  "amp_release": 2.5 },
         "sustained": { "amp_decay": 0.3,  "amp_sustain": 80, "amp_release": 0.45 },
         "long":      { "amp_decay": 0.4,  "amp_sustain": 75, "amp_release": 2.5 },
         "drone":     { "amp_decay": 0.5,  "amp_sustain": 100,"amp_release": 4.0 }
-      }
+      },
+      "level_note": "ring = ДЛИННОЕ ЗАТУХАНИЕ при sustain 0 (колокол/гонг/тарелка/пиано/длинный звон) — нота сама гаснет долгим хвостом, в отличие от 'long' (УДЕРЖИВАЕТСЯ, sustain 75)."
     },
 
     "filter_motion": {

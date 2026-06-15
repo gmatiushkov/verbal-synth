@@ -23,7 +23,7 @@ ATTRS_PATH = ROOT / "config" / "v4" / "attributes.json"
 # Порядок уровней для ОРДИНАЛЬНЫХ осей (для метрики «в пределах 1 уровня»).
 REGISTER_ORDER = ["sub", "low", "mid", "high", "very_high"]
 BRIGHTNESS_ORDER = ["dark", "warm", "neutral", "bright", "piercing"]
-BODY_ORDER = ["staccato", "pluck", "sustained", "long", "drone"]
+BODY_ORDER = ["staccato", "pluck", "ring", "long", "sustained", "drone"]
 _OCT2REG = {-2: "sub", -1: "low", 0: "mid", 1: "high", 2: "very_high"}
 
 _attrs = None

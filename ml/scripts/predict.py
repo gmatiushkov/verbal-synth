@@ -16,7 +16,7 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).parent))
 import param_convert as pc
-from model import SynthPredictor, ENCODER_NAME, CATEGORICALS, CONT_NAMES, CAT_NAMES
+from model import SynthPredictor, reconstruct, ENCODER_NAME, CATEGORICALS
 
 MODELS = Path(__file__).resolve().parents[2] / "ml" / "models"
 
@@ -41,14 +41,12 @@ def predict(text, snap=True):
     _load()
     emb = _enc.encode([text], normalize_embeddings=True, convert_to_numpy=True)
     with torch.no_grad():
-        cont, cats = _model(torch.tensor(emb))
-    vals = {n: float(cont[0, i]) for i, n in enumerate(CONT_NAMES)}
-    for n in CAT_NAMES:
-        vals[n] = CATEGORICALS[n][int(cats[n][0].argmax())]
+        cont, cats, axes = _model(torch.tensor(emb))
+        vec = reconstruct(cont, cats, axes)[0]            # полный вектор 38 в PARAM_ORDER
     out = {}
-    for name in pc.PARAM_ORDER:
-        v = min(max(vals[name], 0.0), 1.0)
-        if snap and name not in CATEGORICALS:     # дискретные уже на сетке
+    for i, name in enumerate(pc.PARAM_ORDER):
+        v = min(max(float(vec[i]), 0.0), 1.0)
+        if snap and name not in CATEGORICALS:             # категории уже на сетке; оси — на якорях
             v = round(pc.real_to_norm(name, pc.norm_to_real(name, v)), 6)
         out[name] = v
     return out

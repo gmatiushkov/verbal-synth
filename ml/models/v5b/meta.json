@@ -1,0 +1,167 @@
+{
+  "encoder": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "input_dim": 384,
+  "trunk": [
+    256,
+    128,
+    64
+  ],
+  "output_dim": 38,
+  "head": "hybrid+axis",
+  "normalize_embeddings": true,
+  "param_order": [
+    "osc1_table",
+    "osc1_position",
+    "osc1_octave",
+    "osc2_table",
+    "osc2_position",
+    "osc2_detune",
+    "osc2_semitones",
+    "mix_osc1",
+    "mix_osc2",
+    "mix_noise",
+    "lp_cutoff",
+    "lp_resonance",
+    "hp_cutoff",
+    "hp_resonance",
+    "filter_keytrack",
+    "amp_attack",
+    "amp_decay",
+    "amp_sustain",
+    "amp_release",
+    "fenv_attack",
+    "fenv_decay",
+    "fenv_sustain",
+    "fenv_release",
+    "fenv_amount",
+    "fenv_to_wt",
+    "lfo1_rate",
+    "lfo1_shape",
+    "lfo1_to_pitch",
+    "lfo1_to_filter",
+    "lfo2_rate",
+    "lfo2_shape",
+    "lfo2_to_wt",
+    "lfo2_to_amp",
+    "drive_amount",
+    "drive_tone",
+    "reverb_time",
+    "reverb_damp",
+    "reverb_mix"
+  ],
+  "cont_names": [
+    "osc1_position",
+    "osc2_position",
+    "osc2_detune",
+    "osc2_semitones",
+    "mix_osc1",
+    "mix_osc2",
+    "lp_resonance",
+    "hp_cutoff",
+    "hp_resonance",
+    "filter_keytrack",
+    "fenv_attack",
+    "fenv_decay",
+    "fenv_sustain",
+    "fenv_release",
+    "fenv_amount",
+    "fenv_to_wt",
+    "lfo1_rate",
+    "lfo1_to_pitch",
+    "lfo1_to_filter",
+    "lfo2_rate",
+    "lfo2_to_wt",
+    "lfo2_to_amp",
+    "reverb_time",
+    "reverb_damp",
+    "reverb_mix"
+  ],
+  "categoricals": {
+    "osc1_table": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "osc1_octave": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "osc2_table": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "lfo1_shape": [
+      0.0,
+      0.33,
+      0.67,
+      1.0
+    ],
+    "lfo2_shape": [
+      0.0,
+      0.33,
+      0.67,
+      1.0
+    ]
+  },
+  "axis_heads": {
+    "brightness": [
+      "dark",
+      "warm",
+      "neutral",
+      "bright",
+      "piercing"
+    ],
+    "attack": [
+      "instant",
+      "fast",
+      "medium",
+      "soft",
+      "swell"
+    ],
+    "body": [
+      "staccato",
+      "pluck",
+      "ring",
+      "sustained",
+      "long",
+      "drone"
+    ],
+    "texture": [
+      "clean",
+      "saturated",
+      "gritty",
+      "distorted",
+      "noisy"
+    ]
+  },
+  "rows": 3360,
+  "patches": 560,
+  "val_patches": 56,
+  "full_mae": 0.07857,
+  "baseline_mae": 0.1199,
+  "cat_accuracy": {
+    "osc1_table": 0.7946,
+    "osc1_octave": 0.7202,
+    "osc2_table": 0.7887,
+    "lfo1_shape": 0.8869,
+    "lfo2_shape": 0.8899
+  },
+  "axis_accuracy": {
+    "brightness": 0.628,
+    "attack": 0.7351,
+    "body": 0.631,
+    "texture": 0.6845
+  },
+  "epochs": 160,
+  "seed": 42
+}

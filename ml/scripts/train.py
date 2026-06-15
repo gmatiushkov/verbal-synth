@@ -26,8 +26,9 @@ from torch.utils.data import TensorDataset, DataLoader
 
 sys.path.insert(0, str(Path(__file__).parent))
 import param_convert as pc
-from model import (SynthPredictor, reconstruct, ENCODER_NAME, INPUT_DIM, OUTPUT_DIM,
-                   TRUNK, CATEGORICALS, CONT_NAMES, CONT_IDX, CAT_NAMES, CAT_IDX)
+from model import (SynthPredictor, reconstruct, axis_label_idx, ENCODER_NAME, INPUT_DIM,
+                   OUTPUT_DIM, TRUNK, CATEGORICALS, CONT_NAMES, CONT_IDX, CAT_NAMES, CAT_IDX,
+                   AXIS_NAMES, AXIS_HEADS)
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "ml" / "data" / "dataset.jsonl"
@@ -107,6 +108,16 @@ def cat_targets(Y):
     return out
 
 
+def axis_targets(Y):
+    """[N,38] норм → [N, len(AXIS)] индексы уровней осей (ближайший якорь уровня)."""
+    out = np.empty((len(Y), len(AXIS_NAMES)), dtype=np.int64)
+    for r in range(len(Y)):
+        patch = dict(zip(pc.PARAM_ORDER, Y[r]))
+        for j, a in enumerate(AXIS_NAMES):
+            out[r, j] = axis_label_idx(a, patch)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--epochs", type=int, default=160)
@@ -136,15 +147,18 @@ def main():
 
     tr, va, n_tr_p, n_va_p = split_by_patch(rows, args.val_frac, args.seed)
     print(f"Сплит по патчам: train {n_tr_p}п / {len(tr)} строк · val {n_va_p}п / {len(va)} строк")
-    print(f"Голова: {len(CONT_NAMES)} регрессия + {len(CAT_NAMES)} классиф. {CAT_NAMES}")
+    print(f"Голова: {len(CONT_NAMES)} регрессия + {len(CAT_NAMES)} категорий {CAT_NAMES} "
+          f"+ {len(AXIS_NAMES)} осей {AXIS_NAMES}")
 
     Ycont = Y_all[:, CONT_IDX]
     Ycat = cat_targets(Y_all)
+    Yax = axis_targets(Y_all)
 
     Xtr = torch.tensor(emb[tr])
     Xva = torch.tensor(emb[va])
     Yc_tr, Yc_va = torch.tensor(Ycont[tr]), torch.tensor(Ycont[va])
     Yk_tr, Yk_va = torch.tensor(Ycat[tr]), torch.tensor(Ycat[va])
+    Ya_tr, Ya_va = torch.tensor(Yax[tr]), torch.tensor(Yax[va])
     Yfull_va = torch.tensor(Y_all[va])
 
     # веса непрерывных параметров
@@ -154,7 +168,7 @@ def main():
             w[i] = 2.0
     wt = torch.tensor(w)
 
-    loader = DataLoader(TensorDataset(Xtr, Yc_tr, Yk_tr), batch_size=args.batch_size, shuffle=True)
+    loader = DataLoader(TensorDataset(Xtr, Yc_tr, Yk_tr, Ya_tr), batch_size=args.batch_size, shuffle=True)
     model = SynthPredictor()
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=args.epochs)
@@ -166,49 +180,49 @@ def main():
     def evaluate():
         model.eval()
         with torch.no_grad():
-            cont, cats = model(Xva)
+            cont, cats, axes = model(Xva)
             cont_mae = (cont - Yc_va).abs().mean().item()
             accs = {n: (cats[n].argmax(1) == Yk_va[:, j]).float().mean().item()
                     for j, n in enumerate(CAT_NAMES)}
-            full_mae = (reconstruct(cont, cats) - Yfull_va).abs().mean().item()
-        return cont_mae, accs, full_mae
+            axaccs = {a: (axes[a].argmax(1) == Ya_va[:, j]).float().mean().item()
+                      for j, a in enumerate(AXIS_NAMES)}
+            full_mae = (reconstruct(cont, cats, axes) - Yfull_va).abs().mean().item()
+        return cont_mae, accs, axaccs, full_mae
 
     best, best_state = float("inf"), None
     for ep in range(args.epochs):
         model.train()
-        for xb, ycb, ykb in loader:
-            cont, cats = model(xb)
+        for xb, ycb, ykb, yab in loader:
+            cont, cats, axes = model(xb)
             l_cont = (huber(cont, ycb) * wt).mean()
             l_cat = sum(ce(cats[n], ykb[:, j]) for j, n in enumerate(CAT_NAMES)) / len(CAT_NAMES)
-            loss = CONT_SCALE * l_cont + l_cat
+            l_ax = sum(ce(axes[a], yab[:, j]) for j, a in enumerate(AXIS_NAMES)) / len(AXIS_NAMES)
+            loss = CONT_SCALE * l_cont + l_cat + l_ax
             opt.zero_grad()
             loss.backward()
             opt.step()
         sched.step()
 
-        cont_mae, accs, full_mae = evaluate()
+        cont_mae, accs, axaccs, full_mae = evaluate()
         if full_mae < best:
             best = full_mae
             best_state = {k: v.clone() for k, v in model.state_dict().items()}
         if ep % 10 == 0 or ep == args.epochs - 1:
             acc_s = " ".join(f"{n.split('_')[0]}{n[-1] if n[-1].isdigit() else ''}:{a:.2f}"
                              for n, a in accs.items())
-            print(f"  эп {ep:3d}: full MAE {full_mae:.4f} (best {best:.4f}) · cont {cont_mae:.4f} · acc {acc_s}")
+            ax_s = " ".join(f"{a[:4]}:{v:.2f}" for a, v in axaccs.items())
+            print(f"  эп {ep:3d}: MAE {full_mae:.4f} (best {best:.4f}) · cat {acc_s} · ось {ax_s}")
 
     model.load_state_dict(best_state)
     torch.save(best_state, out_dir / "synth_predictor.pt")
 
-    cont_mae, accs, full_mae = evaluate()
-    model.eval()
-    with torch.no_grad():
-        cont, cats = model(Xva)
-        per = (cont - Yc_va).abs().mean(0).numpy()
-    print("\nХудшие по MAE непрерывные (val):")
-    for i in np.argsort(-per)[:8]:
-        print(f"  {CONT_NAMES[i]:16s} MAE {per[i]:.3f}")
-    print("\nТочность классификации дискретных (val):")
+    cont_mae, accs, axaccs, full_mae = evaluate()
+    print("\nТочность КАТЕГОРИЙ (val):")
     for n, a in accs.items():
         print(f"  {n:16s} acc {a:.3f}")
+    print("Точность ОСЕЙ-классификаторов (val):")
+    for a, v in axaccs.items():
+        print(f"  {a:16s} acc {v:.3f}")
     print(f"\nИТОГ: full MAE {best:.4f}  ·  бэйзлайн-среднее {base_mae:.4f}  ·  {time.time() - t0:.0f}с")
 
     meta = {
@@ -216,14 +230,16 @@ def main():
         "input_dim": INPUT_DIM,
         "trunk": list(TRUNK),
         "output_dim": OUTPUT_DIM,
-        "head": "hybrid",
+        "head": "hybrid+axis",
         "normalize_embeddings": True,
         "param_order": pc.PARAM_ORDER,
         "cont_names": CONT_NAMES,
         "categoricals": {n: list(CATEGORICALS[n]) for n in CAT_NAMES},
+        "axis_heads": {a: AXIS_HEADS[a]["levels"] for a in AXIS_NAMES},
         "rows": len(rows), "patches": n_patches, "val_patches": n_va_p,
         "full_mae": round(best, 5), "baseline_mae": round(base_mae, 5),
         "cat_accuracy": {n: round(a, 4) for n, a in accs.items()},
+        "axis_accuracy": {a: round(v, 4) for a, v in axaccs.items()},
         "epochs": args.epochs, "seed": args.seed,
     }
     (out_dir / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
