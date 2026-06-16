@@ -57,7 +57,6 @@ private:
     juce::TextEditor* mDevLog = nullptr;             // принадлежит mDevWindow
     void toggleDevMode();
     void appendDevLog(const juce::String& text);
-    static juce::String formatExplain(const juce::var& explain);
 
     // Preset manager state
     PresetManager mPresetManager;

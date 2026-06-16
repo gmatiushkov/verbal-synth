@@ -7,7 +7,7 @@ class DevLogWindow : public juce::DocumentWindow
 {
 public:
     explicit DevLogWindow(std::function<void()> onHide)
-        : juce::DocumentWindow("VerbalSynth — Developer Log",
+        : juce::DocumentWindow("VerbalSynth - Developer Log",
                                juce::Colour(0xff141414), juce::DocumentWindow::allButtons),
           mOnHide(std::move(onHide)) {}
     void closeButtonPressed() override { if (mOnHide) mOnHide(); }
@@ -465,14 +465,17 @@ void MainComponent::onGenerateClicked()
                 }
                 if (dev)                                     // лог разбора в окно разработчика
                 {
+                    // Текст лога формируется в predict.py (поле explain.log) и приходит через JSON —
+                    // так кириллица корректна (juce::JSON декодирует UTF-8), без C++-литералов.
                     const juce::String body = output.fromFirstOccurrenceOf("{", true, false)
                                                     .upToLastOccurrenceOf("}", true, false);
                     const juce::var parsed = juce::JSON::parse(body);
-                    const juce::var ex = parsed.getProperty("explain", juce::var());
-                    if (ex.isObject())
-                        self->appendDevLog(formatExplain(ex));
+                    const juce::var ex = parsed.getProperty(juce::Identifier("explain"), juce::var());
+                    const juce::String logText = ex.getProperty(juce::Identifier("log"), juce::var()).toString();
+                    if (logText.isNotEmpty())
+                        self->appendDevLog(logText + "\n");
                     else
-                        self->appendDevLog("ЗАПРОС: " + prompt + "\n  (ошибка генерации — нет explain)\n\n");
+                        self->appendDevLog("QUERY: " + prompt + "  (generation error: no explain)\n\n");
                 }
                 self->mGenerateBtn.setEnabled(true);
                 self->mGenerateBtn.setButtonText("Generate");
@@ -508,9 +511,10 @@ void MainComponent::toggleDevMode()
             w->setResizable(true, false);
             w->centreWithSize(580, 640);
             mDevWindow.reset(w);
-            appendDevLog("Режим разработчика ВКЛ (F12 — переключить).\n"
-                         "После каждой генерации здесь появится разбор: запрос → retrieval → "
-                         "модификаторы → изменения параметров. Текст выделяется и копируется.\n\n");
+            // ASCII-интро (кириллицу в C++-литералах MSVC корёжит; русский текст лога приходит из predict.py).
+            appendDevLog("VerbalSynth developer log. F12 toggles this window.\n"
+                         "After each Generate: query -> retrieval -> modifiers -> param changes.\n"
+                         "Text is selectable and copyable.\n\n");
         }
         mDevWindow->setVisible(true);
         mDevWindow->toFront(true);
@@ -527,74 +531,6 @@ void MainComponent::appendDevLog(const juce::String& text)
     mDevLog->moveCaretToEnd();
     mDevLog->insertTextAtCaret(text);
     mDevLog->moveCaretToEnd();
-}
-
-juce::String MainComponent::formatExplain(const juce::var& e)
-{
-    if (! e.isObject()) return "(нет данных explain)\n\n";
-    auto prop = [&e](const char* k) { return e.getProperty(juce::Identifier(k), juce::var()); };
-
-    juce::String s;
-    s << "============================================================\n";
-    s << "[" << juce::Time::getCurrentTime().toString(false, true) << "]  ЗАПРОС: «"
-      << prop("query").toString() << "»\n";
-
-    const juce::String ident = prop("identity_query").toString();
-    if (ident != prop("query").toString())
-    {
-        s << "Идентичность (для поиска): «" << ident << "»";
-        const juce::var strippedV = prop("stripped");
-        if (auto* st = strippedV.getArray())
-        {
-            if (! st->isEmpty())
-            {
-                s << "   (убраны слова-модификаторы: ";
-                for (auto& w : *st) s << w.toString() << " ";
-                s << ")";
-            }
-        }
-        s << "\n";
-    }
-
-    s << "\nRETRIEVAL (top-3 по идентичности):\n";
-    const juce::var retrV = prop("retrieval");
-    if (auto* r = retrV.getArray())
-        for (int i = 0; i < r->size(); ++i)
-        {
-            const juce::var h = (*r)[i];
-            s << (i == 0 ? "  >> " : "     ") << "#" << h.getProperty("num", {}).toString()
-              << "  " << h.getProperty("target", {}).toString()
-              << "   [role=" << h.getProperty("role", {}).toString()
-              << ", bank=" << h.getProperty("bank", {}).toString()
-              << ", score=" << h.getProperty("score", {}).toString()
-              << (bool(h.getProperty("approved", false)) ? ", approved]" : ", draft]") << "\n";
-        }
-
-    s << "\nВЫЧЛЕНЕНО (модификаторы из запроса): ";
-    const juce::var modsV = prop("modifiers");
-    if (auto* m = modsV.getArray())
-    {
-        if (m->isEmpty()) s << "—";
-        else for (auto& x : *m) s << x.toString() << "  ";
-    }
-    else s << "—";
-    s << "\n";
-
-    s << "\nИЗМЕНЕНИЯ ПАРАМЕТРОВ ЭТАЛОНА:\n";
-    const juce::var changesV = prop("changes");
-    if (auto* c = changesV.getArray())
-    {
-        if (c->isEmpty())
-            s << "  (без изменений — эталон отдан как есть)\n";
-        else
-            for (auto& ch : *c)
-                s << "  " << ch.getProperty("param", {}).toString() << ":  "
-                  << ch.getProperty("before_real", {}).toString() << " -> "
-                  << ch.getProperty("after_real", {}).toString() << " "
-                  << ch.getProperty("unit", {}).toString() << "\n";
-    }
-    s << "\n";
-    return s;
 }
 
 // ── Computer keyboard → MIDI note map ────────────────────────────────────────

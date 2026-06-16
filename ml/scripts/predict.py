@@ -23,6 +23,9 @@ from modifiers import apply_modifiers, strip_modifier_words
 from retrieval import Retriever, DEFAULT_ENCODER
 
 try:
+    # stdout ОБЯЗАТЕЛЬНО UTF-8: синт читает его как UTF-8, а --explain содержит кириллицу/«→».
+    # Без этого на Windows stdout=cp1251 и печать JSON падает с UnicodeEncodeError (пустой вывод).
+    sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
 except (AttributeError, ValueError):
     pass
@@ -34,6 +37,33 @@ _UNITS = {"lp_cutoff": "Гц", "hp_cutoff": "Гц", "amp_attack": "с", "amp_dec
           "drive_amount": "%", "drive_tone": "%", "reverb_mix": "%", "reverb_time": "%", "reverb_damp": "%",
           "lp_resonance": "Q", "hp_resonance": "Q", "osc1_octave": "окт", "osc2_semitones": "пт",
           "osc2_detune": "цент", "fenv_amount": "окт", "lfo1_rate": "Гц", "lfo2_rate": "Гц"}
+
+
+def _format_log(e):
+    """Готовый человекочитаемый блок лога (UTF-8 → JSON → синт). Формируем в Python, чтобы
+    кириллица не зависела от кодировки C++-литералов (MSVC их корёжит)."""
+    L = ["=" * 60, f"ЗАПРОС: «{e['query']}»"]
+    if e["identity_query"] != e["query"]:
+        line = f"Идентичность (для поиска): «{e['identity_query']}»"
+        if e["stripped"]:
+            line += f"   (убраны: {' '.join(e['stripped'])})"
+        L.append(line)
+    L += ["", "RETRIEVAL (top-3 по идентичности):"]
+    for i, h in enumerate(e["retrieval"]):
+        mark = ">>" if i == 0 else "  "
+        appr = "approved" if h["approved"] else "draft"
+        L.append(f"  {mark} #{h['num']}  {h['target']}   "
+                 f"[role={h['role']}, bank={h['bank']}, score={h['score']}, {appr}]")
+    L += ["", "ВЫЧЛЕНЕНО (модификаторы из запроса): "
+          + (", ".join(e["modifiers"]) if e["modifiers"] else "—")]
+    L += ["", "ИЗМЕНЕНИЯ ПАРАМЕТРОВ ЭТАЛОНА:"]
+    if not e["changes"]:
+        L.append("  (без изменений — эталон отдан как есть)")
+    else:
+        for c in e["changes"]:
+            L.append(f"  {c['param']}:  {c['before_real']} → {c['after_real']} {c['unit']}")
+    L.append("")
+    return "\n".join(L)
 
 
 def _build_explain(text, ident, hits, before, after, applied):
@@ -48,7 +78,7 @@ def _build_explain(text, ident, hits, before, after, applied):
                         "before_norm": round(float(b), 4), "after_norm": round(float(a), 4)})
     iw = set(ident.split())
     top = hits[0]
-    return {
+    explain = {
         "query": text, "identity_query": ident,
         "stripped": [w for w in text.split() if w not in iw],
         "retrieval": [{"num": h["num"], "target": h["target"], "role": h.get("role", ""),
@@ -57,6 +87,8 @@ def _build_explain(text, ident, hits, before, after, applied):
                    "bank": top.get("bank", ""), "score": top["score"], "approved": top["approved"]},
         "modifiers": applied, "changes": changes,
     }
+    explain["log"] = _format_log(explain)                 # готовый текст для dev-окна (UTF-8 через JSON)
+    return explain
 
 
 def predict(text, encoder=DEFAULT_ENCODER, approved_only=False, k=1, modifiers=True):
