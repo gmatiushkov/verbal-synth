@@ -19,6 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 import param_convert as pc
+from modifiers import apply_modifiers, strip_modifier_words
 from retrieval import Retriever, DEFAULT_ENCODER
 
 try:
@@ -27,18 +28,23 @@ except (AttributeError, ValueError):
     pass
 
 
-def predict(text, encoder=DEFAULT_ENCODER, approved_only=False, k=1):
-    """Возвращает (patch_dict_38, hits). patch_dict — params top-1 в порядке PARAM_ORDER."""
+def predict(text, encoder=DEFAULT_ENCODER, approved_only=False, k=1, modifiers=True):
+    """Возвращает (patch_dict_38, hits, applied). retrieval top-1 + модификаторы параметров (Фаза 2)."""
     r = Retriever(encoder_name=encoder, approved_only=approved_only)
-    hits = r.search(text, k=max(k, 1))
+    # retrieval по идентичности: убираем слова-модификаторы, чтобы прилагательные не уводили выбор
+    ident = strip_modifier_words(text) if modifiers else text
+    hits = r.search(ident, k=max(k, 1))
     if not hits:
-        return None, []
+        return None, [], []
     params = r.params_of(hits[0]["num"])
+    applied = []
+    if modifiers:
+        params, applied = apply_modifiers(params, text)   # двигаем непрерывные оси под запрос (по полному тексту)
     out = {}
     for name in pc.PARAM_ORDER:                            # стабильный порядок + клип на всякий
         v = float(params.get(name, 0.0))
         out[name] = min(max(v, 0.0), 1.0)
-    return out, hits
+    return out, hits, applied
 
 
 if __name__ == "__main__":
@@ -47,6 +53,7 @@ if __name__ == "__main__":
     ap.add_argument("--encoder", default=DEFAULT_ENCODER)
     ap.add_argument("--approved-only", action="store_true", help="только утверждённые прототипы")
     ap.add_argument("-k", "--topk", type=int, default=1, help="сколько кандидатов показать в stderr")
+    ap.add_argument("--no-modifiers", action="store_true", help="отключить модификаторы параметров (Фаза 2)")
     args = ap.parse_args()
 
     text = " ".join(args.text).strip()
@@ -56,16 +63,22 @@ if __name__ == "__main__":
         print(json.dumps({"error": "no text"}))
         sys.exit(1)
 
-    patch, hits = predict(text, encoder=args.encoder, approved_only=args.approved_only, k=args.topk)
+    patch, hits, applied = predict(text, encoder=args.encoder, approved_only=args.approved_only,
+                                   k=args.topk, modifiers=not args.no_modifiers)
     if patch is None:
         print(json.dumps({"error": "no candidates in library"}))
         sys.exit(2)
 
     # Диагностика — в stderr (stdout парсит синт).
     top = hits[0]
-    print(f"[retrieval] «{text}» → #{top['num']} {top['target']} "
+    ident = strip_modifier_words(text) if not args.no_modifiers else text
+    if ident != text:
+        print(f"[identity]  «{text}» → ищем «{ident}»", file=sys.stderr)
+    print(f"[retrieval] «{ident}» → #{top['num']} {top['target']} "
           f"(score {top['score']}, {'approved' if top['approved'] else 'draft'})", file=sys.stderr)
     for h in hits[1:]:
         print(f"            · #{h['num']} {h['target']} ({h['score']}) ← {h['phrase']}", file=sys.stderr)
+    if applied:
+        print(f"[modifiers] применены: {', '.join(applied)}", file=sys.stderr)
 
     print(json.dumps(patch, ensure_ascii=False))
