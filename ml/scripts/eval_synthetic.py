@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from retrieval import Retriever, DEFAULT_ENCODER, QUERIES
+from retrieval import Retriever, DEFAULT_ENCODER, QUERIES, detect_axes
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -40,6 +40,7 @@ def main():
     ap = argparse.ArgumentParser(description="Автоэвал retrieval на самозамеченных queries.json.")
     ap.add_argument("--encoder", default=DEFAULT_ENCODER)
     ap.add_argument("--syn-weight", type=float, default=None)
+    ap.add_argument("--attr-lambda", type=float, default=None, help="вес атрибутного ре-ранка (0=выкл)")
     ap.add_argument("--per", type=int, default=None, help="ограничить N запросов на прототип")
     ap.add_argument("--worst", type=int, default=12, help="сколько худших прототипов показать")
     args = ap.parse_args()
@@ -51,6 +52,8 @@ def main():
     rkw = {"encoder_name": args.encoder}
     if args.syn_weight is not None:
         rkw["syn_weight"] = args.syn_weight
+    if args.attr_lambda is not None:
+        rkw["attr_lambda"] = args.attr_lambda
     r = Retriever(**rkw)
     role_by_num = {e["num"]: e["role"] for e in r.entries}
     cat_by_num = {e["num"]: e["category"] for e in r.entries}
@@ -83,6 +86,10 @@ def main():
         sims = sims_all[i]
         best = np.full(nptypes, -1.0, dtype=np.float32)
         np.maximum.at(best, owner, sims)                   # max-pool фраз → прототипы
+        if r.attr_rerank and r.attr_lambda > 0:            # атрибутный ре-ранк (как в search)
+            det = detect_axes(q)
+            if any(det.values()):
+                best = best + r.attr_lambda * r._attr_bonus_vec(det)
         order = np.argsort(-best)[:3]
         top_nums = [r.entries[int(j)]["num"] for j in order]
         top_roles = [role_by_num[t] for t in top_nums]

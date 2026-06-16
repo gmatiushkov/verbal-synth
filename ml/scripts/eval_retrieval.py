@@ -39,6 +39,8 @@ def main():
     ap.add_argument("--approved-only", action="store_true")
     ap.add_argument("--syn-weight", type=float, default=None,
                     help="вес синонимов (0=выкл; по умолчанию DEFAULT_SYN_WEIGHT)")
+    ap.add_argument("--attr-lambda", type=float, default=None,
+                    help="вес атрибутного ре-ранка (0=выкл; по умолчанию DEFAULT_ATTR_LAMBDA)")
     ap.add_argument("--golden", default=str(GOLDEN))
     ap.add_argument("--show-misses", action="store_true", help="показать промахи (role top-1)")
     args = ap.parse_args()
@@ -50,6 +52,8 @@ def main():
     rkw = {"encoder_name": args.encoder, "approved_only": args.approved_only}
     if args.syn_weight is not None:
         rkw["syn_weight"] = args.syn_weight
+    if args.attr_lambda is not None:
+        rkw["attr_lambda"] = args.attr_lambda
     r = Retriever(**rkw)
     cand = {e["num"] for e in r.entries}                  # что реально доступно (есть params)
 

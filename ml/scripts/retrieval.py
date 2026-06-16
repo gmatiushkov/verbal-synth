@@ -31,6 +31,9 @@ from pathlib import Path
 
 import numpy as np
 
+sys.path.insert(0, str(Path(__file__).parent))            # чтобы attr_decode импортнулся при любом запуске
+import attr_decode as ad                                   # оси/ORDER для атрибутного ре-ранка
+
 ROOT = Path(__file__).resolve().parents[1]                 # .../ml
 LIB = ROOT / "data" / "library" / "library.json"
 QUERIES = ROOT / "data" / "library" / "queries.json"       # синонимы-формулировки (gen_queries.py), опц.
@@ -79,15 +82,77 @@ def _prefixes(encoder_name):
     return "", ""
 
 
+# ── Атрибутный ре-ранк (Фаза 2-лайт): запрос → оси, бонус совпавшим прототипам ──────
+# Идея: для размытых запросов («очень низкий», «бесконечный») поднять прототип с подходящими
+# декодированными атрибутами. ВЫКЛ по умолчанию: замер на 4261 запросе показал, что это
+# НЕ даёт чистого выигрыша (все оси — net-минус ~1 п.п.; только register — нейтрально). Причина:
+# ре-ранк лишь ВЫБИРАЕТ другой прототип, а декод-атрибуты шумны; реальный фикс «теплее/ярче» —
+# модификаторы параметров (Фаза 2 настоящая), а не пере-выбор. Включить для экспериментов:
+# Retriever(attr_rerank=True, attr_lambda=0.05). Лексиконы/веса ниже сохранены.
+DEFAULT_ATTR_RERANK = False
+DEFAULT_ATTR_LAMBDA = 0.05                              # вес бонуса (если включить); косинус ~0.8–0.9
+_AXIS_WEIGHTS = {"register": 1.0, "body": 1.0, "brightness": 0.0}  # brightness шумный (статич. срез) → 0
+
+# Лексиконы (подстроки; группы по убыванию специфичности — берётся первая сработавшая).
+_REGISTER_CUES = [
+    ("sub", ["очень низк", "ультранизк", "саб", "sub", "глубочайш", "подвальн"]),
+    ("very_high", ["очень высок", "ультравысок", "пронзительн", "писклив", "визглив", "сверхвысок"]),
+    ("low", ["низк", "low", "глубок", "басов"]),
+    ("high", ["высок", "high", "верхн"]),
+]
+_BODY_CUES = [
+    ("drone", ["бесконечн", "непрерывн", "дрон", "drone", "гуд", "гул", "эмбиент", "ambient", "зацикл", "тянущ"]),
+    ("sustained", ["длинн", "долг", "выдержанн", "sustain", "педаль", "держ", "тягуч", "протяжн"]),
+    ("ring", ["затухаю", "звеня", "звон", "ring", "резонир", "поющ"]),
+    ("staccato", ["коротк", "отрывист", "стаккато", "staccato", "щелч", "клик", "click", "перкусс",
+                  "стаб", "stab", "плак", "pluck", "клац", "тычк", "резк удар"]),
+]
+_BRIGHT_CUES = [
+    ("piercing", ["пронзительн", "режущ", "остр", "piercing", "визглив"]),
+    ("bright", ["ярк", "светл", "звонк", "bright", "блестящ", "искрист"]),
+    ("dark", ["тёмн", "темн", "глух", "dark", "мутн", "тускл", "приглуш"]),
+    ("warm", ["тёпл", "тепл", "warm", "мягк", "округл", "лампов"]),
+]
+_AXIS_ORDERS = {"register": ad.REGISTER_ORDER, "brightness": ad.BRIGHTNESS_ORDER, "body": ad.BODY_ORDER}
+
+
+def _detect(text, cues):
+    low = text.lower()
+    for level, subs in cues:
+        if any(s in low for s in subs):
+            return level
+    return None
+
+
+def detect_axes(text):
+    """Запрос → желаемые уровни осей (или None, если слов оси нет)."""
+    return {"register": _detect(text, _REGISTER_CUES),
+            "body": _detect(text, _BODY_CUES),
+            "brightness": _detect(text, _BRIGHT_CUES)}
+
+
+def _ord_bonus(level, target, order):
+    if not level or not target:
+        return 0.0
+    try:
+        d = abs(order.index(level) - order.index(target))
+    except ValueError:
+        return 0.0
+    return 1.0 if d == 0 else (0.4 if d == 1 else 0.0)   # d≤1 — «верная семья = ок»
+
+
 class Retriever:
     """Поиск ближайшего прототипа по описаниям. Эмбеддинги фраз кэшируются на диск."""
 
     def __init__(self, encoder_name=DEFAULT_ENCODER, approved_only=False, lib_path=LIB,
-                 syn_weight=DEFAULT_SYN_WEIGHT):
+                 syn_weight=DEFAULT_SYN_WEIGHT, attr_rerank=DEFAULT_ATTR_RERANK,
+                 attr_lambda=DEFAULT_ATTR_LAMBDA):
         self.encoder_name = encoder_name
         self.lib = load_library(lib_path)
         self.q_prefix, self.d_prefix = _prefixes(encoder_name)
         self.syn_weight = syn_weight                       # вес матча по синонимам (<1 → точные фразы важнее)
+        self.attr_rerank = attr_rerank                     # атрибутный ре-ранк (Фаза 2-лайт)
+        self.attr_lambda = attr_lambda
 
         # Синонимы-формулировки (gen_queries.py) — опционально, по num прототипа.
         # syn_weight<=0 полностью отключает синонимы (только target+descriptors).
@@ -112,9 +177,21 @@ class Retriever:
                 self.phrases.append(ph); self.owner.append(ei); weights.append(self.syn_weight)
         self.owner = np.asarray(self.owner, dtype=np.int64)
         self.weights = np.asarray(weights, dtype=np.float32)
+        self.entry_attrs = [e.get("attributes") or {} for e in self.entries]  # для атрибутного ре-ранка
 
         self._enc = None                                    # ленивый энкодер (запросы/сборка кэша)
         self.emb = self._load_or_encode()                  # (n_phrases, dim), L2-норм.
+
+    def _attr_bonus_vec(self, detected):
+        """Вектор бонусов по прототипам: сумма по осям w·ordinal_bonus(декод. уровень, желаемый)."""
+        bonus = np.zeros(len(self.entries), dtype=np.float32)
+        for i, attrs in enumerate(self.entry_attrs):
+            s = 0.0
+            for axis, target in detected.items():
+                if target:
+                    s += _AXIS_WEIGHTS[axis] * _ord_bonus(attrs.get(axis), target, _AXIS_ORDERS[axis])
+            bonus[i] = s
+        return bonus
 
     # ── кэш эмбеддингов фраз ──────────────────────────────────────────────
     def _cache_path(self):
@@ -164,7 +241,14 @@ class Retriever:
             if sims[i] > best[oi]:
                 best[oi] = sims[i]
                 best_ph[oi] = i
-        order = np.argsort(-best)[:k]
+        # атрибутный ре-ранк: если в запросе есть осевые слова — двигаем близкие кандидаты
+        # (бонус мал относительно косинуса → переставляет только near-ties, чужих не подтягивает)
+        score = best
+        if self.attr_rerank and self.attr_lambda > 0:
+            det = detect_axes(text)
+            if any(det.values()):
+                score = best + self.attr_lambda * self._attr_bonus_vec(det)
+        order = np.argsort(-score)[:k]
         out = []
         for ei in order:
             e = self.entries[int(ei)]
