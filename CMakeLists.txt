@@ -32,6 +32,13 @@ target_compile_definitions(VerbalSynth PRIVATE
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:VerbalSynth,JUCE_VERSION>"
 )
 
+# MSVC по умолчанию декодирует узкие строковые литералы в системной кодировке (CP1251),
+# из-за чего UTF-8-исходники с кириллицей превращались в мохобайт в juce::String.
+# /utf-8 = трактовать и исходники, и узкие литералы как UTF-8 (juce::String ждёт UTF-8).
+if(MSVC)
+    target_compile_options(VerbalSynth PRIVATE /utf-8)
+endif()
+
 target_link_libraries(VerbalSynth PRIVATE
     juce::juce_audio_basics
     juce::juce_audio_devices
