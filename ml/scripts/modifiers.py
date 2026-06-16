@@ -58,10 +58,37 @@ MODIFIERS = [
 ]
 
 
+# Отрицание ПРЯМО перед cue подавляет модификатор («не яркий» больше не делает ярче).
+# Также «не очень/слишком X» (отрицание + усилитель + cue). Узко, чтобы «не» не глушило
+# модификатор через слово («не яркий КОРОТКИЙ бас» → «короче» обязан сработать).
+_NEG = {"не", "без", "ни", "нет"}
+_INT = {"очень", "слишком", "сильно", "супер", "чрезмерно"}
+
+
+def _negated(words, idx):
+    """Отрицание непосредственно перед words[idx] (или через усилитель: «не очень X»)."""
+    if idx - 1 >= 0 and words[idx - 1] in _NEG:
+        return True
+    if idx - 2 >= 0 and words[idx - 1] in _INT and words[idx - 2] in _NEG:
+        return True
+    return False
+
+
 def detect_modifiers(text):
-    """Список сработавших модификаторов: [(имя, ops), ...]."""
+    """Список сработавших модификаторов: [(имя, ops), ...]. Отрицание перед cue подавляет модификатор."""
     low = text.lower()
-    return [(name, ops) for name, cues, ops in MODIFIERS if any(c in low for c in cues)]
+    words = [w.strip('.,!?;:()«»"\'') for w in low.split()]
+    out = []
+    for name, cues, ops in MODIFIERS:
+        for c in cues:
+            if " " in c:                                   # многословный cue — простое вхождение
+                if c in low:
+                    out.append((name, ops)); break
+            else:                                          # одно-словный cue — токенно, с проверкой отрицания
+                idxs = [i for i, w in enumerate(words) if c in w]
+                if idxs and not _negated(words, idxs[0]):
+                    out.append((name, ops)); break
+    return out
 
 
 # одно-словные cue-стеммы (для вырезания слов-модификаторов из запроса retrieval)

@@ -1,16 +1,22 @@
 """
-Инференс для синта: текст → 38 нормализованных параметров (RETRIEVAL-MVP, PIVOT_RETRIEVAL.md §2).
+Инференс для синта: текст → 38 нормализованных параметров.
 
-Не генерируем патч, а ВЫБИРАЕМ ближайший эталон из library.json и отдаём его параметры КАК ЕСТЬ.
+Каскад (см. записку, L1→L4):
+  L1 запрос → эмбеддинг e5 (заморожен) → L2 ОБУЧАЕМЫЙ классификатор → прототип (#N)
+  L3 прототип → ручные 38 параметров из library.json → L4 детерминированные модификаторы.
+
+Метод по умолчанию — классификатор (clf), если модель обучена (ml/models/clf); иначе retrieval
+(ближайший эталон по косинусу) как fallback/baseline. Классификатор ест ПОЛНЫЙ запрос (без
+вырезания слов): прилагательные обработаны в контексте при обучении, identity-split не нужен.
+
 Печатает одну строку JSON {param_name: value} в порядке PARAM_ORDER — формат PresetManager
 (см. MainComponent::parsePatchJson). Диагностика идёт в stderr, чтобы не мешать парсингу stdout.
-
-Параметры читаются из library.json НА ЛЕТУ (свежий процесс на каждый клик Generate) — правки
-тюнинга подхватываются без перестройки чего-либо. Кэшируются только эмбеддинги описаний.
+Параметры читаются из library.json НА ЛЕТУ (свежий процесс на каждый клик) — правки тюнинга
+подхватываются без перестройки.
 
     python predict.py "тёплый бас с лёгким перегрузом"
     echo "яркий колокольчик" | python predict.py
-    python predict.py -k 5 "кислотный бас"      # top-5 в stderr (отладка), top-1 в stdout
+    python predict.py --method retrieval "кислотный бас"   # сравнить с baseline
 """
 import argparse
 import json
@@ -18,7 +24,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import clf
 import param_convert as pc
+from clf import Classifier
 from modifiers import apply_modifiers, strip_modifier_words
 from retrieval import Retriever, DEFAULT_ENCODER
 
@@ -48,12 +56,15 @@ def _format_log(e):
         if e["stripped"]:
             line += f"   (убраны: {' '.join(e['stripped'])})"
         L.append(line)
-    L += ["", "RETRIEVAL (top-3 по идентичности):"]
+    method = "классификатор (L2)" if e.get("method") == "clf" else "retrieval (baseline)"
+    L.append(f"МЕТОД: {method}")
+    sc_label = "prob" if e.get("method") == "clf" else "score"
+    L += ["", f"TOP-3 КАНДИДАТА ({'вероятность' if e.get('method') == 'clf' else 'косинус'}):"]
     for i, h in enumerate(e["retrieval"]):
         mark = ">>" if i == 0 else "  "
         appr = "approved" if h["approved"] else "draft"
         L.append(f"  {mark} #{h['num']}  {h['target']}   "
-                 f"[role={h['role']}, bank={h['bank']}, score={h['score']}, {appr}]")
+                 f"[role={h['role']}, bank={h['bank']}, {sc_label}={h['score']}, {appr}]")
     L += ["", "ВЫЧЛЕНЕНО (модификаторы из запроса): "
           + (", ".join(e["modifiers"]) if e["modifiers"] else "—")]
     L += ["", "ИЗМЕНЕНИЯ ПАРАМЕТРОВ ЭТАЛОНА:"]
@@ -66,7 +77,7 @@ def _format_log(e):
     return "\n".join(L)
 
 
-def _build_explain(text, ident, hits, before, after, applied):
+def _build_explain(text, ident, hits, before, after, applied, method="clf"):
     changes = []
     for name in pc.PARAM_ORDER:
         b, a = before.get(name), after.get(name)
@@ -79,7 +90,7 @@ def _build_explain(text, ident, hits, before, after, applied):
     iw = set(ident.split())
     top = hits[0]
     explain = {
-        "query": text, "identity_query": ident,
+        "query": text, "identity_query": ident, "method": method,
         "stripped": [w for w in text.split() if w not in iw],
         "retrieval": [{"num": h["num"], "target": h["target"], "role": h.get("role", ""),
                        "bank": h.get("bank", ""), "score": h["score"], "approved": h["approved"]} for h in hits],
@@ -91,21 +102,47 @@ def _build_explain(text, ident, hits, before, after, applied):
     return explain
 
 
-def predict(text, encoder=DEFAULT_ENCODER, approved_only=False, k=1, modifiers=True):
-    """Возвращает (patch_dict_38, hits, applied, explain). retrieval top-1 + модификаторы (Фаза 2)."""
-    r = Retriever(encoder_name=encoder, approved_only=approved_only)
-    # retrieval по идентичности: убираем слова-модификаторы, чтобы прилагательные не уводили выбор
-    ident = strip_modifier_words(text) if modifiers else text
-    hits = r.search(ident, k=max(k, 3))
-    if not hits:
-        return None, [], [], None
-    before = dict(r.params_of(hits[0]["num"]))
+def _clf_hits(text, k):
+    """Классификатор (L2): полный запрос → top-k прототипов, обогащённых данными библиотеки."""
+    C = Classifier()
+    ent = clf.entries_by_num()
+    hits = []
+    for c in C.predict(text, k=k):
+        e = ent.get(c["num"], {})
+        hits.append({"num": c["num"], "name": e.get("name", ""), "target": e.get("target", ""),
+                     "role": e.get("role", ""), "bank": e.get("bank", ""),
+                     "score": c["prob"], "phrase": "", "approved": bool(e.get("approved"))})
+    return hits, ent
+
+
+def predict(text, encoder=DEFAULT_ENCODER, approved_only=False, k=1, modifiers=True, method=None):
+    """Возвращает (patch_dict_38, hits, applied, explain).
+    method: 'clf' (обученная голова, по умолчанию если есть модель) | 'retrieval' (baseline)."""
+    if method is None:
+        method = "clf" if Classifier.exists() else "retrieval"
+
+    if method == "clf":
+        # классификатор видит ПОЛНЫЙ запрос (без identity-split) — прилагательные учтены в контексте
+        hits, ent = _clf_hits(text, max(k, 3))
+        if not hits:
+            return None, [], [], None
+        ident = text
+        before = dict(ent[hits[0]["num"]]["params"])
+    else:
+        r = Retriever(encoder_name=encoder, approved_only=approved_only)
+        # retrieval по идентичности: убираем слова-модификаторы, чтобы прилагательные не уводили выбор
+        ident = strip_modifier_words(text) if modifiers else text
+        hits = r.search(ident, k=max(k, 3))
+        if not hits:
+            return None, [], [], None
+        before = dict(r.params_of(hits[0]["num"]))
+
     params, applied = (apply_modifiers(before, text) if modifiers else (before, []))
     out = {}
     for name in pc.PARAM_ORDER:                            # стабильный порядок + клип на всякий
         v = float(params.get(name, 0.0))
         out[name] = min(max(v, 0.0), 1.0)
-    explain = _build_explain(text, ident, hits, before, params, applied)
+    explain = _build_explain(text, ident, hits, before, params, applied, method=method)
     return out, hits, applied, explain
 
 
@@ -115,7 +152,9 @@ if __name__ == "__main__":
     ap.add_argument("--encoder", default=DEFAULT_ENCODER)
     ap.add_argument("--approved-only", action="store_true", help="только утверждённые прототипы")
     ap.add_argument("-k", "--topk", type=int, default=3, help="сколько кандидатов показать в stderr")
-    ap.add_argument("--no-modifiers", action="store_true", help="отключить модификаторы параметров (Фаза 2)")
+    ap.add_argument("--no-modifiers", action="store_true", help="отключить модификаторы параметров (L4)")
+    ap.add_argument("--method", choices=["clf", "retrieval"], default=None,
+                    help="clf (обученная голова, по умолч.) | retrieval (baseline)")
     ap.add_argument("--explain", action="store_true",
                     help="печатать {params, explain} (для режима разработчика синта)")
     args = ap.parse_args()
@@ -128,19 +167,20 @@ if __name__ == "__main__":
         sys.exit(1)
 
     patch, hits, applied, explain = predict(text, encoder=args.encoder, approved_only=args.approved_only,
-                                            k=args.topk, modifiers=not args.no_modifiers)
+                                            k=args.topk, modifiers=not args.no_modifiers, method=args.method)
     if patch is None:
         print(json.dumps({"error": "no candidates in library"}))
         sys.exit(2)
 
     # Диагностика — в stderr (stdout парсит синт).
     top = hits[0]
+    sc = "prob" if explain["method"] == "clf" else "score"
     if explain["identity_query"] != text:
         print(f"[identity]  «{text}» → ищем «{explain['identity_query']}»", file=sys.stderr)
-    print(f"[retrieval] «{explain['identity_query']}» → #{top['num']} {top['target']} "
-          f"(score {top['score']}, {'approved' if top['approved'] else 'draft'})", file=sys.stderr)
+    print(f"[{explain['method']}] «{text}» → #{top['num']} {top['target']} "
+          f"({sc} {top['score']}, {'approved' if top['approved'] else 'draft'})", file=sys.stderr)
     for h in hits[1:]:
-        print(f"            · #{h['num']} {h['target']} ({h['score']}) ← {h['phrase']}", file=sys.stderr)
+        print(f"            · #{h['num']} {h['target']} ({sc} {h['score']})", file=sys.stderr)
     if applied:
         print(f"[modifiers] применены: {', '.join(applied)}", file=sys.stderr)
 

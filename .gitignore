@@ -39,5 +39,7 @@ ml/models/_probe_emb_*.npz
 # Кэш эмбеддингов retrieval-индекса (регенерируется retrieval.py из library/queries.json+энкодер)
 ml/models/retrieval_*.npz
 ml/models/emb_cache.npz
+# Кэш эмбеддингов обучения классификатора (регенерируется clf.py; head.pt/meta.json — коммитим)
+ml/models/clf/emb_cache/
 # Отчёт-глянец retrieval (регенерируется review_retrieval.py)
 ml/eval/RETRIEVAL_REVIEW.md
