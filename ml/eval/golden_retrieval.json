@@ -711,24 +711,36 @@
     },
     {
       "text": "короткий отрывистый щелчок",
-      "role": null,
-      "primary": null,
-      "primary_target": null,
-      "expected": []
+      "role": "perc_click",
+      "primary": 140,
+      "primary_target": "пальцевый щелчок/snap",
+      "expected": [
+        140,
+        125,
+        111,
+        71
+      ]
     },
     {
       "text": "длинный тянущийся бесконечный звук",
-      "role": null,
-      "primary": null,
-      "primary_target": null,
-      "expected": []
+      "role": "drone",
+      "primary": 79,
+      "primary_target": "бесконечный дрон (низкий)",
+      "expected": [
+        79,
+        44,
+        80
+      ]
     },
     {
       "text": "очень низкий бас",
-      "role": null,
-      "primary": null,
-      "primary_target": null,
-      "expected": []
+      "role": "sub_bass",
+      "primary": 46,
+      "primary_target": "808-саб (длинный сабовый тон)",
+      "expected": [
+        46,
+        45
+      ]
     },
     {
       "text": "звонкий высокий тон",
