@@ -1,6 +1,21 @@
 #include "MainComponent.h"
 #include "UIColors.h"
 
+// Окно режима разработчика: при закрытии по «X» прячется (не удаляется), а сообщает наружу.
+namespace {
+class DevLogWindow : public juce::DocumentWindow
+{
+public:
+    explicit DevLogWindow(std::function<void()> onHide)
+        : juce::DocumentWindow("VerbalSynth — Developer Log",
+                               juce::Colour(0xff141414), juce::DocumentWindow::allButtons),
+          mOnHide(std::move(onHide)) {}
+    void closeButtonPressed() override { if (mOnHide) mOnHide(); }
+private:
+    std::function<void()> mOnHide;
+};
+} // namespace
+
 MainComponent::MainComponent()
     : mKeyboard(mKeyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
@@ -358,6 +373,11 @@ bool MainComponent::parsePatchJson(const juce::String& jsonText, SynthPatch& out
     if (obj == nullptr)
         return false;
 
+    // Режим --explain даёт {"params": {...38...}, "explain": {...}} — берём вложенный params.
+    if (obj->hasProperty("params"))
+        if (auto* inner = obj->getProperty("params").getDynamicObject())
+            obj = inner;
+
     float* data = out.data();
     const auto names = SynthPatch::paramNames();
     int found = 0;
@@ -398,21 +418,24 @@ void MainComponent::onGenerateClicked()
     mGenerateBtn.setEnabled(false);
     mGenerateBtn.setButtonText("...");
 
+    const bool dev = mDevMode;                       // в dev-режиме просим --explain (разбор для лога)
     juce::Component::SafePointer<MainComponent> safe(this);
-    juce::Thread::launch([safe, prompt, script]()
+    juce::Thread::launch([safe, prompt, script, dev]()
     {
         SynthPatch patch;
         bool ok = false;
+        juce::String output;
 
         juce::ChildProcess proc;
         juce::StringArray args;
         args.add("python");
         args.add(script.getFullPathName());
+        if (dev) args.add("--explain");
         args.add(prompt);
 
         if (proc.start(args, juce::ChildProcess::wantStdOut))
         {
-            const juce::String output = proc.readAllProcessOutput();
+            output = proc.readAllProcessOutput();
             ok = parsePatchJson(output, patch);
             if (! ok)
             {
@@ -424,7 +447,7 @@ void MainComponent::onGenerateClicked()
             DBG("Generate: не удалось запустить python predict.py");
         }
 
-        juce::MessageManager::callAsync([safe, patch, ok]()
+        juce::MessageManager::callAsync([safe, patch, ok, dev, output, prompt]()
         {
             if (auto* self = safe.getComponent())
             {
@@ -440,12 +463,138 @@ void MainComponent::onGenerateClicked()
                     self->markDirty();
                     self->updatePresetLabel();
                 }
+                if (dev)                                     // лог разбора в окно разработчика
+                {
+                    const juce::String body = output.fromFirstOccurrenceOf("{", true, false)
+                                                    .upToLastOccurrenceOf("}", true, false);
+                    const juce::var parsed = juce::JSON::parse(body);
+                    const juce::var ex = parsed.getProperty("explain", juce::var());
+                    if (ex.isObject())
+                        self->appendDevLog(formatExplain(ex));
+                    else
+                        self->appendDevLog("ЗАПРОС: " + prompt + "\n  (ошибка генерации — нет explain)\n\n");
+                }
                 self->mGenerateBtn.setEnabled(true);
                 self->mGenerateBtn.setButtonText("Generate");
                 self->mGenerating = false;
             }
         });
     });
+}
+
+// ── Режим разработчика: окно-лог разбора генерации (F12) ─────────────────────
+void MainComponent::toggleDevMode()
+{
+    mDevMode = ! mDevMode;
+    if (mDevMode)
+    {
+        if (mDevWindow == nullptr)
+        {
+            auto* ed = new juce::TextEditor();
+            ed->setMultiLine(true);
+            ed->setReadOnly(true);                       // только чтение, но текст выделяется и копируется
+            ed->setScrollbarsShown(true);
+            ed->setCaretVisible(false);
+            ed->setFont(juce::Font(juce::FontOptions("Consolas", 13.f, juce::Font::plain)));
+            ed->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0xff141414));
+            ed->setColour(juce::TextEditor::textColourId,       juce::Colour(0xffd8d8d8));
+            mDevLog = ed;
+
+            auto* w = new DevLogWindow([safe = juce::Component::SafePointer<MainComponent>(this)]() {
+                if (safe != nullptr) safe->toggleDevMode();   // «X» прячет окно
+            });
+            w->setContentOwned(ed, false);
+            w->setUsingNativeTitleBar(true);
+            w->setResizable(true, false);
+            w->centreWithSize(580, 640);
+            mDevWindow.reset(w);
+            appendDevLog("Режим разработчика ВКЛ (F12 — переключить).\n"
+                         "После каждой генерации здесь появится разбор: запрос → retrieval → "
+                         "модификаторы → изменения параметров. Текст выделяется и копируется.\n\n");
+        }
+        mDevWindow->setVisible(true);
+        mDevWindow->toFront(true);
+    }
+    else if (mDevWindow != nullptr)
+    {
+        mDevWindow->setVisible(false);
+    }
+}
+
+void MainComponent::appendDevLog(const juce::String& text)
+{
+    if (mDevLog == nullptr) return;
+    mDevLog->moveCaretToEnd();
+    mDevLog->insertTextAtCaret(text);
+    mDevLog->moveCaretToEnd();
+}
+
+juce::String MainComponent::formatExplain(const juce::var& e)
+{
+    if (! e.isObject()) return "(нет данных explain)\n\n";
+    auto prop = [&e](const char* k) { return e.getProperty(juce::Identifier(k), juce::var()); };
+
+    juce::String s;
+    s << "============================================================\n";
+    s << "[" << juce::Time::getCurrentTime().toString(false, true) << "]  ЗАПРОС: «"
+      << prop("query").toString() << "»\n";
+
+    const juce::String ident = prop("identity_query").toString();
+    if (ident != prop("query").toString())
+    {
+        s << "Идентичность (для поиска): «" << ident << "»";
+        const juce::var strippedV = prop("stripped");
+        if (auto* st = strippedV.getArray())
+        {
+            if (! st->isEmpty())
+            {
+                s << "   (убраны слова-модификаторы: ";
+                for (auto& w : *st) s << w.toString() << " ";
+                s << ")";
+            }
+        }
+        s << "\n";
+    }
+
+    s << "\nRETRIEVAL (top-3 по идентичности):\n";
+    const juce::var retrV = prop("retrieval");
+    if (auto* r = retrV.getArray())
+        for (int i = 0; i < r->size(); ++i)
+        {
+            const juce::var h = (*r)[i];
+            s << (i == 0 ? "  >> " : "     ") << "#" << h.getProperty("num", {}).toString()
+              << "  " << h.getProperty("target", {}).toString()
+              << "   [role=" << h.getProperty("role", {}).toString()
+              << ", bank=" << h.getProperty("bank", {}).toString()
+              << ", score=" << h.getProperty("score", {}).toString()
+              << (bool(h.getProperty("approved", false)) ? ", approved]" : ", draft]") << "\n";
+        }
+
+    s << "\nВЫЧЛЕНЕНО (модификаторы из запроса): ";
+    const juce::var modsV = prop("modifiers");
+    if (auto* m = modsV.getArray())
+    {
+        if (m->isEmpty()) s << "—";
+        else for (auto& x : *m) s << x.toString() << "  ";
+    }
+    else s << "—";
+    s << "\n";
+
+    s << "\nИЗМЕНЕНИЯ ПАРАМЕТРОВ ЭТАЛОНА:\n";
+    const juce::var changesV = prop("changes");
+    if (auto* c = changesV.getArray())
+    {
+        if (c->isEmpty())
+            s << "  (без изменений — эталон отдан как есть)\n";
+        else
+            for (auto& ch : *c)
+                s << "  " << ch.getProperty("param", {}).toString() << ":  "
+                  << ch.getProperty("before_real", {}).toString() << " -> "
+                  << ch.getProperty("after_real", {}).toString() << " "
+                  << ch.getProperty("unit", {}).toString() << "\n";
+    }
+    s << "\n";
+    return s;
 }
 
 // ── Computer keyboard → MIDI note map ────────────────────────────────────────
@@ -469,6 +618,12 @@ int MainComponent::computerKeyToSemitone(int kc)
 
 bool MainComponent::keyPressed(const juce::KeyPress& key, juce::Component*)
 {
+    if (key == juce::KeyPress::F12Key)        // режим разработчика — работает и при фокусе в поле ввода
+    {
+        toggleDevMode();
+        return true;
+    }
+
     if (mPromptInput.hasKeyboardFocus(true))
         return false;
 

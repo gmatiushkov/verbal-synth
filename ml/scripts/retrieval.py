@@ -256,6 +256,8 @@ class Retriever:
                 "num": e["num"],
                 "name": e["name"],
                 "target": e.get("target", ""),
+                "role": e.get("role", ""),
+                "bank": e.get("bank", ""),
                 "score": round(float(best[ei]), 4),
                 "phrase": self.phrases[int(best_ph[ei])],
                 "approved": bool(e.get("approved")),

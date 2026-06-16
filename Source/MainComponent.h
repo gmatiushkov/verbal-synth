@@ -51,6 +51,14 @@ private:
     static bool parsePatchJson(const juce::String& jsonText, SynthPatch& out);
     std::atomic<bool> mGenerating { false };
 
+    // Режим разработчика — отдельное окно-лог (F12), не влияет на основной UI.
+    bool mDevMode = false;
+    std::unique_ptr<juce::DocumentWindow> mDevWindow;
+    juce::TextEditor* mDevLog = nullptr;             // принадлежит mDevWindow
+    void toggleDevMode();
+    void appendDevLog(const juce::String& text);
+    static juce::String formatExplain(const juce::var& explain);
+
     // Preset manager state
     PresetManager mPresetManager;
     int           mCurrentPresetIndex = -1;
