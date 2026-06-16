@@ -1,7 +1,7 @@
 """
 Рис. 3.2 — Сигнальная цепь синтезатора (на голос + общий тракт).
 Генерация схемы кодом (matplotlib). Запуск:  python signal_chain.py
-Вывод: out/signal_chain.png
+Вывод: img/signal_chain.png
 
 Примечание по инструментарию: договорённость — блок-схемы на Graphviz, но `dot` пока не установлен,
 поэтому первая проба сделана на matplotlib (уже доступен). При установке Graphviz перенесём на .dot.
@@ -12,7 +12,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
-OUT = os.path.join(os.path.dirname(__file__), "out")
+OUT = os.path.join(os.path.dirname(__file__), "img")
 os.makedirs(OUT, exist_ok=True)
 
 # Цвета (нейтральные, печать на белом)
